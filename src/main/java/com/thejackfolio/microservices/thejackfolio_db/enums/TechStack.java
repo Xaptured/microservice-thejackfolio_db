@@ -6,9 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
-import org.springframework.stereotype.Component;
-
 public enum TechStack {
-    JAVA,SPRING_BOOT,HITML,CSS,JS,MYSQL,AWS_CDK,VUE,REACT;
+    JAVA, SPRING_BOOT, HITML, CSS, JS, MYSQL, AWS_CDK, VUE, REACT
 
 }

@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * The class type Address.
- */
 @Component
 public class Address implements Serializable {
 
@@ -24,135 +21,62 @@ public class Address implements Serializable {
     private String state;
     private String country;
 
-    /**
-     * Instantiates a new Address.
-     */
     public Address() {
     }
 
-    /**
-     * Instantiates a new Address.
-     *
-     * @param flatNumber the flat number
-     * @param society    the society
-     * @param city       the city
-     * @param pinCode    the pin code
-     * @param state      the state
-     * @param country    the country
-     */
     public Address(String flatNumber, String society, String city, Integer pinCode, String state, String country) {
         this.flatNumber = flatNumber;
         this.society = society;
         this.city = city;
         this.pinCode = pinCode;
-        state = state;
+        this.state = state;
         this.country = country;
     }
 
-    /**
-     * Gets flat number.
-     *
-     * @return the flat number
-     */
     public String getFlatNumber() {
         return flatNumber;
     }
 
-    /**
-     * Sets flat number.
-     *
-     * @param flatNumber the flat number
-     */
     public void setFlatNumber(String flatNumber) {
         this.flatNumber = flatNumber;
     }
 
-    /**
-     * Gets society.
-     *
-     * @return the society
-     */
     public String getSociety() {
         return society;
     }
 
-    /**
-     * Sets society.
-     *
-     * @param society the society
-     */
     public void setSociety(String society) {
         this.society = society;
     }
 
-    /**
-     * Gets city.
-     *
-     * @return the city
-     */
     public String getCity() {
         return city;
     }
 
-    /**
-     * Sets city.
-     *
-     * @param city the city
-     */
     public void setCity(String city) {
         this.city = city;
     }
 
-    /**
-     * Gets pin code.
-     *
-     * @return the pin code
-     */
     public Integer getPinCode() {
         return pinCode;
     }
 
-    /**
-     * Sets pin code.
-     *
-     * @param pinCode the pin code
-     */
     public void setPinCode(Integer pinCode) {
         this.pinCode = pinCode;
     }
 
-    /**
-     * Gets state.
-     *
-     * @return the state
-     */
     public String getstate() {
         return state;
     }
 
-    /**
-     * Sets state.
-     *
-     * @param state the state
-     */
     public void setstate(String state) {
         state = state;
     }
 
-    /**
-     * Gets country.
-     *
-     * @return the country
-     */
     public String getCountry() {
         return country;
     }
 
-    /**
-     * Sets country.
-     *
-     * @param country the country
-     */
     public void setCountry(String country) {
         this.country = country;
     }

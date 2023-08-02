@@ -13,9 +13,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * The class type Project.
- */
 @Component
 public class Project implements Serializable {
 
@@ -24,20 +21,9 @@ public class Project implements Serializable {
     private List<TechStack> techStacks;
     private List<String> roles;
 
-    /**
-     * Instantiates a new Project.
-     */
     public Project() {
     }
 
-    /**
-     * Instantiates a new Project.
-     *
-     * @param name        the name
-     * @param description the description
-     * @param techStacks  the tech stacks
-     * @param roles       the roles
-     */
     public Project(String name, String description, List<TechStack> techStacks, List<String> roles) {
         this.name = name;
         this.description = description;
@@ -45,74 +31,34 @@ public class Project implements Serializable {
         this.roles = roles;
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets description.
-     *
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Sets description.
-     *
-     * @param description the description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Gets tech stacks.
-     *
-     * @return the tech stacks
-     */
     public List<TechStack> getTechStacks() {
         return techStacks;
     }
 
-    /**
-     * Sets tech stacks.
-     *
-     * @param techStacks the tech stacks
-     */
     public void setTechStacks(List<TechStack> techStacks) {
         this.techStacks = techStacks;
     }
 
-    /**
-     * Gets roles.
-     *
-     * @return the roles
-     */
     public List<String> getRoles() {
         return roles;
     }
 
-    /**
-     * Sets roles.
-     *
-     * @param roles the roles
-     */
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }

@@ -10,9 +10,6 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-/**
- * The class type Roles.
- */
 @Entity
 @Table(name = "roles")
 public class Roles {
@@ -26,75 +23,35 @@ public class Roles {
     @Column(name = "role")
     private String role;
 
-    /**
-     * Instantiates a new Roles.
-     */
     public Roles() {
     }
 
-    /**
-     * Instantiates a new Roles.
-     *
-     * @param id        the id
-     * @param projectId the project id
-     * @param role      the role
-     */
     public Roles(Integer id, Integer projectId, String role) {
         this.id = id;
         this.projectId = projectId;
         this.role = role;
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets project id.
-     *
-     * @return the project id
-     */
     public Integer getProjectId() {
         return projectId;
     }
 
-    /**
-     * Sets project id.
-     *
-     * @param projectId the project id
-     */
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
-    /**
-     * Gets role.
-     *
-     * @return the role
-     */
     public String getRole() {
         return role;
     }
 
-    /**
-     * Sets role.
-     *
-     * @param role the role
-     */
     public void setRole(String role) {
         this.role = role;
     }

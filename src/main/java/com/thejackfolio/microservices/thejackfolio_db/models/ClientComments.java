@@ -12,66 +12,54 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * The class type Client comments.
- */
 @Component
 public class ClientComments implements Serializable {
 
     private String email;
-    private List<String> comments;
+    private String comments;
+    private boolean replied;
+    private String message;
 
-    /**
-     * Instantiates a new Client comments.
-     */
     public ClientComments() {
     }
 
-    /**
-     * Instantiates a new Client comments.
-     *
-     * @param email    the email
-     * @param comments the comments
-     */
-    public ClientComments(String email, List<String> comments) {
+    public ClientComments(String email, String comments, boolean replied, String message) {
         this.email = email;
         this.comments = comments;
+        this.replied = replied;
+        this.message = message;
     }
 
-    /**
-     * Gets email.
-     *
-     * @return the email
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * Sets email.
-     *
-     * @param email the email
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * Gets comments.
-     *
-     * @return the comments
-     */
-    public List<String> getComments() {
+    public String getComments() {
         return comments;
     }
 
-    /**
-     * Sets comments.
-     *
-     * @param comments the comments
-     */
-    public void setComments(List<String> comments) {
+    public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public boolean isReplied() {
+        return replied;
+    }
+
+    public void setReplied(boolean replied) {
+        this.replied = replied;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
@@ -79,19 +67,21 @@ public class ClientComments implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientComments that = (ClientComments) o;
-        return Objects.equals(email, that.email) && Objects.equals(comments, that.comments);
+        return replied == that.replied && Objects.equals(email, that.email) && Objects.equals(comments, that.comments) && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, comments);
+        return Objects.hash(email, comments, replied, message);
     }
 
     @Override
     public String toString() {
         return "ClientComments{" +
                 "email='" + email + '\'' +
-                ", comments=" + comments +
+                ", comments='" + comments + '\'' +
+                ", replied=" + replied +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

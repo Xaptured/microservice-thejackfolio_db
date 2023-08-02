@@ -18,12 +18,12 @@ public class EncryptDecrypt {
     private ApplicationContext context;
     private StringEncryptor jasyptStringEncryptor;
 
-    public String encrypt(String plainText){
+    public String encrypt(String plainText) {
         jasyptStringEncryptor = (StringEncryptor) SpringBeanApplicationContext.getBean("jasyptStringEncryptor");
         return jasyptStringEncryptor.encrypt(plainText);
     }
 
-    public String decrypt(String cypherText){
+    public String decrypt(String cypherText) {
         jasyptStringEncryptor = (StringEncryptor) SpringBeanApplicationContext.getBean("jasyptStringEncryptor");
         return jasyptStringEncryptor.decrypt(cypherText);
     }

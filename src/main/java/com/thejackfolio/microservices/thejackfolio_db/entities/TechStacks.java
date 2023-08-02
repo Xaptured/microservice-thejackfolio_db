@@ -10,9 +10,6 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-/**
- * The class type Tech stacks.
- */
 @Entity
 @Table(name = "tech_stacks")
 public class TechStacks {
@@ -26,75 +23,35 @@ public class TechStacks {
     @Column(name = "tech_stack")
     private String techStack;
 
-    /**
-     * Instantiates a new Tech stacks.
-     */
     public TechStacks() {
     }
 
-    /**
-     * Instantiates a new Tech stacks.
-     *
-     * @param id        the id
-     * @param projectId the project id
-     * @param techStack the tech stack
-     */
     public TechStacks(Integer id, Integer projectId, String techStack) {
         this.id = id;
         this.projectId = projectId;
         this.techStack = techStack;
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets project id.
-     *
-     * @return the project id
-     */
     public Integer getProjectId() {
         return projectId;
     }
 
-    /**
-     * Sets project id.
-     *
-     * @param projectId the project id
-     */
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
-    /**
-     * Gets tech stack.
-     *
-     * @return the tech stack
-     */
     public String getTechStack() {
         return techStack;
     }
 
-    /**
-     * Sets tech stack.
-     *
-     * @param techStack the tech stack
-     */
     public void setTechStack(String techStack) {
         this.techStack = techStack;
     }

@@ -14,17 +14,9 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * The class type Jasypt encryptor config.
- */
 @Configuration
 public class JasyptEncryptorConfig {
 
-    /**
-     * Gets password encryptor.
-     *
-     * @return the password encryptor
-     */
     @Bean(name = "jasyptStringEncryptor")
     public StringEncryptor getPasswordEncryptor() {
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
