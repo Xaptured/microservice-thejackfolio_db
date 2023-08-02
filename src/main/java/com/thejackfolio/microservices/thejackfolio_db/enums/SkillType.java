@@ -6,8 +6,6 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
-import org.springframework.stereotype.Component;
-
 public enum SkillType {
     PROFESSIONAL, PERSONAL;
 }

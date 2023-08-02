@@ -10,48 +10,38 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.SkillType;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * The class type Skill.
- */
 @Component
 public class Skill implements Serializable {
 
-    private Map<SkillType, String> skills;
+    private Map<SkillType, List<String>> skills;
+    private String message;
 
-    /**
-     * Instantiates a new Skill.
-     */
     public Skill() {
     }
 
-    /**
-     * Instantiates a new Skill.
-     *
-     * @param skills the skills
-     */
-    public Skill(Map<SkillType, String> skills) {
+    public Skill(Map<SkillType, List<String>> skills, String message) {
         this.skills = skills;
+        this.message = message;
     }
 
-    /**
-     * Gets skills.
-     *
-     * @return the skills
-     */
-    public Map<SkillType, String> getSkills() {
+    public Map<SkillType, List<String>> getSkills() {
         return skills;
     }
 
-    /**
-     * Sets skills.
-     *
-     * @param skills the skills
-     */
-    public void setSkills(Map<SkillType, String> skills) {
+    public void setSkills(Map<SkillType, List<String>> skills) {
         this.skills = skills;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
@@ -59,18 +49,19 @@ public class Skill implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
-        return Objects.equals(skills, skill.skills);
+        return Objects.equals(skills, skill.skills) && Objects.equals(message, skill.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(skills);
+        return Objects.hash(skills, message);
     }
 
     @Override
     public String toString() {
         return "Skill{" +
                 "skills=" + skills +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

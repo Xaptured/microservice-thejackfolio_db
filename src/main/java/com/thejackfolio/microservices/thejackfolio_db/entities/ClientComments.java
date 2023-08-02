@@ -10,9 +10,6 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-/**
- * The class type Client comments.
- */
 @Entity
 @Table(name = "client_comments")
 public class ClientComments {
@@ -25,78 +22,49 @@ public class ClientComments {
     private String email;
     @Column(name = "comment")
     private String comment;
+    @Column(name = "replied")
+    private boolean replied;
 
-    /**
-     * Instantiates a new Client comments.
-     */
     public ClientComments() {
     }
 
-    /**
-     * Instantiates a new Client comments.
-     *
-     * @param id      the id
-     * @param email   the email
-     * @param comment the comment
-     */
-    public ClientComments(Integer id, String email, String comment) {
+    public ClientComments(Integer id, String email, String comment, boolean replied) {
         this.id = id;
         this.email = email;
         this.comment = comment;
+        this.replied = replied;
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets email.
-     *
-     * @return the email
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * Sets email.
-     *
-     * @param email the email
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * Gets comment.
-     *
-     * @return the comment
-     */
     public String getComment() {
         return comment;
     }
 
-    /**
-     * Sets comment.
-     *
-     * @param comment the comment
-     */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isReplied() {
+        return replied;
+    }
+
+    public void setReplied(boolean replied) {
+        this.replied = replied;
     }
 
     @Override
@@ -104,12 +72,12 @@ public class ClientComments {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientComments that = (ClientComments) o;
-        return Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(comment, that.comment);
+        return replied == that.replied && Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(comment, that.comment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, comment);
+        return Objects.hash(id, email, comment, replied);
     }
 
     @Override
@@ -118,6 +86,7 @@ public class ClientComments {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", comment='" + comment + '\'' +
+                ", replied=" + replied +
                 '}';
     }
 }

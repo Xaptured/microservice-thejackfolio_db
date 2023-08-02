@@ -10,9 +10,6 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-/**
- * The class type Skills.
- */
 @Entity
 @Table(name = "skills")
 public class Skills {
@@ -26,75 +23,35 @@ public class Skills {
     @Column(name = "skill")
     private String skill;
 
-    /**
-     * Instantiates a new Skills.
-     */
     public Skills() {
     }
 
-    /**
-     * Instantiates a new Skills.
-     *
-     * @param id        the id
-     * @param skillType the skill type
-     * @param skill     the skill
-     */
     public Skills(Integer id, String skillType, String skill) {
         this.id = id;
         this.skillType = skillType;
         this.skill = skill;
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets skill type.
-     *
-     * @return the skill type
-     */
     public String getSkillType() {
         return skillType;
     }
 
-    /**
-     * Sets skill type.
-     *
-     * @param skillType the skill type
-     */
     public void setSkillType(String skillType) {
         this.skillType = skillType;
     }
 
-    /**
-     * Gets skill.
-     *
-     * @return the skill
-     */
     public String getSkill() {
         return skill;
     }
 
-    /**
-     * Sets skill.
-     *
-     * @param skill the skill
-     */
     public void setSkill(String skill) {
         this.skill = skill;
     }

@@ -11,9 +11,6 @@ import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
-/**
- * The class type Organizations.
- */
 @Entity
 @Table(name = "organizations")
 public class Organizations {
@@ -29,20 +26,9 @@ public class Organizations {
     @Column(name = "to_date")
     private Date toDate;
 
-    /**
-     * Instantiates a new Organizations.
-     */
     public Organizations() {
     }
 
-    /**
-     * Instantiates a new Organizations.
-     *
-     * @param id       the id
-     * @param name     the name
-     * @param fromDate the from date
-     * @param toDate   the to date
-     */
     public Organizations(Integer id, String name, Date fromDate, Date toDate) {
         this.id = id;
         this.name = name;
@@ -50,74 +36,34 @@ public class Organizations {
         this.toDate = toDate;
     }
 
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Sets id.
-     *
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets from date.
-     *
-     * @return the from date
-     */
     public Date getFromDate() {
         return fromDate;
     }
 
-    /**
-     * Sets from date.
-     *
-     * @param fromDate the from date
-     */
     public void setFromDate(Date fromDate) {
         this.fromDate = fromDate;
     }
 
-    /**
-     * Gets to date.
-     *
-     * @return the to date
-     */
     public Date getToDate() {
         return toDate;
     }
 
-    /**
-     * Sets to date.
-     *
-     * @param toDate the to date
-     */
     public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
