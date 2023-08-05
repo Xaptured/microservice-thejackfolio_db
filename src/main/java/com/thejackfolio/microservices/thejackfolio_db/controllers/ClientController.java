@@ -42,11 +42,8 @@ public class ClientController {
             }
             clientService.saveComments(comments);
             comments.setMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException mapperException) {
-            comments.setMessage(StringConstants.MAPPING_ERROR);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            comments.setMessage(StringConstants.DATABASE_ERROR);
+        } catch (MapperException | DataBaseOperationException exception) {
+            comments.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(comments);
@@ -62,16 +59,10 @@ public class ClientController {
         List<ClientComments> comments = null;
         try {
             comments = clientService.getComments();
-        } catch (MapperException mapperException) {
+        } catch (MapperException | DataBaseOperationException exception) {
             comments = new ArrayList<>();
             ClientComments comment = new ClientComments();
-            comment.setMessage(StringConstants.MAPPING_ERROR);
-            comments.add(comment);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            comments = new ArrayList<>();
-            ClientComments comment = new ClientComments();
-            comment.setMessage(StringConstants.DATABASE_ERROR);
+            comment.setMessage(exception.getMessage());
             comments.add(comment);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
         }

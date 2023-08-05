@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class ClientServiceHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessionalDetailsServiceHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientServiceHelper.class);
 
     @Autowired
     private ClientCommentsRepository repository;

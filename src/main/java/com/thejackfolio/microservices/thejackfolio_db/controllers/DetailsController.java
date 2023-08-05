@@ -39,11 +39,8 @@ public class DetailsController {
             }
             detailsService.saveDetails(details);
             details.setResponseMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException mapperException) {
-            details.setResponseMessage(StringConstants.MAPPING_ERROR);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            details.setResponseMessage(StringConstants.DATABASE_ERROR);
+        } catch (MapperException | DataBaseOperationException exception) {
+            details.setResponseMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(details);
@@ -60,13 +57,9 @@ public class DetailsController {
         try {
             details = detailsService.getDetails();
             details.setResponseMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException mapperException) {
+        } catch (MapperException | DataBaseOperationException exception) {
             details = new Details();
-            details.setResponseMessage(StringConstants.MAPPING_ERROR);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            details = new Details();
-            details.setResponseMessage(StringConstants.DATABASE_ERROR);
+            details.setResponseMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
         }
         return ResponseEntity.status(HttpStatus.OK).body(details);
