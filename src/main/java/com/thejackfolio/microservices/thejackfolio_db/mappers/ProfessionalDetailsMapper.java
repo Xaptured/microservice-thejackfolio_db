@@ -40,7 +40,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return organizationEntity;
     }
@@ -56,7 +56,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return organizationModel;
     }
@@ -72,7 +72,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return projectEntity;
     }
@@ -87,7 +87,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return projectModel;
     }
@@ -102,7 +102,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return techStackEntity;
     }
@@ -119,7 +119,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return techStacksModels;
     }
@@ -134,7 +134,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return roleEntity;
     }
@@ -151,7 +151,7 @@ public class ProfessionalDetailsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return roleModels;
     }

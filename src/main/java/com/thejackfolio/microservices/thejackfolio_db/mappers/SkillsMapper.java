@@ -47,7 +47,7 @@ public class SkillsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return skillEntities;
     }
@@ -73,7 +73,7 @@ public class SkillsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return skill;
     }

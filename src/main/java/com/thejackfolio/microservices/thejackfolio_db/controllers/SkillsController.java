@@ -39,11 +39,8 @@ public class SkillsController {
             }
             skillsService.saveSkills(skill);
             skill.setMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException mapperException) {
-            skill.setMessage(StringConstants.MAPPING_ERROR);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(skill);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            skill.setMessage(StringConstants.DATABASE_ERROR);
+        } catch (MapperException | DataBaseOperationException exception) {
+            skill.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(skill);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(skill);
@@ -60,13 +57,9 @@ public class SkillsController {
         try {
             skill = skillsService.getSkills();
             skill.setMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException mapperException) {
+        } catch (MapperException | DataBaseOperationException exception) {
             skill = new Skill();
-            skill.setMessage(StringConstants.MAPPING_ERROR);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(skill);
-        } catch (DataBaseOperationException dataBaseOperationException) {
-            skill = new Skill();
-            skill.setMessage(StringConstants.DATABASE_ERROR);
+            skill.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(skill);
         }
         return ResponseEntity.status(HttpStatus.OK).body(skill);

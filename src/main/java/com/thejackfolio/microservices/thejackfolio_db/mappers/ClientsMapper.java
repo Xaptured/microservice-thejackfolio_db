@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class ClientsMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonalDetailsMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientsMapper.class);
 
     public ClientComments modelToEntityComments(com.thejackfolio.microservices.thejackfolio_db.models.ClientComments comments) throws MapperException {
         ClientComments commentEntity = null;
@@ -32,7 +32,7 @@ public class ClientsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
 
         return commentEntity;
@@ -55,7 +55,7 @@ public class ClientsMapper {
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
-            throw new MapperException(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return commentModels;
     }

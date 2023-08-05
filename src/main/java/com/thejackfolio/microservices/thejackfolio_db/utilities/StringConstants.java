@@ -8,6 +8,8 @@ package com.thejackfolio.microservices.thejackfolio_db.utilities;
 
 public class StringConstants {
 
+    private StringConstants(){}
+
     // Encryption Params
     public static final String ENCRYPTION_PASSWORD = "ENCRYPTION_PASSWORD";
     public static final String ENCRYPTION_ALGORITHM = "ENCRYPTION_ALGORITHM";
