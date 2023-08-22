@@ -11,18 +11,25 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException
 import com.thejackfolio.microservices.thejackfolio_db.models.Instagram_Token;
 import com.thejackfolio.microservices.thejackfolio_db.services.InstagramTokenService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "instagram-token", description = "Instagram Token APIs")
 @RestController
-@RequestMapping("/instagram-token")
+@RequestMapping("/Instagram-token")
 public class InstagramTokenController {
 
     @Autowired
     private InstagramTokenService service;
 
+    @Operation(
+            summary = "Save token",
+            description = "Save token and gives the same token response with a message which defines whether the request is successful or not."
+    )
     @PostMapping("/save-token")
     public ResponseEntity<Instagram_Token> saveInstagramToken(@RequestBody Instagram_Token instagramToken){
         try{
@@ -38,6 +45,10 @@ public class InstagramTokenController {
         return ResponseEntity.status(HttpStatus.CREATED).body(instagramToken);
     }
 
+    @Operation(
+            summary = "Get token",
+            description = "Gets token with a message which defines whether the request is successful or not."
+    )
     @GetMapping("/get-token")
     public ResponseEntity<Instagram_Token> getInstagramToken(){
         Instagram_Token instagramToken = null;

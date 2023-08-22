@@ -28,8 +28,7 @@ public class DetailsController {
 
     @Operation(
             summary = "Save details",
-            description = "Save details which includes both personal and professional and gives the same details response with a message which defines whether the request is successful or not.",
-            tags = { "details", "post" }
+            description = "Save details which includes both personal and professional and gives the same details response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-details")
     public ResponseEntity<Details> saveDetails(@RequestBody Details details) {
@@ -48,8 +47,7 @@ public class DetailsController {
 
     @Operation(
             summary = "Get details",
-            description = "It gives the details as response which includes both personal and professional with a message which defines whether the request is successful or not.",
-            tags = { "details", "get" }
+            description = "It gives the details as response which includes both personal and professional with a message which defines whether the request is successful or not."
     )
     @GetMapping("/get-details")
     public ResponseEntity<Details> getDetails() {
