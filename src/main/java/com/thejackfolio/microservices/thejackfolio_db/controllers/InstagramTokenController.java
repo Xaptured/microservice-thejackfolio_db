@@ -18,9 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "instagram-token", description = "Instagram Token APIs")
+@Tag(name = "Instagram-token", description = "Instagram Token APIs")
 @RestController
-@RequestMapping("/Instagram-token")
+@RequestMapping("/instagram-token")
 public class InstagramTokenController {
 
     @Autowired

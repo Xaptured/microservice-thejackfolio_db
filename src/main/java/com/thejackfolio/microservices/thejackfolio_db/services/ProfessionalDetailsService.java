@@ -34,8 +34,6 @@ public class ProfessionalDetailsService {
     @Autowired
     private ProfessionalDetailsServiceHelper helper;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfessionalDetailsService.class);
-
     public void saveProfessionalDetails(List<ProfessionalDetail> professionalDetails) throws MapperException, DataBaseOperationException {
         if (professionalDetails != null && !professionalDetails.isEmpty()) {
             for (ProfessionalDetail professionalDetail : professionalDetails) {
