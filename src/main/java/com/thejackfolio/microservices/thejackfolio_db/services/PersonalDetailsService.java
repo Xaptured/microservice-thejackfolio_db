@@ -21,8 +21,6 @@ import java.util.List;
 @Service
 public class PersonalDetailsService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonalDetailsService.class);
-
     @Autowired
     private PersonalDetailsMapper mapper;
     @Autowired
