@@ -31,8 +31,7 @@ public class ClientController {
 
     @Operation(
             summary = "Save comments",
-            description = "Save comments and gives the same comments response with a message which defines whether the request is successful or not.",
-            tags = { "comments", "post" }
+            description = "Save comments and gives the same comments response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-comments")
     public ResponseEntity<ClientComments> saveComments(@RequestBody ClientComments comments) {
@@ -51,8 +50,7 @@ public class ClientController {
 
     @Operation(
             summary = "Get comments",
-            description = "It gives the list of comments as response which are not replied yet with a message which defines whether the request is successful or not.",
-            tags = { "comments", "get" }
+            description = "It gives the list of comments as response which are not replied yet with a message which defines whether the request is successful or not."
     )
     @GetMapping("/get-comments")
     public ResponseEntity<List<ClientComments>> getComments() {

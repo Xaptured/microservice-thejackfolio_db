@@ -28,8 +28,7 @@ public class SkillsController {
 
     @Operation(
             summary = "Save skills",
-            description = "Save skills which includes both personal and professional and gives the same skills response with a message which defines whether the request is successful or not.",
-            tags = { "skills", "post" }
+            description = "Save skills which includes both personal and professional and gives the same skills response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-skills")
     public ResponseEntity<Skill> saveSkills(@RequestBody Skill skill) {
@@ -48,8 +47,7 @@ public class SkillsController {
 
     @Operation(
             summary = "Get skills",
-            description = "It gives the skills as response which includes both personal and professional with a message which defines whether the request is successful or not.",
-            tags = { "comments", "get" }
+            description = "It gives the skills as response which includes both personal and professional with a message which defines whether the request is successful or not."
     )
     @GetMapping("/get-skills")
     public ResponseEntity<Skill> getSkills() {
