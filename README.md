@@ -6,6 +6,8 @@ The complete High Level Document will be added in all the repositories to unders
 
 #### Other repositories related to this project:
 
+TheJackFolioParentRepository : https://github.com/Xaptured/TheJackFolioParentRepository
+
 microservice-profession : https://github.com/Xaptured/microservice-profession
 
 microservice-client : https://github.com/Xaptured/microservice-client
@@ -13,6 +15,8 @@ microservice-client : https://github.com/Xaptured/microservice-client
 microservice-instagram : https://github.com/Xaptured/microservice-instagram
 
 microservice-youtube : https://github.com/Xaptured/microservice-youtube
+
+microservice-instagram-oauth-client : https://github.com/Xaptured/microservice-instagram-oauth-client
 
 If you want to clone this repository and use it in your local, then **please follow these steps**.
 
@@ -29,6 +33,7 @@ which internally selects the appropriate profile and change the database values 
 
 #### More Links:
 Swagger UI: "http://localhost:{your-port}/swagger-ui/index.html"
+
 H2-Console: "http://localhost:{your-port}/h2-console"
 
 
