@@ -16,6 +16,6 @@ import java.util.List;
 @Repository
 public interface ClientCommentsRepository extends JpaRepository<ClientComments, Integer> {
 
-    @Query(value = "select * from client_comments where verified != 1", nativeQuery = true)
+    @Query(value = "select * from client_comments where replied = false", nativeQuery = true)
     List<ClientComments> findByNonReplied();
 }
