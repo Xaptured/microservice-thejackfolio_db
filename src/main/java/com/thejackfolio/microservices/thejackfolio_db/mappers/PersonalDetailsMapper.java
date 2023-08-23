@@ -73,6 +73,7 @@ public class PersonalDetailsMapper {
         com.thejackfolio.microservices.thejackfolio_db.models.PersonalDetails details = null;
         try {
             if (personalDetails != null) {
+                details = new com.thejackfolio.microservices.thejackfolio_db.models.PersonalDetails();
                 Name name = new Name();
                 name.setFirstName(encryptDecrypt.decrypt(personalDetails.getFirstName()));
                 name.setMiddleName(encryptDecrypt.decrypt(personalDetails.getMiddleName()));
