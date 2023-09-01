@@ -38,6 +38,7 @@ public class PersonalDetailsMapper {
                     details.setMiddleName(encryptDecrypt.encrypt(personalDetails.getName().getMiddleName()));
                     details.setLastName(encryptDecrypt.encrypt(personalDetails.getName().getLastName()));
                 }
+                details.setDescription(personalDetails.getDescription());
                 details.setEmail(personalDetails.getEmail());
                 details.setDateOfBirth(encryptDecrypt.encrypt(personalDetails.getDateOfBirth().toString()));
                 if (personalDetails.getAddress() != null) {
@@ -79,6 +80,7 @@ public class PersonalDetailsMapper {
                 name.setMiddleName(encryptDecrypt.decrypt(personalDetails.getMiddleName()));
                 name.setLastName(encryptDecrypt.decrypt(personalDetails.getLastName()));
                 details.setName(name);
+                details.setDescription(personalDetails.getDescription());
                 details.setEmail(personalDetails.getEmail());
                 details.setDateOfBirth(Date.valueOf(encryptDecrypt.decrypt(personalDetails.getDateOfBirth())));
                 Address address = new Address();
