@@ -25,6 +25,8 @@ public class PersonalDetails {
     private String middleName;
     @Column(name = "last_name")
     private String lastName;
+    @Column(name = "description")
+    private String description;
     @Column(name = "email")
     private String email;
     @Column(name = "date_of_birth")
@@ -63,11 +65,12 @@ public class PersonalDetails {
     public PersonalDetails() {
     }
 
-    public PersonalDetails(Integer id, String firstName, String middleName, String lastName, String email, String dateOfBirth, String flatNumber, String society, String city, Integer pinCode, String state, String country, String phoneNumber, String collegeName, String branch, Date fromDate, Date toDate, String linkedinLink, String githubLink, String youtubeLink, String instagramLink) {
+    public PersonalDetails(Integer id, String firstName, String middleName, String lastName, String description, String email, String dateOfBirth, String flatNumber, String society, String city, Integer pinCode, String state, String country, String phoneNumber, String collegeName, String branch, Date fromDate, Date toDate, String linkedinLink, String githubLink, String youtubeLink, String instagramLink) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.description = description;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.flatNumber = flatNumber;
@@ -117,6 +120,14 @@ public class PersonalDetails {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getEmail() {
@@ -260,12 +271,12 @@ public class PersonalDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonalDetails that = (PersonalDetails) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(dateOfBirth, that.dateOfBirth) && Objects.equals(flatNumber, that.flatNumber) && Objects.equals(society, that.society) && Objects.equals(city, that.city) && Objects.equals(pinCode, that.pinCode) && Objects.equals(state, that.state) && Objects.equals(country, that.country) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(collegeName, that.collegeName) && Objects.equals(branch, that.branch) && Objects.equals(fromDate, that.fromDate) && Objects.equals(toDate, that.toDate) && Objects.equals(linkedinLink, that.linkedinLink) && Objects.equals(githubLink, that.githubLink) && Objects.equals(youtubeLink, that.youtubeLink) && Objects.equals(instagramLink, that.instagramLink);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(middleName, that.middleName) && Objects.equals(lastName, that.lastName) && Objects.equals(description, that.description) && Objects.equals(email, that.email) && Objects.equals(dateOfBirth, that.dateOfBirth) && Objects.equals(flatNumber, that.flatNumber) && Objects.equals(society, that.society) && Objects.equals(city, that.city) && Objects.equals(pinCode, that.pinCode) && Objects.equals(state, that.state) && Objects.equals(country, that.country) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(collegeName, that.collegeName) && Objects.equals(branch, that.branch) && Objects.equals(fromDate, that.fromDate) && Objects.equals(toDate, that.toDate) && Objects.equals(linkedinLink, that.linkedinLink) && Objects.equals(githubLink, that.githubLink) && Objects.equals(youtubeLink, that.youtubeLink) && Objects.equals(instagramLink, that.instagramLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, middleName, lastName, email, dateOfBirth, flatNumber, society, city, pinCode, state, country, phoneNumber, collegeName, branch, fromDate, toDate, linkedinLink, githubLink, youtubeLink, instagramLink);
+        return Objects.hash(id, firstName, middleName, lastName, description, email, dateOfBirth, flatNumber, society, city, pinCode, state, country, phoneNumber, collegeName, branch, fromDate, toDate, linkedinLink, githubLink, youtubeLink, instagramLink);
     }
 
     @Override
@@ -275,6 +286,7 @@ public class PersonalDetails {
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", description='" + description + '\'' +
                 ", email='" + email + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", flatNumber='" + flatNumber + '\'' +
