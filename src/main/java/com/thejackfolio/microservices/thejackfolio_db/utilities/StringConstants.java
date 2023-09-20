@@ -26,4 +26,8 @@ public class StringConstants {
     public static final String MAPPING_ERROR_MODEL_TO_ENTITY = "Error occurred while converting model to entity";
     public static final String MAPPING_ERROR_ENTITY_TO_MODEL = "Error occurred while converting entity to model";
 
+    public static final String USERNAME = "USERNAME";
+    public static final String PASSWORD = "PASSWORD";
+    public static final String ROLE = "ROLE";
+
 }

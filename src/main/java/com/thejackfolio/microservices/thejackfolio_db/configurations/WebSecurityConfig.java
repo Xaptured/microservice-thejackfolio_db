@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.configurations;
 
 import com.thejackfolio.microservices.thejackfolio_db.utilities.PropertiesReader;
+import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -25,9 +26,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static final String USERNAME = PropertiesReader.getProperty("USERNAME");
-    private static final String PASSWORD = PropertiesReader.getProperty("PASSWORD");
-    private static final String ROLE = PropertiesReader.getProperty("ROLE");
+    private static final String USERNAME = PropertiesReader.getProperty(StringConstants.USERNAME);
+    private static final String PASSWORD = PropertiesReader.getProperty(StringConstants.PASSWORD);
+    private static final String ROLE = PropertiesReader.getProperty(StringConstants.ROLE);
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, MvcRequestMatcher.Builder mvc) throws Exception {
