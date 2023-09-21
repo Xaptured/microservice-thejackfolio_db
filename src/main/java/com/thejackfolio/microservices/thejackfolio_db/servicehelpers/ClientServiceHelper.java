@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientServiceHelper {
@@ -43,5 +44,16 @@ public class ClientServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return comments;
+    }
+
+    public ClientComments findCommentById(Integer commentId) throws DataBaseOperationException {
+        Optional<ClientComments> comment;
+        try{
+            comment = repository.findById(commentId);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return comment.orElse(null);
     }
 }

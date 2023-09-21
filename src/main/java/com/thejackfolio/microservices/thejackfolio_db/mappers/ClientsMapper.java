@@ -38,6 +38,24 @@ public class ClientsMapper {
         return commentEntity;
     }
 
+    public ClientComments modelToEntityComments(com.thejackfolio.microservices.thejackfolio_db.models.ClientComments comments, Integer commentId) throws MapperException {
+        ClientComments commentEntity = null;
+        try {
+            if(comments != null) {
+                commentEntity = new ClientComments();
+                commentEntity.setEmail(comments.getEmail());
+                commentEntity.setComment(comments.getComments());
+                commentEntity.setReplied(comments.isReplied());
+                commentEntity.setId(commentId);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+
+        return commentEntity;
+    }
+
     public List<com.thejackfolio.microservices.thejackfolio_db.models.ClientComments> entityToModel(List<ClientComments> comments) throws MapperException {
         List<com.thejackfolio.microservices.thejackfolio_db.models.ClientComments> commentModels = null;
         try {
@@ -58,5 +76,22 @@ public class ClientsMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return commentModels;
+    }
+
+    public com.thejackfolio.microservices.thejackfolio_db.models.ClientComments entityToModelForComment(ClientComments commentEntity) throws MapperException {
+        com.thejackfolio.microservices.thejackfolio_db.models.ClientComments commentModel = null;
+        try{
+            if(commentEntity != null)
+            {
+                commentModel = new com.thejackfolio.microservices.thejackfolio_db.models.ClientComments();
+                commentModel.setEmail(commentEntity.getEmail());
+                commentModel.setComments(commentEntity.getComment());
+                commentModel.setReplied(commentEntity.isReplied());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return commentModel;
     }
 }
