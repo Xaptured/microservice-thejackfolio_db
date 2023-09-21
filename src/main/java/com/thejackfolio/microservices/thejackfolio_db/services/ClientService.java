@@ -29,10 +29,22 @@ public class ClientService {
         helper.saveClientComments(commentEntity);
     }
 
+    public void updateComments(ClientComments clientComments, Integer commentId) throws MapperException, DataBaseOperationException {
+        com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = mapper.modelToEntityComments(clientComments, commentId);
+        helper.saveClientComments(commentEntity);
+    }
+
     public List<ClientComments> getComments() throws MapperException, DataBaseOperationException {
         List<ClientComments> comments = null;
         List<com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments> commentEntities = helper.findNonRepliedComments();
         comments = mapper.entityToModel(commentEntities);
         return comments;
+    }
+
+    public ClientComments findCommentById(Integer commentId) throws DataBaseOperationException, MapperException {
+        ClientComments comment = null;
+        com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = helper.findCommentById(commentId);
+        comment = mapper.entityToModelForComment(commentEntity);
+        return comment;
     }
 }

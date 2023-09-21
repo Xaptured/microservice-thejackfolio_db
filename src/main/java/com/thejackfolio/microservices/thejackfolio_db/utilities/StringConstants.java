@@ -23,6 +23,7 @@ public class StringConstants {
     public static final String MAPPING_ERROR = "Error occurred while mapping";
     public static final String DATABASE_ERROR = "Error occurred while database operation";
     public static final String REQUEST_PROCESSED = "Request Processed";
+    public static final String ID_NOT_PRESENT = "Id not present in Database";
     public static final String MAPPING_ERROR_MODEL_TO_ENTITY = "Error occurred while converting model to entity";
     public static final String MAPPING_ERROR_ENTITY_TO_MODEL = "Error occurred while converting entity to model";
 

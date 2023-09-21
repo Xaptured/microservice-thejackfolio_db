@@ -48,6 +48,21 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
+    @PostMapping("/update-comments/{commentId}")
+    public ResponseEntity<ClientComments> updateComments(@RequestBody ClientComments comments, @PathVariable Integer commentId) {
+        try{
+            if(comments == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.updateComments(comments, commentId);
+            comments.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            comments.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(comments);
+    }
+
     @Operation(
             summary = "Get comments",
             description = "It gives the list of comments as response which are not replied yet with a message which defines whether the request is successful or not."
@@ -65,5 +80,24 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comments);
         }
         return ResponseEntity.status(HttpStatus.OK).body(comments);
+    }
+
+    @GetMapping("/get-comments/{commentId}")
+    public ResponseEntity<ClientComments> getCommentById(@PathVariable Integer commentId){
+        ClientComments comment = null;
+        try{
+            comment = clientService.findCommentById(commentId);
+            if(comment == null){
+                comment = new ClientComments();
+                comment.setMessage(StringConstants.ID_NOT_PRESENT);
+            } else {
+                comment.setMessage(StringConstants.REQUEST_PROCESSED);
+            }
+        } catch (DataBaseOperationException | MapperException exception){
+            comment = new ClientComments();
+            comment.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comment);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 }
