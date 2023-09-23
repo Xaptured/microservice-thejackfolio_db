@@ -67,7 +67,7 @@ public class ClientsMapper {
                     commentModel.setEmail(comment.getEmail());
                     commentModel.setComments(comment.getComment());
                     commentModel.setReplied(comment.isReplied());
-                    commentModel.setMessage(StringConstants.REQUEST_PROCESSED);
+                    commentModel.setMessage(comment.getId().toString());
                     commentModels.add(commentModel);
                 }
             }
