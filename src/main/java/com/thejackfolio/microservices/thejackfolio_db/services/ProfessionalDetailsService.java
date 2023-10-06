@@ -59,10 +59,9 @@ public class ProfessionalDetailsService {
     }
 
     public List<ProfessionalDetail> getProfessionalDetails() throws MapperException, DataBaseOperationException {
-        List<ProfessionalDetail> professionalDetails = null;
+        List<ProfessionalDetail> professionalDetails = new ArrayList<>();
         List<Organizations> organizationEntities = helper.findAllOrganizations();
         for (Organizations organizationEntity : organizationEntities) {
-            professionalDetails = new ArrayList<>();
             ProfessionalDetail details = new ProfessionalDetail();
             List<Project> projects = new ArrayList<>();
 
