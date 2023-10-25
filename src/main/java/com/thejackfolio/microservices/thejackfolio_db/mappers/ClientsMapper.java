@@ -7,10 +7,14 @@
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
+import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
+import com.thejackfolio.microservices.thejackfolio_db.utilities.EncryptDecrypt;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,6 +24,9 @@ import java.util.List;
 public class ClientsMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientsMapper.class);
+
+    @Autowired
+    private EncryptDecrypt encryptDecrypt;
 
     public ClientComments modelToEntityComments(com.thejackfolio.microservices.thejackfolio_db.models.ClientComments comments) throws MapperException {
         ClientComments commentEntity = null;
@@ -94,4 +101,39 @@ public class ClientsMapper {
         }
         return commentModel;
     }
+
+    public ClientCredentials modelToEntityCredential(ClientCredential credential) throws MapperException {
+        ClientCredentials credentialEntity = null;
+        try{
+            if(credential != null) {
+                credentialEntity = new ClientCredentials();
+                credentialEntity.setEmail(credential.getEmail());
+                credentialEntity.setPassword(encryptDecrypt.encrypt(credential.getPassword()));
+                credentialEntity.setRole(credential.getRole());
+                credentialEntity.setVerified(credentialEntity.isVerified());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return credentialEntity;
+    }
+
+    public ClientCredential entityToModelCredential(ClientCredentials credentials) throws MapperException {
+        ClientCredential credentialModel = null;
+        try {
+            if(credentials != null) {
+                credentialModel = new ClientCredential();
+                credentialModel.setEmail(credentials.getEmail());
+                credentialModel.setPassword(encryptDecrypt.decrypt(credentials.getPassword()));
+                credentialModel.setRole(credentials.getRole());
+                credentialModel.setVerified(credentials.isVerified());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return credentialModel;
+    }
+
 }

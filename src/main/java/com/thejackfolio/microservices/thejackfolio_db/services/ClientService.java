@@ -6,10 +6,12 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
+import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,5 +48,17 @@ public class ClientService {
         com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = helper.findCommentById(commentId);
         comment = mapper.entityToModelForComment(commentEntity);
         return comment;
+    }
+
+    public void saveCredentials(ClientCredential credential) throws MapperException, DataBaseOperationException {
+        ClientCredentials credentialEntity = mapper.modelToEntityCredential(credential);
+        helper.saveCredentials(credentialEntity);
+    }
+
+    public ClientCredential findClientCredential(String email) throws DataBaseOperationException, MapperException {
+        ClientCredential credential = null;
+        ClientCredentials credentialEntity = helper.findCredentialByEmail(email);
+        credential = mapper.entityToModelCredential(credentialEntity);
+        return credential;
     }
 }

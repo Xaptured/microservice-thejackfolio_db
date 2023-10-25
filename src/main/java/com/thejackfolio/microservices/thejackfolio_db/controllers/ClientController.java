@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
+import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
 import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -99,5 +100,39 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(comment);
         }
         return ResponseEntity.status(HttpStatus.OK).body(comment);
+    }
+
+    @PostMapping("/save-credentials")
+    public ResponseEntity<ClientCredential> saveClientCredential(@RequestBody  ClientCredential credential) {
+        try {
+            if (credential == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.saveCredentials(credential);
+            credential.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            credential.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(credential);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(credential);
+    }
+
+    @GetMapping("/get-credentials/{email}")
+    public ResponseEntity<ClientCredential> findClientCredential(@PathVariable String email) {
+        ClientCredential credential = null;
+        try{
+            credential = clientService.findClientCredential(email);
+            if(credential == null){
+                credential = new ClientCredential();
+                credential.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+            } else {
+                credential.setMessage(StringConstants.REQUEST_PROCESSED);
+            }
+        } catch (DataBaseOperationException | MapperException exception){
+            credential = new ClientCredential();
+            credential.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(credential);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(credential);
     }
 }
