@@ -7,8 +7,10 @@
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCommentsRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCredentialsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ public class ClientServiceHelper {
 
     @Autowired
     private ClientCommentsRepository repository;
+    @Autowired
+    private ClientCredentialsRepository credentialsRepository;
 
     public void saveClientComments(ClientComments comments) throws DataBaseOperationException {
         try {
@@ -55,5 +59,25 @@ public class ClientServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return comment.orElse(null);
+    }
+
+    public void saveCredentials(ClientCredentials credentials) throws DataBaseOperationException {
+        try {
+            credentialsRepository.save(credentials);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public ClientCredentials findCredentialByEmail(String email) throws DataBaseOperationException {
+        Optional<ClientCredentials> credentialEntity = null;
+        try {
+            credentialEntity = credentialsRepository.findByEmail(email);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return credentialEntity.orElse(null);
     }
 }
