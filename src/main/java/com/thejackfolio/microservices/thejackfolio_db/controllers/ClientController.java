@@ -49,6 +49,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
+    @Operation(
+            summary = "Update comment",
+            description = "Update comment and gives the same comments response with a message which defines whether the request is successful or not."
+    )
     @PostMapping("/update-comments/{commentId}")
     public ResponseEntity<ClientComments> updateComments(@RequestBody ClientComments comments, @PathVariable Integer commentId) {
         try{
@@ -83,6 +87,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 
+    @Operation(
+            summary = "Get comment",
+            description = "Get comment and gives the same comment response with a message which defines whether the request is successful or not."
+    )
     @GetMapping("/get-comments/{commentId}")
     public ResponseEntity<ClientComments> getCommentById(@PathVariable Integer commentId){
         ClientComments comment = null;
@@ -102,6 +110,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
+    @Operation(
+            summary = "Save credential",
+            description = "Save credential and gives the same credential response with a message which defines whether the request is successful or not."
+    )
     @PostMapping("/save-credentials")
     public ResponseEntity<ClientCredential> saveClientCredential(@RequestBody  ClientCredential credential) {
         try {
@@ -117,6 +129,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(credential);
     }
 
+    @Operation(
+            summary = "Get credential",
+            description = "Get credential and gives the same credential response with a message which defines whether the request is successful or not."
+    )
     @GetMapping("/get-credentials/{email}")
     public ResponseEntity<ClientCredential> findClientCredential(@PathVariable String email) {
         ClientCredential credential = null;
