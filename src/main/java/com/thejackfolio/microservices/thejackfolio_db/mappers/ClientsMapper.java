@@ -108,7 +108,7 @@ public class ClientsMapper {
             if(credential != null) {
                 credentialEntity = new ClientCredentials();
                 credentialEntity.setEmail(credential.getEmail());
-                credentialEntity.setPassword(encryptDecrypt.encrypt(credential.getPassword()));
+                credentialEntity.setPassword(credential.getPassword());
                 credentialEntity.setRole(credential.getRole());
                 credentialEntity.setVerified(credentialEntity.isVerified());
             }
@@ -125,7 +125,7 @@ public class ClientsMapper {
             if(credentials != null) {
                 credentialModel = new ClientCredential();
                 credentialModel.setEmail(credentials.getEmail());
-                credentialModel.setPassword(encryptDecrypt.decrypt(credentials.getPassword()));
+                credentialModel.setPassword(credentials.getPassword());
                 credentialModel.setRole(credentials.getRole());
                 credentialModel.setVerified(credentials.isVerified());
             }
