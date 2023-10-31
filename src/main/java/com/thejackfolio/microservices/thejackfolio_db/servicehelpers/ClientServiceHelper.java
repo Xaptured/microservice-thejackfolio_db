@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCommentsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCredentialsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
@@ -79,5 +80,43 @@ public class ClientServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return credentialEntity.orElse(null);
+    }
+
+    public void verifyClientAccount(Integer clientId) throws DataBaseOperationException {
+        try {
+            credentialsRepository.verifyAccount(clientId);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveSecretCode(EmailValidationDetails details) throws DataBaseOperationException {
+        try {
+            ClientCredentials credentials = credentialsRepository.findById(details.getClientId()).orElse(null);
+            if(credentials != null) {
+                credentials.setCode(details.getSecretCode());
+                credentialsRepository.save(credentials);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public EmailValidationDetails findDetailsById(Integer id) throws DataBaseOperationException {
+        EmailValidationDetails details = null;
+        try{
+            ClientCredentials credentials = credentialsRepository.findById(id).orElse(null);
+            if(credentials != null) {
+                details = new EmailValidationDetails();
+                details.setClientId(credentials.getId());
+                details.setSecretCode(credentials.getCode());
+            }
+        } catch (Exception exception ) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return details;
     }
 }
