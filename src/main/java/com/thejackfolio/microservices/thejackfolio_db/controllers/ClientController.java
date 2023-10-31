@@ -10,6 +10,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperati
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
+import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
 import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -150,5 +151,63 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(credential);
         }
         return ResponseEntity.status(HttpStatus.OK).body(credential);
+    }
+
+    @Operation(
+            summary = "Get client id",
+            description = "Get client id"
+    )
+    @GetMapping("/get-client-id/{email}")
+    public ResponseEntity<EmailValidationDetails> findClientId(@PathVariable String email) {
+        EmailValidationDetails details = null;
+        try {
+            details = clientService.findClientId(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(details);
+    }
+
+    @Operation(
+            summary = "Get client id",
+            description = "Get client id"
+    )
+    @PostMapping("/verify-account/{clientId}")
+    public ResponseEntity<String> verifyClientAccount(@PathVariable Integer clientId) {
+        try {
+            clientService.verifyClientAccount(clientId);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(StringConstants.REQUEST_PROCESSED);
+    }
+
+    @Operation(
+            summary = "Save secret code",
+            description = "Save secret code"
+    )
+    @PostMapping("/save-secret-code")
+    public ResponseEntity<String> saveSecretCode(@RequestBody EmailValidationDetails details) {
+        try {
+            clientService.saveSecretCode(details);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(StringConstants.REQUEST_PROCESSED);
+    }
+
+    @Operation(
+            summary = "Get Email Validation Details",
+            description = "Get Email Validation Details"
+    )
+    @PostMapping("/save-secret-code/{id}")
+    public ResponseEntity<EmailValidationDetails> findDetailsById(@PathVariable Integer id) {
+        EmailValidationDetails details = null;
+        try {
+            details = clientService.findDetailsById(id);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(details);
     }
 }

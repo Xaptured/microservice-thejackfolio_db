@@ -27,16 +27,19 @@ public class ClientCredentials {
     private Role role;
     @Column(name = "verified")
     private boolean verified;
+    @Column(name = "code")
+    private Integer code;
 
     public ClientCredentials() {
     }
 
-    public ClientCredentials(int id, String email, String password, Role role, boolean verified) {
+    public ClientCredentials(int id, String email, String password, Role role, boolean verified, Integer code) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
         this.verified = verified;
+        this.code = code;
     }
 
     public int getId() {
@@ -77,6 +80,14 @@ public class ClientCredentials {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     @Override

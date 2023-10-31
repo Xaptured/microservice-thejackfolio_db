@@ -12,6 +12,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
+import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,5 +61,25 @@ public class ClientService {
         ClientCredentials credentialEntity = helper.findCredentialByEmail(email);
         credential = mapper.entityToModelCredential(credentialEntity);
         return credential;
+    }
+
+    public EmailValidationDetails findClientId(String email) throws DataBaseOperationException, MapperException {
+        EmailValidationDetails details = new EmailValidationDetails();
+        ClientCredentials credentialEntity = helper.findCredentialByEmail(email);
+        details.setClientId(credentialEntity.getId());
+        details.setSecretCode(credentialEntity.getCode());
+        return details;
+    }
+
+    public void verifyClientAccount(Integer clientId) throws DataBaseOperationException {
+        helper.verifyClientAccount(clientId);
+    }
+
+    public void saveSecretCode(EmailValidationDetails details) throws DataBaseOperationException {
+        helper.saveSecretCode(details);
+    }
+
+    public EmailValidationDetails findDetailsById(Integer id) throws DataBaseOperationException {
+        return helper.findDetailsById(id);
     }
 }
