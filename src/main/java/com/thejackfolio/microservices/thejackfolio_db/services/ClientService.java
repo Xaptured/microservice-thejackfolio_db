@@ -7,12 +7,14 @@
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
 import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
+import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class ClientService {
     private ClientsMapper mapper;
     @Autowired
     private ClientServiceHelper helper;
+    @Autowired
+    private GameService service;
 
     public void saveComments(ClientComments clientComments) throws MapperException, DataBaseOperationException {
         com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = mapper.modelToEntityComments(clientComments);
@@ -54,6 +58,9 @@ public class ClientService {
     public void saveCredentials(ClientCredential credential) throws MapperException, DataBaseOperationException {
         ClientCredentials credentialEntity = mapper.modelToEntityCredential(credential);
         helper.saveCredentials(credentialEntity);
+        ProfileDetail detail = new ProfileDetail();
+        detail.setEmail(credential.getEmail());
+        saveProfile(detail);
     }
 
     public ClientCredential findClientCredential(String email) throws DataBaseOperationException, MapperException {
@@ -81,5 +88,11 @@ public class ClientService {
 
     public EmailValidationDetails findDetailsById(Integer id) throws DataBaseOperationException {
         return helper.findDetailsById(id);
+    }
+
+    public void saveProfile(ProfileDetail detail) throws MapperException, DataBaseOperationException {
+        ProfileDetails detailsEntity = mapper.modelToEntityDetails(detail);
+        helper.saveProfile(detailsEntity);
+        service.saveInterestedGames(detail);
     }
 }

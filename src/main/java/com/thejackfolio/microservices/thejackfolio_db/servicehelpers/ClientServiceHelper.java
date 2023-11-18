@@ -8,10 +8,12 @@ package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCommentsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCredentialsRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.ProfileDetailsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,8 @@ public class ClientServiceHelper {
     private ClientCommentsRepository repository;
     @Autowired
     private ClientCredentialsRepository credentialsRepository;
+    @Autowired
+    private ProfileDetailsRepository profileDetailsRepository;
 
     public void saveClientComments(ClientComments comments) throws DataBaseOperationException {
         try {
@@ -118,5 +122,20 @@ public class ClientServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return details;
+    }
+
+    public void saveProfile(ProfileDetails details) throws DataBaseOperationException {
+        try {
+            ProfileDetails detailEntity = profileDetailsRepository.findByEmail(details.getEmail()).orElse(null);
+            if(detailEntity == null) {
+                profileDetailsRepository.save(details);
+            } else {
+                details.setId(detailEntity.getId());
+                profileDetailsRepository.save(details);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
     }
 }

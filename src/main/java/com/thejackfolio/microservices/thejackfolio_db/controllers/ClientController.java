@@ -6,11 +6,13 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
 import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
+import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -209,5 +211,24 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return ResponseEntity.status(HttpStatus.OK).body(details);
+    }
+
+    @Operation(
+            summary = "Save profile",
+            description = "Save profile and gives the same profile response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-profile")
+    public ResponseEntity<ProfileDetail> saveProfileDetails(@RequestBody ProfileDetail details) {
+        try {
+            if (details == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.saveProfile(details);
+            details.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            details.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(details);
     }
 }
