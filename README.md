@@ -1,3 +1,6 @@
+![Static Badge](https://img.shields.io/badge/java-v17-green)
+[![Build and Test Java Spring Boot Application](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/build-and-test.yml)
+
 # thejackfolio_db
 
 This microservice is used as a layer on the Database to do all kind of operations like add, update, select and delete. There are other microservices which are using this service to get data from the database or save data in the database. 
