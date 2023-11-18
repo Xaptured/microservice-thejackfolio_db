@@ -8,8 +8,10 @@ package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
+import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.EncryptDecrypt;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -134,6 +136,24 @@ public class ClientsMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return credentialModel;
+    }
+
+    public ProfileDetails modelToEntityDetails(ProfileDetail detailModel) throws MapperException {
+        ProfileDetails detailsEntity = null;
+        try {
+            if(detailModel != null) {
+                detailsEntity = new ProfileDetails();
+                detailsEntity.setName(detailModel.getName());
+                detailsEntity.setEmail(detailModel.getEmail());
+                detailsEntity.setPhone(detailModel.getPhone());
+                detailsEntity.setCity(detailModel.getCity());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+
+        return detailsEntity;
     }
 
 }
