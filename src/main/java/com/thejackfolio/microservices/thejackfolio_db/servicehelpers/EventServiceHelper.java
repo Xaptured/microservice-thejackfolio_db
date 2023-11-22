@@ -6,12 +6,13 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.Games;
-import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
+import com.thejackfolio.microservices.thejackfolio_db.entities.EventDetails;
+import com.thejackfolio.microservices.thejackfolio_db.entities.EventRules;
+import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
-import com.thejackfolio.microservices.thejackfolio_db.models.Game;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.GamesRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.InterestedGamesRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.EventDetailsRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.EventRulesRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.EventsRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,41 +22,43 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GameServiceHelper {
+public class EventServiceHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameServiceHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceHelper.class);
 
     @Autowired
-    private GamesRepository repository;
+    private EventsRepository eventsRepository;
     @Autowired
-    private InterestedGamesRepository interestedGamesRepository;
+    private EventDetailsRepository detailsRepository;
+    @Autowired
+    private EventRulesRepository eventRulesRepository;
 
-    public void saveGame(Games games) throws DataBaseOperationException {
+    public Events saveEvent(Events event) throws DataBaseOperationException {
+        Events eventEntity = null;
         try {
-            repository.save(games);
+            eventEntity = eventsRepository.save(event);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return eventEntity;
+    }
+
+    public void saveEventDetails(EventDetails details) throws DataBaseOperationException {
+        try {
+            detailsRepository.save(details);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
     }
 
-    public void saveInterestedGames(List<InterestedGames> games) throws DataBaseOperationException {
+    public void saveEventRules(List<EventRules> rules) throws DataBaseOperationException {
         try {
-            interestedGamesRepository.saveAll(games);
+            eventRulesRepository.saveAll(rules);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
-    }
-
-    public Integer getGameId(String gameName) throws DataBaseOperationException {
-        Games game = null;
-        try {
-            game = repository.findByName(gameName);
-        } catch (Exception exception) {
-            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
-            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
-        }
-        return game.getId();
     }
 }
