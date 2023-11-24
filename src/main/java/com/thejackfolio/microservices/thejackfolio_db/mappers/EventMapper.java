@@ -12,6 +12,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
+import com.thejackfolio.microservices.thejackfolio_db.models.Rule;
 import com.thejackfolio.microservices.thejackfolio_db.services.GameService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -21,8 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EventMapper {
@@ -31,6 +31,7 @@ public class EventMapper {
 
     @Autowired
     private GameService gameService;
+
 
     public Events modelToEntityEvent(Event event) throws MapperException, DataBaseOperationException {
         Events eventEntity = null;
@@ -93,10 +94,12 @@ public class EventMapper {
         List<EventRules> ruleEntities = new ArrayList<>();
         try {
             if(event != null && event.getRules() != null && !event.getRules().isEmpty()) {
-                for(String rule : event.getRules()) {
+                int counter = 1;
+                for(Rule rule : event.getRules()) {
                     EventRules ruleEntity = new EventRules();
                     ruleEntity.setEventId(eventId);
-                    ruleEntity.setDescription(rule);
+                    ruleEntity.setDescription(rule.getDescription());
+                    ruleEntity.setRuleNumber(counter++);
                     ruleEntities.add(ruleEntity);
                 }
             }
@@ -106,14 +109,64 @@ public class EventMapper {
         }
         return ruleEntities;
     }
-    public List<EventRules> modelToEntityRules(Event event, List<EventRules> rules) throws MapperException {
+
+    public List<EventRules> modelToEntityRules(List<Rule> rules, List<EventRules> eventRules, Integer eventId) throws MapperException {
+        List<EventRules> ruleEntities = null;
         try {
-            if(event != null && event.getRules() != null && !event.getRules().isEmpty() && rules != null) {
-                for(String rule : event.getRules()) {
-                    EventRules ruleEntity = new EventRules();
-                    ruleEntity.setEventId(rules.get(0).getEventId());
-                    ruleEntity.setDescription(rule);
-                    rules.add(ruleEntity);
+            if(rules != null && !rules.isEmpty()) {
+                ruleEntities = new ArrayList<>();
+                int counter = findMaxRuleNumber(eventRules) + 1;
+                for(Rule rule : rules) {
+                    EventRules ruleEntity;
+                    if(rule.getRuleNumber() == null) {
+                        ruleEntity = new EventRules();
+                        ruleEntity.setEventId(eventId);
+                        ruleEntity.setDescription(rule.getDescription());
+                        ruleEntity.setRuleNumber(counter++);
+                    } else {
+                        ruleEntity = searchEventRuleByRuleNumber(eventRules, rule.getRuleNumber());
+                        if(ruleEntity != null) {
+                            ruleEntity.setDescription(rule.getDescription());
+                        }
+                    }
+                    ruleEntities.add(ruleEntity);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return ruleEntities;
+    }
+
+    private Integer findMaxRuleNumber(List<EventRules> rules) {
+        int maxRuleNumber = 0;
+        Optional<EventRules> maxEventRule = rules.stream().max(Comparator.comparingInt(EventRules::getRuleNumber));
+        if(maxEventRule.isPresent()) {
+            maxRuleNumber = maxEventRule.get().getRuleNumber();
+        }
+        return maxRuleNumber;
+    }
+
+    private EventRules searchEventRuleByRuleNumber(List<EventRules> rules, Integer ruleNumber) {
+        for(EventRules rule: rules) {
+            if(Objects.equals(rule.getRuleNumber(), ruleNumber)) {
+                return rule;
+            }
+        }
+        return null;
+    }
+
+    public List<Rule> entityToModelRules(List<EventRules> ruleEntities) throws MapperException {
+        List<Rule> rules = null;
+        try {
+            if(ruleEntities != null) {
+                rules = new ArrayList<>();
+                for(EventRules entity : ruleEntities) {
+                    Rule rule = new Rule();
+                    rule.setRuleNumber(entity.getRuleNumber());
+                    rule.setDescription(entity.getDescription());
+                    rules.add(rule);
                 }
             }
         } catch (Exception exception) {
@@ -141,9 +194,12 @@ public class EventMapper {
                 event.setRemainingSlots(detailEntity.getRemainingSlots());
                 event.setType(detailEntity.getType());
                 event.setPrizePool(detailEntity.getPrizePool());
-                List<String> rules = new ArrayList<>();
-                for(EventRules rule: ruleEntities) {
-                    rules.add(rule.getDescription());
+                List<Rule> rules = new ArrayList<>();
+                for(EventRules ruleEntity: ruleEntities) {
+                    Rule rule = new Rule();
+                    rule.setRuleNumber(ruleEntity.getRuleNumber());
+                    rule.setDescription(ruleEntity.getDescription());
+                    rules.add(rule);
                 }
                 event.setRules(rules);
             }

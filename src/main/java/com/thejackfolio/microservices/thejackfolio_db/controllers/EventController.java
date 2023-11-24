@@ -37,7 +37,7 @@ public class EventController {
             if(event == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            service.saveEvent(event, isCreate, isUpdate);
+            event = service.saveEvent(event, isCreate, isUpdate);
             event.setMessage(StringConstants.REQUEST_PROCESSED);
         } catch (MapperException | DataBaseOperationException | EventException exception) {
             event.setMessage(exception.getMessage());

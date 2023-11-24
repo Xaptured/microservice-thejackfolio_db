@@ -14,6 +14,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
+import com.thejackfolio.microservices.thejackfolio_db.models.Rule;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class EventService {
     @Autowired
     private EventServiceHelper helper;
 
-    public void saveEvent(Event event, boolean isCreate, boolean isUpdate) throws MapperException, DataBaseOperationException, EventException {
+    public Event saveEvent(Event event, boolean isCreate, boolean isUpdate) throws MapperException, DataBaseOperationException, EventException {
         Events nullOrEntity = helper.findEventByName(event.getName());
         if(isCreate) {
             if(nullOrEntity == null) {
@@ -39,6 +40,8 @@ public class EventService {
                 helper.saveEventDetails(detailEntity);
                 List<EventRules> ruleEntities = mapper.modelToEntityRules(event, entity.getId());
                 helper.saveEventRules(ruleEntities);
+                List<Rule> rules = mapper.entityToModelRules(ruleEntities);
+                event.setRules(rules);
             } else {
                 throw new EventException(StringConstants.EVENT_ERROR);
             }
@@ -48,13 +51,17 @@ public class EventService {
                 EventDetails detail = helper.findDetailsByEventId(nullOrEntity.getId());
                 detail = mapper.modelToEntityDetails(event, detail);
                 helper.saveEventDetails(detail);
-                List<EventRules> rules = helper.findRulesByEventId(nullOrEntity.getId());
-                rules = mapper.modelToEntityRules(event, rules);
-                helper.saveEventRules(rules);
+                List<EventRules> eventRules = helper.findRulesByEventId(nullOrEntity.getId());
+                List<Rule> rules = event.getRules();
+                eventRules = mapper.modelToEntityRules(rules,eventRules, nullOrEntity.getId());
+                helper.saveEventRules(eventRules);
+                List<Rule> rulesModel = mapper.entityToModelRules(eventRules);
+                event.setRules(rulesModel);
             } else {
                 throw new EventException(StringConstants.EVENT_UPDATE_ERROR);
             }
         }
+        return event;
     }
 
     public Event getEvent(String name) throws DataBaseOperationException, MapperException {

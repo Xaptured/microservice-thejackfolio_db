@@ -28,13 +28,13 @@ public class Event {
     private Integer remainingSlots;
     private EventType type;
     private Float prizePool;
-    private List<String> rules;
+    private List<Rule> rules;
     private String message;
 
     public Event() {
     }
 
-    public Event(String name, String email, EventStatus status, String date, String time, String duration, Integer playersPerSlot, Integer slotCount, Integer remainingSlots, EventType type, Float prizePool, List<String> rules, String message, String gameName) {
+    public Event(String name, String email, EventStatus status, String date, String time, String duration, Integer playersPerSlot, Integer slotCount, Integer remainingSlots, EventType type, Float prizePool, List<Rule> rules, String message, String gameName) {
         this.name = name;
         this.email = email;
         this.status = status;
@@ -139,11 +139,11 @@ public class Event {
         this.prizePool = prizePool;
     }
 
-    public List<String> getRules() {
+    public List<Rule> getRules() {
         return rules;
     }
 
-    public void setRules(List<String> rules) {
+    public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
 
