@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.Games;
 import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.models.Game;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.GamesRepository;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.InterestedGamesRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
@@ -45,5 +46,27 @@ public class GameServiceHelper {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
+    }
+
+    public Integer getGameId(String gameName) throws DataBaseOperationException {
+        Games game = null;
+        try {
+            game = repository.findByName(gameName).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return game == null ? null : game.getId();
+    }
+
+    public String getGameName(Integer gameId) throws DataBaseOperationException {
+        Games game = null;
+        try {
+            game = repository.findById(gameId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return game == null ? null : game.getName();
     }
 }

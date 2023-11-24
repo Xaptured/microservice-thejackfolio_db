@@ -38,4 +38,12 @@ public class GameService {
             helper.saveInterestedGames(interestedGames);
         }
     }
+
+    public Integer getGameId(String gameName) throws DataBaseOperationException {
+        return helper.getGameId(gameName);
+    }
+
+    public String getGameName(Integer gameId) throws DataBaseOperationException {
+        return helper.getGameName(gameId);
+    }
 }

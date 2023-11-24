@@ -6,14 +6,14 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.repositories;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.Games;
+import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface GamesRepository extends JpaRepository<Games, Integer> {
+public interface EventsRepository extends JpaRepository<Events, Integer> {
 
-    Optional<Games> findByName(String gameName);
+    Optional<Events> findByName(String name);
 }
