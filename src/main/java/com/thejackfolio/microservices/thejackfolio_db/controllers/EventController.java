@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
@@ -27,18 +28,18 @@ public class EventController {
     private EventService service;
 
     @Operation(
-            summary = "Save events",
-            description = "Save events and gives the same event response with a message which defines whether the request is successful or not."
+            summary = "Save OR Update events",
+            description = "Save or Update events and gives the same event response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-event")
-    public ResponseEntity<Event> saveEvent(@RequestBody Event event) {
+    public ResponseEntity<Event> saveOrUpdateEvent(@RequestBody Event event, @RequestParam boolean isCreate, @RequestParam boolean isUpdate) {
         try {
             if(event == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            service.saveEvent(event);
+            service.saveEvent(event, isCreate, isUpdate);
             event.setMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException | DataBaseOperationException exception) {
+        } catch (MapperException | DataBaseOperationException | EventException exception) {
             event.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event);
         }

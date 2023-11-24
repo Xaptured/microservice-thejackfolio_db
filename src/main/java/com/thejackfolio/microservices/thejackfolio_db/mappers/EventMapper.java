@@ -75,6 +75,20 @@ public class EventMapper {
         return detailEntity;
     }
 
+    public EventDetails modelToEntityDetails(Event event, EventDetails entityDetails) throws MapperException {
+        try {
+            if(event != null) {
+                entityDetails.setDate(Date.valueOf(event.getDate()));
+                entityDetails.setTime(Time.valueOf(event.getTime()));
+                entityDetails.setDuration(Time.valueOf(event.getDuration()));
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entityDetails;
+    }
+
     public List<EventRules> modelToEntityRules(Event event, Integer eventId) throws MapperException {
         List<EventRules> ruleEntities = new ArrayList<>();
         try {
@@ -91,6 +105,22 @@ public class EventMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return ruleEntities;
+    }
+    public List<EventRules> modelToEntityRules(Event event, List<EventRules> rules) throws MapperException {
+        try {
+            if(event != null && event.getRules() != null && !event.getRules().isEmpty() && rules != null) {
+                for(String rule : event.getRules()) {
+                    EventRules ruleEntity = new EventRules();
+                    ruleEntity.setEventId(rules.get(0).getEventId());
+                    ruleEntity.setDescription(rule);
+                    rules.add(ruleEntity);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return rules;
     }
 
     public Event entityToModelEvent(Events eventEntity, EventDetails detailEntity, List<EventRules> ruleEntities) throws MapperException {
