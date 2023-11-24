@@ -51,11 +51,22 @@ public class GameServiceHelper {
     public Integer getGameId(String gameName) throws DataBaseOperationException {
         Games game = null;
         try {
-            game = repository.findByName(gameName);
+            game = repository.findByName(gameName).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
-        return game.getId();
+        return game == null ? null : game.getId();
+    }
+
+    public String getGameName(Integer gameId) throws DataBaseOperationException {
+        Games game = null;
+        try {
+            game = repository.findById(gameId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return game == null ? null : game.getName();
     }
 }

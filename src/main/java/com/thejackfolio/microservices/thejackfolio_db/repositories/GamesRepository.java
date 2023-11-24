@@ -10,8 +10,10 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.Games;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface GamesRepository extends JpaRepository<Games, Integer> {
 
-    Games findByName(String gameName);
+    Optional<Games> findByName(String gameName);
 }

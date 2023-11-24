@@ -44,4 +44,25 @@ public class EventController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(event);
     }
+
+    @Operation(
+            summary = "Get event",
+            description = "Get event with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-event/{name}")
+    public ResponseEntity<Event> getEvent(@PathVariable String name) {
+        Event event = null;
+        try {
+            if(name == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            event = service.getEvent(name);
+            event.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            event = new Event();
+            event.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(event);
+    }
 }

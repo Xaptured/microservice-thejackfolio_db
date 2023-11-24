@@ -35,4 +35,15 @@ public class EventService {
         List<EventRules> ruleEntities = mapper.modelToEntityRules(event, entity.getId());
         helper.saveEventRules(ruleEntities);
     }
+
+    public Event getEvent(String name) throws DataBaseOperationException, MapperException {
+        Event event = null;
+        Events eventEntity = helper.findEventByName(name);
+        if(eventEntity != null) {
+            EventDetails detailEntity = helper.findDetailsByEventId(eventEntity.getId());
+            List<EventRules> ruleEntities = helper.findRulesByEventId(eventEntity.getId());
+            event = mapper.entityToModelEvent(eventEntity, detailEntity, ruleEntities);
+        }
+        return event;
+    }
 }

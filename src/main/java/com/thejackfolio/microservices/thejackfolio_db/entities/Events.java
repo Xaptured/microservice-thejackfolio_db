@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "events")
-public class Events {
+public class  Events {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

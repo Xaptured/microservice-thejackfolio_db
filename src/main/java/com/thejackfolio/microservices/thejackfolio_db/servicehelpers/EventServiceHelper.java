@@ -61,4 +61,37 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public Events findEventByName(String name) throws DataBaseOperationException {
+        Events eventEntity = null;
+        try {
+            eventEntity = eventsRepository.findByName(name).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return eventEntity;
+    }
+
+    public EventDetails findDetailsByEventId(Integer eventId) throws DataBaseOperationException {
+         EventDetails detailEntity = null;
+         try {
+             detailEntity = detailsRepository.findByEventId(eventId).orElse(null);
+         } catch (Exception exception) {
+             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+         }
+         return detailEntity;
+    }
+
+    public List<EventRules> findRulesByEventId(Integer eventId) throws DataBaseOperationException {
+        List<EventRules> ruleEntities = null;
+        try {
+            ruleEntities = eventRulesRepository.findAllByEventId(eventId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return ruleEntities;
+    }
 }

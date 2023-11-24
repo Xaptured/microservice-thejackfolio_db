@@ -92,4 +92,35 @@ public class EventMapper {
         }
         return ruleEntities;
     }
+
+    public Event entityToModelEvent(Events eventEntity, EventDetails detailEntity, List<EventRules> ruleEntities) throws MapperException {
+        Event event = null;
+        try {
+            if(eventEntity != null && detailEntity != null && ruleEntities != null) {
+                event = new Event();
+                event.setName(eventEntity.getName());
+                event.setEmail(eventEntity.getEmail());
+                String gameName = gameService.getGameName(eventEntity.getGameId());
+                event.setGameName(gameName);
+                event.setStatus(eventEntity.getStatus());
+                event.setDate(detailEntity.getDate().toString());
+                event.setTime(detailEntity.getTime().toString());
+                event.setDuration(detailEntity.getDuration().toString());
+                event.setPlayersPerSlot(detailEntity.getPlayersPerSlot());
+                event.setSlotCount(detailEntity.getSlotCount());
+                event.setRemainingSlots(detailEntity.getRemainingSlots());
+                event.setType(detailEntity.getType());
+                event.setPrizePool(detailEntity.getPrizePool());
+                List<String> rules = new ArrayList<>();
+                for(EventRules rule: ruleEntities) {
+                    rules.add(rule.getDescription());
+                }
+                event.setRules(rules);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return event;
+    }
 }
