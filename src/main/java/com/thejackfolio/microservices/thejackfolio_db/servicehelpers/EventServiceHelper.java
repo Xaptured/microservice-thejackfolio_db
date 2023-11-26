@@ -32,6 +32,8 @@ public class EventServiceHelper {
     private TeamsRepository teamsRepository;
     @Autowired
     private TeamDetailsRepository teamDetailsRepository;
+    @Autowired
+    private ViewerRepository viewerRepository;
 
     public Events saveEvent(Events event) throws DataBaseOperationException {
         Events eventEntity = null;
@@ -135,5 +137,25 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return teamDetails;
+    }
+
+    public void saveViewer(Viewers viewer) throws DataBaseOperationException {
+        try {
+            viewerRepository.save(viewer);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public boolean isViewerForEvent(Integer eventId, String email) throws DataBaseOperationException {
+        Viewers viewer = null;
+        try {
+            viewer = viewerRepository.findViewer(eventId, email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return viewer != null;
     }
 }

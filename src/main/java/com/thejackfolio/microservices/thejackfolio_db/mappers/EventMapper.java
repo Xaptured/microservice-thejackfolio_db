@@ -9,10 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.mappers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
-import com.thejackfolio.microservices.thejackfolio_db.models.Event;
-import com.thejackfolio.microservices.thejackfolio_db.models.Rule;
-import com.thejackfolio.microservices.thejackfolio_db.models.Team;
-import com.thejackfolio.microservices.thejackfolio_db.models.TeamDetail;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.GameService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -323,5 +320,35 @@ public class EventMapper {
             }
         }
         return null;
+    }
+
+    public Viewers modelToEntityViewer(Viewer viewer) throws MapperException {
+        Viewers viewerEntity = null;
+        try {
+            if(viewer != null) {
+                viewerEntity = new Viewers();
+                viewerEntity.setEmail(viewer.getEmail());
+                viewerEntity.setEventId(viewer.getEventId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return viewerEntity;
+    }
+
+    public Viewer entityToModelViewer(Viewers viewerEntity) throws MapperException {
+        Viewer viewer = null;
+        try {
+            if(viewerEntity != null) {
+                viewer = new Viewer();
+                viewer.setEmail(viewerEntity.getEmail());
+                viewer.setEventId(viewerEntity.getEventId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return viewer;
     }
 }

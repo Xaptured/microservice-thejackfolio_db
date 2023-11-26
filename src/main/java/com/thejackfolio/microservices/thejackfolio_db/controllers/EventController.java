@@ -6,12 +6,14 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.Viewers;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
 import com.thejackfolio.microservices.thejackfolio_db.models.Team;
+import com.thejackfolio.microservices.thejackfolio_db.models.Viewer;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.View;
 
 @Tag(name = "Event", description = "Event management APIs")
 @RestController
@@ -107,5 +111,42 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(team);
         }
         return ResponseEntity.status(HttpStatus.OK).body(team);
+    }
+
+    @Operation(
+            summary = "Save viewer",
+            description = "Save viewer with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-viewer")
+    public ResponseEntity<Viewer> saveViewer(@RequestBody Viewer viewer) {
+        try {
+            if(viewer == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            service.saveViewer(viewer);
+            viewer.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            viewer.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(viewer);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(viewer);
+    }
+
+    @Operation(
+            summary = "Is a viewer or not",
+            description = "Is a viewer or not."
+    )
+    @GetMapping("/is-viewer")
+    public ResponseEntity<Boolean> isViewer(@RequestParam String email, @RequestParam Integer eventId) {
+        Boolean isViewer = false;
+        try {
+            if(email == null || eventId == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            isViewer = service.isViewer(email, eventId);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(isViewer);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(isViewer);
     }
 }
