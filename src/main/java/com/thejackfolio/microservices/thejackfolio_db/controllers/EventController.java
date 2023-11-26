@@ -9,7 +9,9 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
+import com.thejackfolio.microservices.thejackfolio_db.models.Team;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +39,7 @@ public class EventController {
             if(event == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            event = service.saveEvent(event, isCreate, isUpdate);
+            event = service.saveOrUpdateEvent(event, isCreate, isUpdate);
             event.setMessage(StringConstants.REQUEST_PROCESSED);
         } catch (MapperException | DataBaseOperationException | EventException exception) {
             event.setMessage(exception.getMessage());
@@ -65,5 +67,45 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event);
         }
         return ResponseEntity.status(HttpStatus.OK).body(event);
+    }
+
+    @Operation(
+            summary = "Save OR Update teams",
+            description = "Save or Update teams and gives the same team response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-team")
+    public ResponseEntity<Team> saveOrUpdateTeam(@RequestBody Team team, @RequestParam boolean isCreate, @RequestParam boolean isUpdate) {
+        try {
+            if(team == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            team = service.saveOrUpdateTeam(team, isCreate, isUpdate);
+            team.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException | TeamException exception) {
+            team.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(team);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(team);
+    }
+
+    @Operation(
+            summary = "Get team",
+            description = "Get team with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-team/{name}")
+    public ResponseEntity<Team> getTeam(@PathVariable String name) {
+        Team team = null;
+        try {
+            if(name == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            team = service.getTeam(name);
+            team.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            team = new Team();
+            team.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(team);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(team);
     }
 }
