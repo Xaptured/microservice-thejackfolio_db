@@ -12,10 +12,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
-import com.thejackfolio.microservices.thejackfolio_db.models.Event;
-import com.thejackfolio.microservices.thejackfolio_db.models.Rule;
-import com.thejackfolio.microservices.thejackfolio_db.models.Team;
-import com.thejackfolio.microservices.thejackfolio_db.models.TeamDetail;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,5 +110,14 @@ public class EventService {
             team = mapper.entityToModelTeam(teamEntity, details);
         }
         return team;
+    }
+
+    public void saveViewer(Viewer viewer) throws MapperException, DataBaseOperationException {
+        Viewers viewerEntity = mapper.modelToEntityViewer(viewer);
+        helper.saveViewer(viewerEntity);
+    }
+
+    public boolean isViewer(String email, Integer eventId) throws DataBaseOperationException {
+        return helper.isViewerForEvent(eventId, email);
     }
 }
