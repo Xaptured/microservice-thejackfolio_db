@@ -6,7 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
-public enum EventStatus {
+public enum TeamStatus {
 
-    INACTIVE, ACTIVE, ONGOING, COMPLETED;
+    FREE, PENDING, PAID;
 }

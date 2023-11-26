@@ -6,13 +6,9 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.EventDetails;
-import com.thejackfolio.microservices.thejackfolio_db.entities.EventRules;
-import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.EventDetailsRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.EventRulesRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.EventsRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +28,10 @@ public class EventServiceHelper {
     private EventDetailsRepository detailsRepository;
     @Autowired
     private EventRulesRepository eventRulesRepository;
+    @Autowired
+    private TeamsRepository teamsRepository;
+    @Autowired
+    private TeamDetailsRepository teamDetailsRepository;
 
     public Events saveEvent(Events event) throws DataBaseOperationException {
         Events eventEntity = null;
@@ -93,5 +93,47 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return ruleEntities;
+    }
+
+    public Teams saveTeam(Teams team) throws DataBaseOperationException {
+        Teams teamEntity = null;
+        try {
+            teamEntity = teamsRepository.save(team);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teamEntity;
+    }
+
+    public void saveTeamDetails(List<TeamDetails> details) throws DataBaseOperationException {
+        try {
+            teamDetailsRepository.saveAll(details);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public Teams findTeamByName(String name) throws DataBaseOperationException {
+        Teams teamEntity = null;
+        try {
+            teamEntity = teamsRepository.findByName(name).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teamEntity;
+    }
+
+    public List<TeamDetails> findDetailsByTeamId(Integer teamId) throws DataBaseOperationException {
+        List<TeamDetails> teamDetails = null;
+        try {
+            teamDetails = teamDetailsRepository.findAllByTeamId(teamId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teamDetails;
     }
 }

@@ -6,13 +6,13 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.EventDetails;
-import com.thejackfolio.microservices.thejackfolio_db.entities.EventRules;
-import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Event;
 import com.thejackfolio.microservices.thejackfolio_db.models.Rule;
+import com.thejackfolio.microservices.thejackfolio_db.models.Team;
+import com.thejackfolio.microservices.thejackfolio_db.models.TeamDetail;
 import com.thejackfolio.microservices.thejackfolio_db.services.GameService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -194,13 +194,7 @@ public class EventMapper {
                 event.setRemainingSlots(detailEntity.getRemainingSlots());
                 event.setType(detailEntity.getType());
                 event.setPrizePool(detailEntity.getPrizePool());
-                List<Rule> rules = new ArrayList<>();
-                for(EventRules ruleEntity: ruleEntities) {
-                    Rule rule = new Rule();
-                    rule.setRuleNumber(ruleEntity.getRuleNumber());
-                    rule.setDescription(ruleEntity.getDescription());
-                    rules.add(rule);
-                }
+                List<Rule> rules = entityToModelRules(ruleEntities);
                 event.setRules(rules);
             }
         } catch (Exception exception) {
@@ -208,5 +202,126 @@ public class EventMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return event;
+    }
+
+    public Teams modelToEntityTeam(Team team) throws MapperException {
+        Teams teamEntity = null;
+        try {
+            if(team != null) {
+                teamEntity = new Teams();
+                teamEntity.setName(team.getName());
+                teamEntity.setEventId(team.getEventId());
+                teamEntity.setTeamStatus(team.getTeamStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return teamEntity;
+    }
+
+    public List<TeamDetails> modelToEntityDetails(Team team, Integer teamId) throws MapperException {
+        List<TeamDetails> teamDetails = null;
+        try {
+            if(team != null) {
+                teamDetails = new ArrayList<>();
+                int counter = 1;
+                for(TeamDetail detail : team.getDetail()) {
+                    TeamDetails details = new TeamDetails();
+                    details.setEmail(detail.getEmail());
+                    details.setTeamId(teamId);
+                    details.setPlayerNumber(counter++);
+                    teamDetails.add(details);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return teamDetails;
+    }
+
+    public List<TeamDetail> entityToModelDetails(List<TeamDetails> detailEntities) throws MapperException {
+        List<TeamDetail> details = null;
+        try {
+            if(detailEntities != null) {
+                details = new ArrayList<>();
+                for (TeamDetails teamDetails : detailEntities) {
+                    TeamDetail teamDetail = new TeamDetail();
+                    teamDetail.setEmail(teamDetails.getEmail());
+                    teamDetail.setPlayerNumber(teamDetails.getPlayerNumber());
+                    details.add(teamDetail);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return details;
+    }
+
+    public Team entityToModelTeam(Teams teamEntity, List<TeamDetails> detailEntities) throws MapperException {
+        Team team = null;
+        try {
+            if(teamEntity != null && detailEntities != null) {
+                team = new Team();
+                team.setName(teamEntity.getName());
+                team.setEventId(teamEntity.getEventId());
+                team.setTeamStatus(teamEntity.getTeamStatus());
+                List<TeamDetail> details = entityToModelDetails(detailEntities);
+                team.setDetail(details);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return team;
+    }
+
+    public List<TeamDetails> modelToEntityDetails(List<TeamDetail> details, List<TeamDetails> detailEntities, Integer teamId) throws MapperException {
+        List<TeamDetails> teamDetails = null;
+        try {
+            if(details != null) {
+                teamDetails = new ArrayList<>();
+                int counter = findMaxPlayerNumber(detailEntities) + 1;
+                for(TeamDetail detail : details) {
+                    TeamDetails teamDetail;
+                    if(detail.getPlayerNumber() == null) {
+                        teamDetail = new TeamDetails();
+                        teamDetail.setTeamId(teamId);
+                        teamDetail.setPlayerNumber(counter++);
+                        teamDetail.setEmail(detail.getEmail());
+                    } else {
+                        teamDetail = searchTeamDetailsByPlayerNumber(detailEntities, detail.getPlayerNumber());
+                        if(teamDetail != null) {
+                            teamDetail.setEmail(detail.getEmail());
+                        }
+                    }
+                    teamDetails.add(teamDetail);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return teamDetails;
+    }
+
+    private Integer findMaxPlayerNumber(List<TeamDetails> details) {
+        int maxPlayerNumber = 0;
+        Optional<TeamDetails> maxNumber = details.stream().max(Comparator.comparingInt(TeamDetails::getPlayerNumber));
+        if(maxNumber.isPresent()) {
+            maxPlayerNumber = maxNumber.get().getPlayerNumber();
+        }
+        return maxPlayerNumber;
+    }
+
+    private TeamDetails searchTeamDetailsByPlayerNumber(List<TeamDetails> details, Integer playerNumber) {
+        for(TeamDetails teamDetail: details) {
+            if(Objects.equals(teamDetail.getPlayerNumber(), playerNumber)) {
+                return teamDetail;
+            }
+        }
+        return null;
     }
 }

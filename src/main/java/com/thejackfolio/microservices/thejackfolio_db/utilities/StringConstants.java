@@ -22,8 +22,8 @@ public class StringConstants {
     // Mapper and Database error messages
     public static final String MAPPING_ERROR = "Error occurred while mapping";
     public static final String DATABASE_ERROR = "Error occurred while database operation";
-    public static final String EVENT_ERROR = "Duplicate event name";
-    public static final String EVENT_UPDATE_ERROR = "Update event failed";
+    public static final String DUPLICATE_ERROR = "Duplicate name";
+    public static final String UPDATE_ERROR = "Update failed";
     public static final String REQUEST_PROCESSED = "Request Processed";
     public static final String ID_NOT_PRESENT = "Id not present in Database";
     public static final String EMAIL_NOT_PRESENT = "Email not present in Database";
