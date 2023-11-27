@@ -138,4 +138,15 @@ public class ClientServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public ProfileDetails findDetailsByEmail(String email) throws DataBaseOperationException {
+        ProfileDetails details = null;
+        try {
+            details = profileDetailsRepository.findByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return details;
+    }
 }

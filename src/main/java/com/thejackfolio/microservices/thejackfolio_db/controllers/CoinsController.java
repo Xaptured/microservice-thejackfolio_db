@@ -58,7 +58,9 @@ public class CoinsController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             coin = service.getCoins(email);
-            coin.setMessage(StringConstants.REQUEST_PROCESSED);
+            if(coin.getMessage().equals(StringConstants.EMAIL_NOT_PRESENT)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(coin);
+            }
         } catch (MapperException | DataBaseOperationException exception) {
             coin.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(coin);

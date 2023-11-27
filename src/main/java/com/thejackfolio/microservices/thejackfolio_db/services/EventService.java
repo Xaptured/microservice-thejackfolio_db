@@ -69,6 +69,10 @@ public class EventService {
             EventDetails detailEntity = helper.findDetailsByEventId(eventEntity.getId());
             List<EventRules> ruleEntities = helper.findRulesByEventId(eventEntity.getId());
             event = mapper.entityToModelEvent(eventEntity, detailEntity, ruleEntities);
+            event.setMessage(StringConstants.REQUEST_PROCESSED);
+        } else {
+            event = new Event();
+            event.setMessage(StringConstants.NAME_NOT_PRESENT);
         }
         return event;
     }
@@ -108,6 +112,10 @@ public class EventService {
         if(teamEntity != null) {
             List<TeamDetails> details = helper.findDetailsByTeamId(teamEntity.getId());
             team = mapper.entityToModelTeam(teamEntity, details);
+            team.setMessage(StringConstants.REQUEST_PROCESSED);
+        } else {
+            team = new Team();
+            team.setMessage(StringConstants.NAME_NOT_PRESENT);
         }
         return team;
     }

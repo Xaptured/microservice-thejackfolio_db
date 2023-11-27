@@ -64,7 +64,9 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             event = service.getEvent(name);
-            event.setMessage(StringConstants.REQUEST_PROCESSED);
+            if(event.getMessage().equals(StringConstants.NAME_NOT_PRESENT)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(event);
+            }
         } catch (MapperException | DataBaseOperationException exception) {
             event = new Event();
             event.setMessage(exception.getMessage());
@@ -104,7 +106,9 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             team = service.getTeam(name);
-            team.setMessage(StringConstants.REQUEST_PROCESSED);
+            if(team.getMessage().equals(StringConstants.NAME_NOT_PRESENT)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(team);
+            }
         } catch (MapperException | DataBaseOperationException exception) {
             team = new Team();
             team.setMessage(exception.getMessage());

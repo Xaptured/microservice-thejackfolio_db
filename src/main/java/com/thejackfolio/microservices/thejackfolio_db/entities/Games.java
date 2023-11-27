@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.entities;
 
+import com.thejackfolio.microservices.thejackfolio_db.enums.GameStatus;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -18,14 +19,17 @@ public class Games {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "status")
+    private GameStatus status;
     @Column(name = "name")
     private String name;
 
     public Games() {
     }
 
-    public Games(int id, String name) {
+    public Games(int id, GameStatus status, String name) {
         this.id = id;
+        this.status = status;
         this.name = name;
     }
 
@@ -35,6 +39,14 @@ public class Games {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GameStatus status) {
+        this.status = status;
     }
 
     public String getName() {
@@ -50,18 +62,19 @@ public class Games {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Games games = (Games) o;
-        return id == games.id && Objects.equals(name, games.name);
+        return id == games.id && status == games.status && Objects.equals(name, games.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, status, name);
     }
 
     @Override
     public String toString() {
         return "Games{" +
                 "id=" + id +
+                ", status=" + status +
                 ", name='" + name + '\'' +
                 '}';
     }

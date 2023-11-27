@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.models;
 
+import com.thejackfolio.microservices.thejackfolio_db.enums.GameStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -14,13 +15,16 @@ import java.util.Objects;
 public class Game {
 
     private String name;
+    private GameStatus status;
     private String message;
 
     public Game() {
     }
 
-    public Game(String name) {
+    public Game(String name, GameStatus status, String message) {
         this.name = name;
+        this.status = status;
+        this.message = message;
     }
 
     public String getName() {
@@ -29,6 +33,14 @@ public class Game {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GameStatus status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -44,18 +56,20 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return Objects.equals(name, game.name);
+        return Objects.equals(name, game.name) && status == game.status && Objects.equals(message, game.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(name, status, message);
     }
 
     @Override
     public String toString() {
         return "Game{" +
                 "name='" + name + '\'' +
+                ", status=" + status +
+                ", message='" + message + '\'' +
                 '}';
     }
 }
