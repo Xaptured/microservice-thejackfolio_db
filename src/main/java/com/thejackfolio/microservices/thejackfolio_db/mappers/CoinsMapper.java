@@ -41,6 +41,10 @@ public class CoinsMapper {
                 coin = new Coin();
                 coin.setBalance(coins.getBalance());
                 coin.setEmail(coins.getEmail());
+                coin.setMessage(StringConstants.REQUEST_PROCESSED);
+            } else {
+                coin = new Coin();
+                coin.setMessage(StringConstants.EMAIL_NOT_PRESENT);
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);

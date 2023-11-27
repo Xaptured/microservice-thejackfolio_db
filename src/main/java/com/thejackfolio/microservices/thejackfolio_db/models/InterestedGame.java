@@ -4,43 +4,26 @@
  * All right reserved by Jack
  */
 
-package com.thejackfolio.microservices.thejackfolio_db.entities;
+package com.thejackfolio.microservices.thejackfolio_db.models;
 
-import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Entity
-@Table(name = "interested_games")
-public class InterestedGames {
+@Component
+public class InterestedGame {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-    @Column(name = "email")
     private String email;
-    @Column(name = "game_name")
     private String gameName;
-    @Column(name = "game_number")
     private Integer gameNumber;
 
-    public InterestedGames() {
+    public InterestedGame() {
     }
 
-    public InterestedGames(int id, String email, String gameName, Integer gameNumber) {
-        this.id = id;
+    public InterestedGame(String email, String gameName, Integer gameNumber) {
         this.email = email;
         this.gameName = gameName;
         this.gameNumber = gameNumber;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -71,20 +54,19 @@ public class InterestedGames {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        InterestedGames that = (InterestedGames) o;
-        return id == that.id && Objects.equals(email, that.email) && Objects.equals(gameName, that.gameName) && Objects.equals(gameNumber, that.gameNumber);
+        InterestedGame that = (InterestedGame) o;
+        return Objects.equals(email, that.email) && Objects.equals(gameName, that.gameName) && Objects.equals(gameNumber, that.gameNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, gameName, gameNumber);
+        return Objects.hash(email, gameName, gameNumber);
     }
 
     @Override
     public String toString() {
-        return "InterestedGames{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
+        return "InterestedGame{" +
+                "email='" + email + '\'' +
                 ", gameName='" + gameName + '\'' +
                 ", gameNumber=" + gameNumber +
                 '}';

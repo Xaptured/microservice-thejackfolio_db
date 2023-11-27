@@ -8,9 +8,11 @@ package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
+import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
+import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
 import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.EncryptDecrypt;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
@@ -156,4 +158,43 @@ public class ClientsMapper {
         return detailsEntity;
     }
 
+    public ProfileDetails modelToEntityDetails(ProfileDetail detail, ProfileDetails detailsEntity) throws MapperException {
+        try {
+            if(detail != null) {
+                detailsEntity.setName(detail.getName());
+                detailsEntity.setPhone(detail.getPhone());
+                detailsEntity.setCity(detail.getCity());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return detailsEntity;
+    }
+
+    public ProfileDetail entityToModelDetails(ProfileDetails details, List<InterestedGames> games) throws MapperException {
+        ProfileDetail detail = null;
+        try {
+            if(details != null && games != null) {
+                detail = new ProfileDetail();
+                detail.setEmail(details.getEmail());
+                detail.setCity(details.getCity());
+                detail.setName(details.getName());
+                detail.setPhone(details.getPhone());
+                List<InterestedGame> gameModels = new ArrayList<>();
+                for(InterestedGames game : games) {
+                    InterestedGame interestedGame = new InterestedGame();
+                    interestedGame.setEmail(game.getEmail());
+                    interestedGame.setGameNumber(game.getGameNumber());
+                    interestedGame.setGameName(game.getGameName());
+                    gameModels.add(interestedGame);
+                }
+                detail.setInterestedGames(gameModels);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return detail;
+    }
 }

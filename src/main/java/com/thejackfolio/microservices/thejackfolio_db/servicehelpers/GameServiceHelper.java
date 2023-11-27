@@ -48,6 +48,26 @@ public class GameServiceHelper {
         }
     }
 
+    public void deleteInterestedGames(List<InterestedGames> games) throws DataBaseOperationException {
+        try {
+            interestedGamesRepository.deleteAll(games);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<InterestedGames> findInterestedGamesByEmail(String email) throws DataBaseOperationException {
+        List<InterestedGames> games = null;
+        try {
+            games = interestedGamesRepository.findByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return games;
+    }
+
     public Integer getGameId(String gameName) throws DataBaseOperationException {
         Games game = null;
         try {

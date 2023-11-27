@@ -7,15 +7,15 @@
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
+import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
-import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
-import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
-import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
-import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
+import com.thejackfolio.microservices.thejackfolio_db.mappers.GameMapper;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,10 @@ public class ClientService {
     private ClientServiceHelper helper;
     @Autowired
     private GameService service;
+    @Autowired
+    private GameMapper gameMapper;
+    @Autowired
+    private GameServiceHelper gameServiceHelper;
 
     public void saveComments(ClientComments clientComments) throws MapperException, DataBaseOperationException {
         com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = mapper.modelToEntityComments(clientComments);
@@ -60,7 +64,7 @@ public class ClientService {
         helper.saveCredentials(credentialEntity);
         ProfileDetail detail = new ProfileDetail();
         detail.setEmail(credential.getEmail());
-        saveProfile(detail);
+        saveOrUpdateProfile(detail);
     }
 
     public ClientCredential findClientCredential(String email) throws DataBaseOperationException, MapperException {
@@ -90,9 +94,31 @@ public class ClientService {
         return helper.findDetailsById(id);
     }
 
-    public void saveProfile(ProfileDetail detail) throws MapperException, DataBaseOperationException {
-        ProfileDetails detailsEntity = mapper.modelToEntityDetails(detail);
-        helper.saveProfile(detailsEntity);
-        service.saveInterestedGames(detail);
+    public ProfileDetail saveOrUpdateProfile(ProfileDetail detail) throws MapperException, DataBaseOperationException {
+        ProfileDetails details = helper.findDetailsByEmail(detail.getEmail());
+        if(details == null) {
+            details = mapper.modelToEntityDetails(detail);
+            helper.saveProfile(details);
+            List<InterestedGames> interestedGames = service.saveInterestedGames(detail);
+            List<InterestedGame> games = gameMapper.entityToModelGames(interestedGames);
+            detail.setInterestedGames(games);
+        } else {
+            details = mapper.modelToEntityDetails(detail, details);
+            helper.saveProfile(details);
+            List<InterestedGames> interestedGames = service.updateInterestedGames(detail);
+            List<InterestedGame> games = gameMapper.entityToModelGames(interestedGames);
+            detail.setInterestedGames(games);
+        }
+        return detail;
+    }
+
+    public ProfileDetail getProfileDetails(String email) throws DataBaseOperationException, MapperException {
+        ProfileDetail detail = null;
+        ProfileDetails details = helper.findDetailsByEmail(email);
+        if(details != null) {
+            List<InterestedGames> games = gameServiceHelper.findInterestedGamesByEmail(details.getEmail());
+            detail = mapper.entityToModelDetails(details, games);
+        }
+        return detail;
     }
 }

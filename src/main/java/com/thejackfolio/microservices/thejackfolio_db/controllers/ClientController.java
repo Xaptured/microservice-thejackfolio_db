@@ -218,17 +218,44 @@ public class ClientController {
             description = "Save profile and gives the same profile response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-profile")
-    public ResponseEntity<ProfileDetail> saveProfileDetails(@RequestBody ProfileDetail details) {
+    public ResponseEntity<ProfileDetail> saveOrUpdateProfileDetails(@RequestBody ProfileDetail details) {
         try {
             if (details == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            clientService.saveProfile(details);
+            details = clientService.saveOrUpdateProfile(details);
             details.setMessage(StringConstants.REQUEST_PROCESSED);
         } catch (MapperException | DataBaseOperationException exception) {
             details.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(details);
+    }
+
+    @Operation(
+            summary = "Get profile",
+            description = "Get profile and gives the same profile response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-profile/{email}")
+    public ResponseEntity<ProfileDetail> getProfileDetails(@PathVariable String email) {
+        ProfileDetail detail = null;
+        try {
+            if (email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            detail = clientService.getProfileDetails(email);
+            if(detail == null) {
+                detail = new ProfileDetail();
+                detail.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(detail);
+            } else {
+                detail.setMessage(StringConstants.REQUEST_PROCESSED);
+            }
+        } catch (MapperException | DataBaseOperationException exception) {
+            detail = new ProfileDetail();
+            detail.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(detail);
     }
 }

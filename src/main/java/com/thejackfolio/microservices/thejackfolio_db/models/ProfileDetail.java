@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.models;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -17,18 +18,18 @@ public class ProfileDetail {
     private String phone;
     private String city;
     private String email;
-    private Game[] games;
+    private List<InterestedGame> interestedGames;
     private String message;
 
     public ProfileDetail() {
     }
 
-    public ProfileDetail(String name, String phone, String city, String email, Game[] games, String message) {
+    public ProfileDetail(String name, String phone, String city, String email, List<InterestedGame> interestedGames, String message) {
         this.name = name;
         this.phone = phone;
         this.city = city;
         this.email = email;
-        this.games = games;
+        this.interestedGames = interestedGames;
         this.message = message;
     }
 
@@ -64,12 +65,12 @@ public class ProfileDetail {
         this.email = email;
     }
 
-    public Game[] getGames() {
-        return games;
+    public List<InterestedGame> getInterestedGames() {
+        return interestedGames;
     }
 
-    public void setGames(Game[] games) {
-        this.games = games;
+    public void setInterestedGames(List<InterestedGame> interestedGames) {
+        this.interestedGames = interestedGames;
     }
 
     public String getMessage() {
@@ -85,14 +86,12 @@ public class ProfileDetail {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProfileDetail detail = (ProfileDetail) o;
-        return Objects.equals(name, detail.name) && Objects.equals(phone, detail.phone) && Objects.equals(city, detail.city) && Objects.equals(email, detail.email) && Arrays.equals(games, detail.games) && Objects.equals(message, detail.message);
+        return Objects.equals(name, detail.name) && Objects.equals(phone, detail.phone) && Objects.equals(city, detail.city) && Objects.equals(email, detail.email) && Objects.equals(interestedGames, detail.interestedGames) && Objects.equals(message, detail.message);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(name, phone, city, email, message);
-        result = 31 * result + Arrays.hashCode(games);
-        return result;
+        return Objects.hash(name, phone, city, email, interestedGames, message);
     }
 
     @Override
@@ -102,7 +101,7 @@ public class ProfileDetail {
                 ", phone='" + phone + '\'' +
                 ", city='" + city + '\'' +
                 ", email='" + email + '\'' +
-                ", games=" + Arrays.toString(games) +
+                ", interestedGames=" + interestedGames +
                 ", message='" + message + '\'' +
                 '}';
     }
