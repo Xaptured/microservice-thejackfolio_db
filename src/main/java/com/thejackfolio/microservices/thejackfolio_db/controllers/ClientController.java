@@ -6,13 +6,12 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.Partners;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
-import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
-import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
-import com.thejackfolio.microservices.thejackfolio_db.models.EmailValidationDetails;
-import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.PartnersRepository;
 import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,5 +259,123 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(detail);
+    }
+
+    @Operation(
+            summary = "Save partner",
+            description = "Save partner and gives the same partner response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-partner")
+    public ResponseEntity<Partner> saveOrUpdatePartner(@RequestBody Partner partner) {
+        try {
+            if(partner == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.saveOrUpdatePartner(partner);
+            partner.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException | IOException exception) {
+            partner.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(partner);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(partner);
+    }
+
+    @Operation(
+            summary = "Get partner",
+            description = "Get partner and gives the response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-partner/{email}")
+    public ResponseEntity<Partner> findPartner(@PathVariable String email) {
+        Partner partner = null;
+        try {
+            if(email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            partner = clientService.findPartnerByEmail(email);
+            if(partner == null) {
+                partner = new Partner();
+                partner.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(partner);
+            } else {
+                partner.setMessage(StringConstants.REQUEST_PROCESSED);
+            }
+        } catch (MapperException | DataBaseOperationException exception) {
+            partner.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(partner);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(partner);
+    }
+
+    @Operation(
+            summary = "Get logo",
+            description = "Get logo and gives the response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-logo/{email}")
+    public ResponseEntity<Document> findLogo(@PathVariable String email) {
+        Document document = new Document();
+        try {
+            if(email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            byte[] logo = clientService.findLogoByEmail(email);
+            if(logo == null) {
+                document.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(document);
+            }
+            document.setDocument(logo);
+            document.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (DataBaseOperationException | IOException exception) {
+            document.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(document);
+    }
+
+    @Operation(
+            summary = "Get document",
+            description = "Get document and gives the response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-document/{email}")
+    public ResponseEntity<Document> findDoc(@PathVariable String email) {
+        Document document = new Document();
+        try {
+            if(email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            byte[] doc = clientService.findDocumentByEmail(email);
+            if(doc == null) {
+                document.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(document);
+            }
+            document.setDocument(doc);
+            document.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (DataBaseOperationException | IOException exception) {
+            document.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(document);
+    }
+
+    @Operation(
+            summary = "Save documents",
+            description = "Save documents and gives the same documents response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-documents/{email}")
+    public ResponseEntity<Partner> saveDocuments(@RequestParam MultipartFile image, @RequestParam MultipartFile doc, @PathVariable String email) throws IOException {
+        Partner partner = new Partner();
+        try {
+            if(image.isEmpty() || doc.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            partner = clientService.saveDocuments(image, doc, email);
+            if(partner == null) {
+                partner.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+            }
+            partner.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (DataBaseOperationException | IOException | MapperException exception) {
+            partner.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(partner);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(partner);
     }
 }

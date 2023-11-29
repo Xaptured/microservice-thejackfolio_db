@@ -8,6 +8,7 @@ package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
 import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
+import com.thejackfolio.microservices.thejackfolio_db.entities.Partners;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
@@ -16,9 +17,15 @@ import com.thejackfolio.microservices.thejackfolio_db.mappers.GameMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -120,5 +127,80 @@ public class ClientService {
             detail = mapper.entityToModelDetails(details, games);
         }
         return detail;
+    }
+
+    public void saveOrUpdatePartner(Partner partner) throws DataBaseOperationException, MapperException, IOException {
+        Partners partnerEntity = helper.findPartnerByEmail(partner.getEmail());
+        if(partnerEntity == null) {
+            partnerEntity = mapper.modelToEntityPartner(partner);
+            helper.savePartner(partnerEntity);
+        } else {
+            boolean isFilesDeleted = deleteDocumentsFromPath(partnerEntity.getLogoPath(), partnerEntity.getDocumentPath(), partner);
+            if( isFilesDeleted ) {
+                partnerEntity = mapper.modelToEntityPartner(partner, partnerEntity);
+                helper.savePartner(partnerEntity);
+            }
+            else {
+                throw new FileNotFoundException(StringConstants.FILE_NOT_PRESENT);
+            }
+        }
+    }
+
+    public Partner saveDocuments(MultipartFile image, MultipartFile doc, String email) throws DataBaseOperationException, MapperException, IOException {
+        Partner partner = null;
+        Partners partnerEntity = helper.findPartnerByEmail(email);
+        if(partnerEntity != null) {
+            partnerEntity = mapper.modelToEntityPartner(partnerEntity, image, doc);
+            helper.savePartner(partnerEntity);
+            saveDocumentsToPath(partnerEntity.getLogoPath(), partnerEntity.getDocumentPath(), image, doc);
+            partner = mapper.entityToModelPartner(partnerEntity);
+        }
+        return partner;
+    }
+
+    private void saveDocumentsToPath(String logoPath, String docPath, MultipartFile image, MultipartFile document) throws IOException {
+        image.transferTo(new File(logoPath).toPath());
+        document.transferTo(new File(docPath).toPath());
+    }
+
+    private boolean deleteDocumentsFromPath(String logoPath, String docPath, Partner partner) {
+        File logoFile = new File(logoPath);
+        File docFile = new File(docPath);
+        boolean isFilesDeleted = false;
+        if(logoFile.exists() && docFile.exists()) {
+            logoFile.delete();
+            docFile.delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Partner findPartnerByEmail(String email) throws DataBaseOperationException, MapperException {
+        Partners partnerEntity = helper.findPartnerByEmail(email);
+        Partner partner = mapper.entityToModelPartner(partnerEntity);
+        return partner;
+    }
+
+    public byte[] findLogoByEmail(String email) throws DataBaseOperationException, IOException {
+        Partners partnerEntity = helper.findPartnerByEmail(email);
+        if(partnerEntity != null) {
+            String logoPath = partnerEntity.getLogoPath();
+            byte[] logo = Files.readAllBytes(new File(logoPath).toPath());
+            return logo;
+        } else {
+            return null;
+        }
+    }
+
+    public byte[] findDocumentByEmail(String email) throws DataBaseOperationException, IOException {
+        Partners partnerEntity = helper.findPartnerByEmail(email);
+        if(partnerEntity != null) {
+            String docPath = partnerEntity.getDocumentPath();
+            byte[] document = Files.readAllBytes(new File(docPath).toPath());
+            return document;
+        } else {
+            return null;
+        }
     }
 }

@@ -8,5 +8,5 @@ package com.thejackfolio.microservices.thejackfolio_db.enums;
 
 public enum TeamStatus {
 
-    FREE, PENDING, PAID;
+    FREE, PENDING, PAID, REJECTED;
 }
