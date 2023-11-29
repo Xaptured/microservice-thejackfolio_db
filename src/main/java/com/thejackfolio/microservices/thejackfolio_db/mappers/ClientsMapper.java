@@ -6,13 +6,11 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
-import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
-import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
-import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
 import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
+import com.thejackfolio.microservices.thejackfolio_db.models.Partner;
 import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.EncryptDecrypt;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
@@ -20,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,5 +195,68 @@ public class ClientsMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return detail;
+    }
+
+    public Partners modelToEntityPartner(Partner partner) throws MapperException {
+        Partners partnerEntity = null;
+        try {
+            if(partner != null) {
+                partnerEntity = new Partners();
+                partnerEntity.setName(partner.getName());
+                partnerEntity.setEmail(partner.getEmail());
+                partnerEntity.setStatus(partner.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return partnerEntity;
+    }
+
+    public Partners modelToEntityPartner(Partner partner, Partners partnerEntity) throws MapperException {
+        try {
+            if(partnerEntity != null && partner != null) {
+                partnerEntity.setName(partner.getName());
+                partnerEntity.setEmail(partner.getEmail());
+                partnerEntity.setStatus(partner.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return partnerEntity;
+    }
+
+    public Partners modelToEntityPartner(Partners entity, MultipartFile image, MultipartFile doc) throws MapperException {
+        try {
+            if(entity != null) {
+                entity.setLogoPath(StringConstants.LOGO_FOLDER_PATH + image.getOriginalFilename());
+                entity.setLogoType(image.getContentType());
+                entity.setLogoName(image.getOriginalFilename());
+                entity.setDocumentName(doc.getOriginalFilename());
+                entity.setDocumentType(doc.getContentType());
+                entity.setDocumentPath(StringConstants.LEGAL_FOLDER_PATH + doc.getOriginalFilename());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entity;
+    }
+
+    public Partner entityToModelPartner(Partners partnerEntity) throws MapperException {
+        Partner partner = null;
+        try {
+            if(partnerEntity != null) {
+                partner = new Partner();
+                partner.setName(partnerEntity.getName());
+                partner.setEmail(partnerEntity.getEmail());
+                partner.setStatus(partnerEntity.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return partner;
     }
 }

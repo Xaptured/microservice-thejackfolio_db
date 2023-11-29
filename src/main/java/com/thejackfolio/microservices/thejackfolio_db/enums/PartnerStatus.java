@@ -6,7 +6,6 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
-public enum GameStatus {
-
+public enum PartnerStatus {
     PENDING, APPROVED, REJECTED;
 }
