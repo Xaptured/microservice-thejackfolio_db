@@ -38,5 +38,8 @@ public class StringConstants {
 
     public static final String LEGAL_FOLDER_PATH="/Jack/ESportsManagementSystem/DOCUMENTS/LEGAL/";
     public static final String LOGO_FOLDER_PATH="/Jack/ESportsManagementSystem/DOCUMENTS/LOGO/";
+    public static final String LEADERBOARD_FOLDER_PATH="/Jack/ESportsManagementSystem/DOCUMENTS/LEADERBOARD/";
+    public static final String CONGRATULATIONS = "Congratulations";
+    public static final String BETTER_LUCK = "Better luck next time";
 
 }

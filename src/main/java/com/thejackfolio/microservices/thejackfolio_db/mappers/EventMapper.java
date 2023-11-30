@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -350,5 +351,61 @@ public class EventMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return viewer;
+    }
+
+    public Leaderboards modelToEntityLeaderBoard(Leaderboard leaderboard) throws MapperException {
+        Leaderboards leaderboardEntity = null;
+        try {
+            if(leaderboard != null) {
+                leaderboardEntity = new Leaderboards();
+                leaderboardEntity.setEventId(leaderboard.getEventId());
+                leaderboardEntity.setTeamId(leaderboard.getTeamId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return leaderboardEntity;
+    }
+
+    public Leaderboards modelToEntityLeaderBoard(Leaderboard leaderboard, Leaderboards leaderboardEntity) throws MapperException {
+        try {
+            if(leaderboard != null && leaderboardEntity != null) {
+                leaderboardEntity.setTeamId(leaderboard.getTeamId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return leaderboardEntity;
+    }
+
+    public Leaderboards modelToEntityLeaderBoard(Leaderboards entity, MultipartFile doc) throws MapperException {
+        try {
+            if(entity != null) {
+                entity.setDocumentName(doc.getOriginalFilename());
+                entity.setDocumentType(doc.getContentType());
+                entity.setDocumentPath(StringConstants.LEADERBOARD_FOLDER_PATH + doc.getOriginalFilename());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entity;
+    }
+
+    public Leaderboard entityToModelLeaderboard(Leaderboards leaderboardEntity) throws MapperException {
+        Leaderboard leaderboard = null;
+        try {
+            if(leaderboardEntity != null) {
+                leaderboard = new Leaderboard();
+                leaderboard.setEventId(leaderboardEntity.getEventId());
+                leaderboard.setTeamId(leaderboardEntity.getTeamId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return leaderboard;
     }
 }

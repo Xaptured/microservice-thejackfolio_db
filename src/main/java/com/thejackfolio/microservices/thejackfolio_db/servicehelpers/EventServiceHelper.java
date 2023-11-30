@@ -34,6 +34,8 @@ public class EventServiceHelper {
     private TeamDetailsRepository teamDetailsRepository;
     @Autowired
     private ViewerRepository viewerRepository;
+    @Autowired
+    private LeaderboardsRepository leaderboardsRepository;
 
     public Events saveEvent(Events event) throws DataBaseOperationException {
         Events eventEntity = null;
@@ -128,6 +130,17 @@ public class EventServiceHelper {
         return teamEntity;
     }
 
+    public Teams findTeamById(Integer id) throws DataBaseOperationException {
+        Teams teamEntity = null;
+        try {
+            teamEntity = teamsRepository.findById(id).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teamEntity;
+    }
+
     public List<TeamDetails> findDetailsByTeamId(Integer teamId) throws DataBaseOperationException {
         List<TeamDetails> teamDetails = null;
         try {
@@ -157,5 +170,25 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return viewer != null;
+    }
+
+    public void saveLeaderboard(Leaderboards leaderboard) throws DataBaseOperationException {
+        try {
+            leaderboardsRepository.save(leaderboard);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public Leaderboards findLeaderboardByEventId(Integer eventId) throws DataBaseOperationException {
+        Leaderboards leaderboard = null;
+        try {
+            leaderboard = leaderboardsRepository.findByEventId(eventId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return leaderboard;
     }
 }

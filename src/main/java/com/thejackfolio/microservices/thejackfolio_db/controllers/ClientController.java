@@ -353,7 +353,7 @@ public class ClientController {
             document.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(document);
+        return ResponseEntity.status(HttpStatus.OK).body(document);
     }
 
     @Operation(
@@ -361,18 +361,21 @@ public class ClientController {
             description = "Save documents and gives the same documents response with a message which defines whether the request is successful or not."
     )
     @PostMapping("/save-documents/{email}")
-    public ResponseEntity<Partner> saveDocuments(@RequestParam MultipartFile image, @RequestParam MultipartFile doc, @PathVariable String email) throws IOException {
-        Partner partner = new Partner();
+    public ResponseEntity<Partner> saveDocuments(@RequestParam MultipartFile image, @RequestParam MultipartFile doc, @PathVariable String email) {
+        Partner partner = null;
         try {
             if(image.isEmpty() || doc.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             partner = clientService.saveDocuments(image, doc, email);
             if(partner == null) {
+                partner = new Partner();
                 partner.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(partner);
             }
             partner.setMessage(StringConstants.REQUEST_PROCESSED);
         } catch (DataBaseOperationException | IOException | MapperException exception) {
+            partner = new Partner();
             partner.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(partner);
         }
