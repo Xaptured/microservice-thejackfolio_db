@@ -11,9 +11,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperati
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
-import com.thejackfolio.microservices.thejackfolio_db.models.Event;
-import com.thejackfolio.microservices.thejackfolio_db.models.Team;
-import com.thejackfolio.microservices.thejackfolio_db.models.Viewer;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.View;
+import java.io.IOException;
 
 @Tag(name = "Event", description = "Event management APIs")
 @RestController
@@ -148,9 +148,104 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             isViewer = service.isViewer(email, eventId);
-        } catch (Exception exception) {
+        } catch (DataBaseOperationException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(isViewer);
         }
         return ResponseEntity.status(HttpStatus.OK).body(isViewer);
+    }
+
+    @Operation(
+            summary = "Save leaderboard",
+            description = "Save leaderboard with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-leaderboard")
+    public ResponseEntity<Leaderboard> saveLeaderboard(@RequestBody Leaderboard leaderboard) {
+        try {
+            if(leaderboard == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            service.saveLeaderboard(leaderboard);
+            leaderboard.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException exception) {
+            leaderboard.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(leaderboard);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(leaderboard);
+    }
+
+    @Operation(
+            summary = "Save documents",
+            description = "Save documents and gives the same documents response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-documents/{eventId}")
+    public ResponseEntity<Leaderboard> saveLeaderboardDocument(@RequestParam MultipartFile doc, @PathVariable Integer eventId) {
+        Leaderboard leaderboard = null;
+        try {
+            if(doc.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            leaderboard = service.saveLeaderboardDocument(doc, eventId);
+            if(leaderboard == null) {
+                leaderboard = new Leaderboard();
+                leaderboard.setMessage(StringConstants.EMAIL_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(leaderboard);
+            }
+            leaderboard.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (DataBaseOperationException | IOException | MapperException exception) {
+            leaderboard = new Leaderboard();
+            leaderboard.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(leaderboard);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(leaderboard);
+    }
+
+    @Operation(
+            summary = "Get leaderboard",
+            description = "Get leaderboard with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-leaderboard/{email}")
+    public ResponseEntity<Leaderboard> findLeaderBoard(@RequestParam Integer eventId, @PathVariable String email) {
+        Leaderboard leaderboard = null;
+        try {
+            if(eventId == null || email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            leaderboard = service.findLeaderboardByEventId(eventId, email);
+            if(leaderboard == null) {
+                leaderboard = new Leaderboard();
+                leaderboard.setMessage(StringConstants.ID_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(leaderboard);
+            }
+        } catch (DataBaseOperationException | MapperException exception) {
+            leaderboard = new Leaderboard();
+            leaderboard.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(leaderboard);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(leaderboard);
+    }
+
+    @Operation(
+            summary = "Get document",
+            description = "Get document and gives the response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-document/{eventId}")
+    public ResponseEntity<Document> findDoc(@PathVariable Integer eventId) {
+        Document document = new Document();
+        try {
+            if(eventId == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            byte[] doc = service.findLeaderBoardDoc(eventId);
+            if(doc == null) {
+                document.setMessage(StringConstants.ID_NOT_PRESENT);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(document);
+            }
+            document.setDocument(doc);
+            document.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (DataBaseOperationException | IOException exception) {
+            document.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(document);
     }
 }

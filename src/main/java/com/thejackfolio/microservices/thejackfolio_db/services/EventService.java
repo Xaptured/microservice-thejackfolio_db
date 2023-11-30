@@ -17,7 +17,11 @@ import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServic
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -127,5 +131,58 @@ public class EventService {
 
     public boolean isViewer(String email, Integer eventId) throws DataBaseOperationException {
         return helper.isViewerForEvent(eventId, email);
+    }
+
+    public void saveLeaderboard(Leaderboard leaderboard) throws DataBaseOperationException, MapperException {
+        Leaderboards leaderboardEntity = mapper.modelToEntityLeaderBoard(leaderboard);
+        helper.saveLeaderboard(leaderboardEntity);
+    }
+    public Leaderboard saveLeaderboardDocument(MultipartFile doc, Integer eventId) throws DataBaseOperationException, MapperException, IOException {
+        Leaderboard leaderboard = null;
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            leaderboardEntity = mapper.modelToEntityLeaderBoard(leaderboardEntity, doc);
+            helper.saveLeaderboard(leaderboardEntity);
+            saveDocumentsToPath(leaderboardEntity.getDocumentPath(), doc);
+            leaderboard = mapper.entityToModelLeaderboard(leaderboardEntity);
+        }
+        return leaderboard;
+    }
+
+    private void saveDocumentsToPath(String docPath, MultipartFile document) throws IOException {
+        document.transferTo(new File(docPath).toPath());
+    }
+
+    public Leaderboard findLeaderboardByEventId(Integer eventId, String email) throws DataBaseOperationException, MapperException {
+        Leaderboard leaderboard = null;
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            List<TeamDetails> details = helper.findDetailsByTeamId(leaderboardEntity.getTeamId());
+            boolean isWon = false;
+            for(TeamDetails detail : details) {
+                if(detail.getEmail().equals(email)) {
+                    isWon = true;
+                    break;
+                }
+            }
+            leaderboard = mapper.entityToModelLeaderboard(leaderboardEntity);
+            if(isWon) {
+                leaderboard.setMessage(StringConstants.CONGRATULATIONS);
+            } else {
+                leaderboard.setMessage(StringConstants.BETTER_LUCK);
+            }
+        }
+        return leaderboard;
+    }
+
+    public byte[] findLeaderBoardDoc(Integer eventId) throws IOException, DataBaseOperationException {
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            String docPath = leaderboardEntity.getDocumentPath();
+            byte[] document = Files.readAllBytes(new File(docPath).toPath());
+            return document;
+        } else {
+            return null;
+        }
     }
 }
