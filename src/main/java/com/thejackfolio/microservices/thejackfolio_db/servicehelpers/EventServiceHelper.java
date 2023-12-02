@@ -7,14 +7,22 @@
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.FileCreateException;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @Service
@@ -75,6 +83,18 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return eventEntity;
+    }
+
+    public String findEventNameById(Integer eventId) throws DataBaseOperationException {
+        String name = null;
+        try {
+            Events event = eventsRepository.findById(eventId).orElse(null);
+            name = event.getName();
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return name;
     }
 
     public EventDetails findDetailsByEventId(Integer eventId) throws DataBaseOperationException {
@@ -190,5 +210,47 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return leaderboard;
+    }
+
+    public List<Teams> findAllTeamsByEventId(Integer eventId) throws DataBaseOperationException {
+        List<Teams> teams = null;
+        try {
+            teams = teamsRepository.findAllByEventId(eventId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teams;
+    }
+
+    public byte[] generateExcel(List<Teams> teams) throws FileCreateException {
+        byte[] outputStreamDoc = null;
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Teams");
+            Row headingRow = sheet.createRow(0);
+            Cell headingCellOne = headingRow.createCell(0);
+            headingCellOne.setCellValue("TEAM NAMES");
+            Cell headingCellTwo = headingRow.createCell(1);
+            headingCellTwo.setCellValue("POINTS");
+            int rowNum = 1;
+            for (Teams team : teams) {
+                Row row = sheet.createRow(rowNum++);
+                Cell cellOne = row.createCell(0);
+                if(team.getTeamStatus() == TeamStatus.FREE || team.getTeamStatus() == TeamStatus.PAID) {
+                    cellOne.setCellValue(team.getName());
+                }
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            workbook.write(byteArrayOutputStream);
+//            Uncomment below code to test in local whether sheet is created or not
+//            try(OutputStream outputStream = new FileOutputStream("/Jack/ESportsManagementSystem/DOCUMENTS/LEADERBOARD/team_names.xlsx")) {
+//                byteArrayOutputStream.writeTo(outputStream);
+//            }
+            outputStreamDoc = byteArrayOutputStream.toByteArray();
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.FILE_ERROR, exception);
+            throw new FileCreateException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return outputStreamDoc;
     }
 }
