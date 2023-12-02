@@ -7,20 +7,22 @@
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
+import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -79,6 +81,10 @@ public class EventService {
             event.setMessage(StringConstants.NAME_NOT_PRESENT);
         }
         return event;
+    }
+
+    public String findEventNameById(Integer eventId) throws DataBaseOperationException {
+        return helper.findEventNameById(eventId);
     }
 
     public Team saveOrUpdateTeam(Team team, boolean isCreate, boolean isUpdate) throws DataBaseOperationException, MapperException, TeamException {
@@ -184,5 +190,10 @@ public class EventService {
         } else {
             return null;
         }
+    }
+
+    public byte[] generateTeamNamesExcel(Integer eventId) throws DataBaseOperationException, FileCreateException {
+        List<Teams> teams = helper.findAllTeamsByEventId(eventId);
+        return helper.generateExcel(teams);
     }
 }

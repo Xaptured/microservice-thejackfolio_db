@@ -7,17 +7,16 @@
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.Viewers;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.EventException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
-import com.thejackfolio.microservices.thejackfolio_db.exceptions.TeamException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -247,5 +246,26 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
         }
         return ResponseEntity.status(HttpStatus.OK).body(document);
+    }
+
+    @Operation(
+            summary = "Get team's document",
+            description = "Get team's document and gives the response with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/create-sheet/{eventId}")
+    public ResponseEntity<byte[]> generateExcel(@PathVariable Integer eventId) {
+        try {
+            byte[] excelBytes = service.generateTeamNamesExcel(eventId);
+            if(excelBytes == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String eventName = service.findEventNameById(eventId);
+            headers.setContentDispositionFormData("attachment", eventName+".xlsx");
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+        } catch (DataBaseOperationException | FileCreateException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
