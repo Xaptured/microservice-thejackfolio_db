@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -87,6 +89,34 @@ public class EventService {
         return helper.findEventNameById(eventId);
     }
 
+    public List<Event> findUpcomingEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> inActiveEvents = null;
+        List<TeamDetails> details = helper.findTeamDetailsByEmail(email);
+        if(!details.isEmpty()) {
+            List<Integer> teamIds = new ArrayList<>();
+            for(TeamDetails detail : details) {
+                teamIds.add(detail.getTeamId());
+            }
+            List<Teams> teams = helper.findAllTeamsByTeamIds(teamIds);
+            List<Integer> eventIds = new ArrayList<>();
+            for(Teams team : teams) {
+                eventIds.add(team.getEventId());
+            }
+            List<Events> events = helper.findAllEventsByEventIds(eventIds);
+            inActiveEvents = new ArrayList<>();
+            for(Events event : events) {
+                if(event.getStatus() == EventStatus.INACTIVE) {
+                    inActiveEvents.add(mapper.entityToModelEvent(event));
+                }
+            }
+        }
+        return inActiveEvents;
+    }
+
+    public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
+        helper.updateEventStatus(name, status);
+    }
+
     public Team saveOrUpdateTeam(Team team, boolean isCreate, boolean isUpdate) throws DataBaseOperationException, MapperException, TeamException {
         Teams teamEntity = helper.findTeamByName(team.getName());
         if(isCreate) {
@@ -128,6 +158,10 @@ public class EventService {
             team.setMessage(StringConstants.NAME_NOT_PRESENT);
         }
         return team;
+    }
+
+    public void updateTeamStatus(String teamName, TeamStatus status) throws DataBaseOperationException {
+        helper.updateTeamStatus(teamName, status);
     }
 
     public void saveViewer(Viewer viewer) throws MapperException, DataBaseOperationException {

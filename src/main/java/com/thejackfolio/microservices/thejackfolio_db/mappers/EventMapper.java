@@ -174,6 +174,24 @@ public class EventMapper {
         return rules;
     }
 
+    public Event entityToModelEvent(Events eventEntity) throws MapperException {
+        Event event = null;
+        try {
+            if(eventEntity != null) {
+                event = new Event();
+                event.setName(eventEntity.getName());
+                event.setEmail(eventEntity.getEmail());
+                String gameName = gameService.getGameName(eventEntity.getGameId());
+                event.setGameName(gameName);
+                event.setStatus(eventEntity.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return event;
+    }
+
     public Event entityToModelEvent(Events eventEntity, EventDetails detailEntity, List<EventRules> ruleEntities) throws MapperException {
         Event event = null;
         try {

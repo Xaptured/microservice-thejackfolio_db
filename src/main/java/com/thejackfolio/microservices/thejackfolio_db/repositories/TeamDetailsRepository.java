@@ -18,4 +18,6 @@ import java.util.Optional;
 public interface TeamDetailsRepository extends JpaRepository<TeamDetails, Integer> {
 
     Optional<List<TeamDetails>> findAllByTeamId(Integer teamId);
+
+    Optional<List<TeamDetails>> findAllByEmail(String email);
 }

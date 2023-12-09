@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.FileCreateException;
@@ -119,6 +120,37 @@ public class EventServiceHelper {
         return ruleEntities;
     }
 
+    public List<Events> findAllEventsByEventIds(List<Integer> eventIds) throws DataBaseOperationException {
+        List<Events> events = null;
+        try {
+            events = eventsRepository.findAllById(eventIds);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return events;
+    }
+
+    public List<TeamDetails> findTeamDetailsByEmail(String email) throws DataBaseOperationException {
+        List<TeamDetails> details = null;
+        try {
+            details = teamDetailsRepository.findAllByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return details;
+    }
+
+    public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
+        try {
+            eventsRepository.updateEventStatus(name, status);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
     public Teams saveTeam(Teams team) throws DataBaseOperationException {
         Teams teamEntity = null;
         try {
@@ -170,6 +202,26 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return teamDetails;
+    }
+
+    public List<Teams> findAllTeamsByTeamIds(List<Integer> teamIds) throws DataBaseOperationException {
+        List<Teams> teams = null;
+        try {
+            teams = teamsRepository.findAllById(teamIds);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return teams;
+    }
+
+    public void updateTeamStatus(String teamName, TeamStatus status) throws DataBaseOperationException {
+        try {
+            teamsRepository.updateTeamStatus(teamName, status);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
     }
 
     public void saveViewer(Viewers viewer) throws DataBaseOperationException {

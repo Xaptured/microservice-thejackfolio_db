@@ -7,12 +7,16 @@
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.Viewers;
+import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
+import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.poi.ss.formula.functions.Even;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.View;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Tag(name = "Event", description = "Event management APIs")
 @RestController
@@ -75,6 +81,45 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Find upcoming events",
+            description = "Find upcoming events with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-upcoming-events/{email}")
+    public ResponseEntity<List<Event>> findUpcomingEvents(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findUpcomingEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
+            summary = "Update event status",
+            description = "Update event status with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/update-event-status")
+    public ResponseEntity<String> updateEventStatus(@RequestParam String status, @RequestParam String eventName) {
+        try {
+            if(StringUtils.isEmpty(eventName) || StringUtils.isBlank(eventName) || StringUtils.isEmpty(status) || StringUtils.isBlank(status)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            service.updateEventStatus(eventName, EventStatus.valueOf(status));
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(StringConstants.REQUEST_PROCESSED);
+    }
+
+    @Operation(
             summary = "Save OR Update teams",
             description = "Save or Update teams and gives the same team response with a message which defines whether the request is successful or not."
     )
@@ -114,6 +159,23 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(team);
         }
         return ResponseEntity.status(HttpStatus.OK).body(team);
+    }
+
+    @Operation(
+            summary = "Update team status",
+            description = "Update team stataus with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/update-team-status")
+    public ResponseEntity<String> updateTeamStatus(@RequestParam String teamName, @RequestParam String teamStatus) {
+        try {
+            if(StringUtils.isBlank(teamName) || StringUtils.isEmpty(teamName) || StringUtils.isBlank(teamStatus) || StringUtils.isEmpty(teamStatus)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            service.updateTeamStatus(teamName, TeamStatus.valueOf(teamStatus));
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(StringConstants.REQUEST_PROCESSED);
     }
 
     @Operation(
