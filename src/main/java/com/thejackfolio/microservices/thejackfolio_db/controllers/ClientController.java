@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Tag(name = "Client", description = "Client management APIs")
 @RestController
@@ -360,8 +363,8 @@ public class ClientController {
             summary = "Save documents",
             description = "Save documents and gives the same documents response with a message which defines whether the request is successful or not."
     )
-    @PostMapping("/save-documents/{email}")
-    public ResponseEntity<Partner> saveDocuments(@RequestParam MultipartFile image, @RequestParam MultipartFile doc, @PathVariable String email) {
+    @RequestMapping(path = "/save-documents/{email}", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Partner> saveDocuments(@RequestPart MultipartFile image, @RequestPart MultipartFile doc, @PathVariable String email) {
         Partner partner = null;
         try {
             if(image.isEmpty() || doc.isEmpty()) {

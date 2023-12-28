@@ -25,8 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class EventService {
@@ -115,6 +116,24 @@ public class EventService {
 
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
         helper.updateEventStatus(name, status);
+    }
+
+    public List<Event> findEventsScheduledForToday() throws DataBaseOperationException, MapperException {
+        LocalDate todayLocalDate = LocalDate.now();
+        Date todaySQLDate = Date.valueOf(todayLocalDate);
+        List<EventDetails> eventDetails = helper.findEventDetailsForToday(todaySQLDate);
+        Map<Integer, EventDetails> eventDetailsMap = new HashMap<>();
+        List<Integer> eventIds = new ArrayList<>();
+        for(EventDetails eventDetail : eventDetails) {
+            eventIds.add(eventDetail.getEventId());
+            eventDetailsMap.put(eventDetail.getEventId(), eventDetail);
+        }
+        List<Events> events = helper.findAllEventsByEventIds(eventIds);
+        List<Event> eventModels = new ArrayList<>();
+        for(Events eventEntity : events) {
+            eventModels.add(mapper.entityToModelEvent(eventEntity, eventDetailsMap.get(eventEntity.getId()), null));
+        }
+        return eventModels;
     }
 
     public Team saveOrUpdateTeam(Team team, boolean isCreate, boolean isUpdate) throws DataBaseOperationException, MapperException, TeamException {

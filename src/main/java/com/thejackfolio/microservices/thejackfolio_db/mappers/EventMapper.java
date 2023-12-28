@@ -195,13 +195,15 @@ public class EventMapper {
     public Event entityToModelEvent(Events eventEntity, EventDetails detailEntity, List<EventRules> ruleEntities) throws MapperException {
         Event event = null;
         try {
-            if(eventEntity != null && detailEntity != null && ruleEntities != null) {
+            if(eventEntity != null) {
                 event = new Event();
                 event.setName(eventEntity.getName());
                 event.setEmail(eventEntity.getEmail());
                 String gameName = gameService.getGameName(eventEntity.getGameId());
                 event.setGameName(gameName);
                 event.setStatus(eventEntity.getStatus());
+            }
+            if(detailEntity != null) {
                 event.setDate(detailEntity.getDate().toString());
                 event.setTime(detailEntity.getTime().toString());
                 event.setDuration(detailEntity.getDuration().toString());
@@ -210,6 +212,8 @@ public class EventMapper {
                 event.setRemainingSlots(detailEntity.getRemainingSlots());
                 event.setType(detailEntity.getType());
                 event.setPrizePool(detailEntity.getPrizePool());
+            }
+            if(ruleEntities != null) {
                 List<Rule> rules = entityToModelRules(ruleEntities);
                 event.setRules(rules);
             }
