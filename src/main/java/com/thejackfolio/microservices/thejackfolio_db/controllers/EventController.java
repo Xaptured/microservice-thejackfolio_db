@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Tag(name = "Event", description = "Event management APIs")
 @RestController
 @RequestMapping("/events")
@@ -120,6 +122,25 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Find today's events",
+            description = "Find today's events with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-today-events")
+    public ResponseEntity<List<Event>> findEventsScheduledForToday() {
+        List<Event> events = null;
+        try {
+            events = service.findEventsScheduledForToday();
+        } catch (DataBaseOperationException | MapperException exception) {
+            events = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            events.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(events);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(events);
+    }
+
+    @Operation(
             summary = "Save OR Update teams",
             description = "Save or Update teams and gives the same team response with a message which defines whether the request is successful or not."
     )
@@ -194,7 +215,7 @@ public class EventController {
             viewer.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(viewer);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(viewer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(viewer);
     }
 
     @Operation(
@@ -238,8 +259,8 @@ public class EventController {
             summary = "Save documents",
             description = "Save documents and gives the same documents response with a message which defines whether the request is successful or not."
     )
-    @PostMapping("/save-documents/{eventId}")
-    public ResponseEntity<Leaderboard> saveLeaderboardDocument(@RequestParam MultipartFile doc, @PathVariable Integer eventId) {
+    @RequestMapping(path = "/save-documents/{eventId}", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Leaderboard> saveLeaderboardDocument(@RequestPart MultipartFile doc, @PathVariable Integer eventId) {
         Leaderboard leaderboard = null;
         try {
             if(doc.isEmpty()) {

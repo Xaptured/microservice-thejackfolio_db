@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -149,6 +150,17 @@ public class EventServiceHelper {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
+    }
+
+    public List<EventDetails> findEventDetailsForToday(Date today) throws DataBaseOperationException {
+        List<EventDetails> details = null;
+        try {
+            details = detailsRepository.findAllByDate(today).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return details;
     }
 
     public Teams saveTeam(Teams team) throws DataBaseOperationException {
