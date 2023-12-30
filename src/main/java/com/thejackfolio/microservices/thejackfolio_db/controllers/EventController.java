@@ -223,17 +223,27 @@ public class EventController {
             description = "Is a viewer or not."
     )
     @GetMapping("/is-viewer")
-    public ResponseEntity<Boolean> isViewer(@RequestParam String email, @RequestParam Integer eventId) {
-        Boolean isViewer = false;
+    public ResponseEntity<Viewer> isViewer(@RequestParam String email, @RequestParam Integer eventId) {
+        Viewer viewer = new Viewer();
         try {
             if(email == null || eventId == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            isViewer = service.isViewer(email, eventId);
+            boolean isViewer = service.isViewer(email, eventId);
+            viewer.setEventId(eventId);
+            viewer.setEmail(email);
+            if(isViewer) {
+                viewer.setMessage(StringConstants.IS_A_VIEWER);
+            } else {
+                viewer.setMessage(StringConstants.NOT_A_VIEWER);
+            }
         } catch (DataBaseOperationException exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(isViewer);
+            viewer.setEventId(eventId);
+            viewer.setEmail(email);
+            viewer.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(viewer);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(isViewer);
+        return ResponseEntity.status(HttpStatus.OK).body(viewer);
     }
 
     @Operation(

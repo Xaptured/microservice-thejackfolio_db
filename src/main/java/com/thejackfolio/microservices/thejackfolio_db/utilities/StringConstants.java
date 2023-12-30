@@ -30,6 +30,8 @@ public class StringConstants {
     public static final String EMAIL_NOT_PRESENT = "Email not present in Database";
     public static final String NAME_NOT_PRESENT = "Name not present in Database";
     public static final String FILE_NOT_PRESENT = "File not present";
+    public static final String IS_A_VIEWER = "User is a viewer";
+    public static final String NOT_A_VIEWER = "User is not a viewer";
     public static final String MAPPING_ERROR_MODEL_TO_ENTITY = "Error occurred while converting model to entity";
     public static final String MAPPING_ERROR_ENTITY_TO_MODEL = "Error occurred while converting entity to model";
 
