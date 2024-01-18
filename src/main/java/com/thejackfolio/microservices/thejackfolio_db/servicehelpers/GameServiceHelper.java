@@ -39,6 +39,28 @@ public class GameServiceHelper {
         }
     }
 
+    public List<Games> findAllActiveGames() throws DataBaseOperationException {
+        List<Games> activeGames = null;
+        try {
+            activeGames = repository.findAllActiveGames();
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return activeGames;
+    }
+
+    public Games findByGameName(String gameName) throws DataBaseOperationException {
+        Games gameEntity = null;
+        try {
+            gameEntity = repository.findByName(gameName).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return gameEntity;
+    }
+
     public void saveInterestedGames(List<InterestedGames> games) throws DataBaseOperationException {
         try {
             interestedGamesRepository.saveAll(games);

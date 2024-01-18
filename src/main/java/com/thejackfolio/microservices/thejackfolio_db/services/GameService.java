@@ -28,9 +28,21 @@ public class GameService {
     @Autowired
     private GameServiceHelper helper;
 
-    public void saveGame(Game game) throws MapperException, DataBaseOperationException {
-        Games gameEntity = mapper.modelToEntityGame(game);
-        helper.saveGame(gameEntity);
+    public void saveOrUpdateGame(Game game) throws MapperException, DataBaseOperationException {
+        Games entity = helper.findByGameName(game.getName());
+        if(entity == null) {
+            entity = mapper.modelToEntityGame(game);
+            helper.saveGame(entity);
+        } else {
+            entity.setStatus(game.getStatus());
+            helper.saveGame(entity);
+        }
+    }
+
+    public List<Game> findAllActiveGames() throws DataBaseOperationException, MapperException {
+        List<Games> activeGameEntities = helper.findAllActiveGames();
+        List<Game> activeGameModels = mapper.entityToModelGameList(activeGameEntities);
+        return activeGameModels;
     }
 
     public List<InterestedGames> saveInterestedGames(ProfileDetail detail) throws MapperException, DataBaseOperationException {
