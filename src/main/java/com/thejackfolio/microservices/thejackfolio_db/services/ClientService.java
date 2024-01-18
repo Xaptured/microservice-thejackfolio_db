@@ -106,9 +106,11 @@ public class ClientService {
         if(details == null) {
             details = mapper.modelToEntityDetails(detail);
             helper.saveProfile(details);
-            List<InterestedGames> interestedGames = service.saveInterestedGames(detail);
-            List<InterestedGame> games = gameMapper.entityToModelGames(interestedGames);
-            detail.setInterestedGames(games);
+            if(detail.getInterestedGames() != null) {
+                List<InterestedGames> interestedGames = service.saveInterestedGames(detail);
+                List<InterestedGame> games = gameMapper.entityToModelGames(interestedGames);
+                detail.setInterestedGames(games);
+            }
         } else {
             details = mapper.modelToEntityDetails(detail, details);
             helper.saveProfile(details);

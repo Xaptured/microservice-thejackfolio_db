@@ -8,6 +8,7 @@ package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.Games;
 import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
+import com.thejackfolio.microservices.thejackfolio_db.enums.GameStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Game;
 import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
@@ -29,13 +30,31 @@ public class GameMapper {
             if(game != null) {
                 gameEntity = new Games();
                 gameEntity.setName(game.getName());
-                gameEntity.setStatus(game.getStatus());
+                gameEntity.setStatus(GameStatus.PENDING);
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return gameEntity;
+    }
+
+    public List<Game> entityToModelGameList(List<Games> gameEntities) throws MapperException {
+        List<Game> gameModels = null;
+        try {
+            if(gameEntities != null && !gameEntities.isEmpty()) {
+                gameModels = new ArrayList<>();
+                for(Games entity : gameEntities) {
+                    Game game = new Game();
+                    game.setName(entity.getName());
+                    gameModels.add(game);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return gameModels;
     }
 
     public List<InterestedGames> modelToEntityGames(List<InterestedGame> games, String email) throws MapperException {
