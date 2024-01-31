@@ -192,6 +192,24 @@ public class EventMapper {
         return event;
     }
 
+    public List<Event> entityToModelEvent(List<Events> eventEntities) throws MapperException {
+        List<Event> eventModel = null;
+        try {
+            if(!eventEntities.isEmpty()) {
+                eventModel = new ArrayList<>();
+                for(Events entity : eventEntities) {
+                    Event event = new Event();
+                    event.setName(entity.getName());
+                    eventModel.add(event);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return eventModel;
+    }
+
     public Event entityToModelEvent(Events eventEntity, EventDetails detailEntity, List<EventRules> ruleEntities) throws MapperException {
         Event event = null;
         try {

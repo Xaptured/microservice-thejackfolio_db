@@ -105,6 +105,28 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Find upcoming active events with respect to interested games",
+            description = "Find upcoming events with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-upcoming-events-interested-games/{email}")
+    public ResponseEntity<List<Event>> findActiveUpcomingEventsWrtInterestedGames(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findActiveUpcomingEventsWrtInterestedGames(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
             summary = "Update event status",
             description = "Update event status with a message which defines whether the request is successful or not."
     )

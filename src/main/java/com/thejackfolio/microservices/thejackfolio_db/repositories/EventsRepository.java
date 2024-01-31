@@ -14,12 +14,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EventsRepository extends JpaRepository<Events, Integer> {
 
     Optional<Events> findByName(String name);
+
+    @Query(value = "select * from events where gameId in (:gameIds) and status = 1", nativeQuery = true)
+    Optional<List<Events>> findActiveEventsWrtInterestedGames(List<Integer> gameIds);
 
     @Transactional
     @Modifying

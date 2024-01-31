@@ -13,6 +13,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,6 +37,8 @@ public class EventService {
     private EventMapper mapper;
     @Autowired
     private EventServiceHelper helper;
+    @Autowired
+    private GameServiceHelper gameServiceHelper;
 
     public Event saveOrUpdateEvent(Event event, boolean isCreate, boolean isUpdate) throws MapperException, DataBaseOperationException, EventException {
         Events nullOrEntity = helper.findEventByName(event.getName());
@@ -91,7 +94,7 @@ public class EventService {
     }
 
     public List<Event> findUpcomingEvents(String email) throws DataBaseOperationException, MapperException {
-        List<Event> inActiveEvents = null;
+        List<Event> activeEvents = null;
         List<TeamDetails> details = helper.findTeamDetailsByEmail(email);
         if(!details.isEmpty()) {
             List<Integer> teamIds = new ArrayList<>();
@@ -104,14 +107,37 @@ public class EventService {
                 eventIds.add(team.getEventId());
             }
             List<Events> events = helper.findAllEventsByEventIds(eventIds);
-            inActiveEvents = new ArrayList<>();
+            activeEvents = new ArrayList<>();
             for(Events event : events) {
-                if(event.getStatus() == EventStatus.INACTIVE) {
-                    inActiveEvents.add(mapper.entityToModelEvent(event));
+                if(event.getStatus() == EventStatus.ACTIVE) {
+                    activeEvents.add(mapper.entityToModelEvent(event));
                 }
             }
         }
-        return inActiveEvents;
+        return activeEvents;
+    }
+
+    public List<Event> findActiveUpcomingEventsWrtInterestedGames(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<InterestedGames> interestedGameEntities = gameServiceHelper.findInterestedGamesByEmail(email);
+        List<Integer> gameIds = null;
+        List<String> gameNames = null;
+        if(!interestedGameEntities.isEmpty()) {
+            gameIds = new ArrayList<>();
+            gameNames = new ArrayList<>();
+            for(InterestedGames gameEntity : interestedGameEntities) {
+                gameNames.add(gameEntity.getGameName());
+            }
+            List<Games> gameEntities = gameServiceHelper.findAllByGameNames(gameNames);
+            if(!gameEntities.isEmpty()) {
+                for(Games gameEntity: gameEntities) {
+                    gameIds.add(gameEntity.getId());
+                }
+                List<Events> eventEntities = helper.findActiveEventsWrtInterestedGames(gameIds);
+                activeEvents = mapper.entityToModelEvent(eventEntities);
+            }
+        }
+        return activeEvents;
     }
 
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {

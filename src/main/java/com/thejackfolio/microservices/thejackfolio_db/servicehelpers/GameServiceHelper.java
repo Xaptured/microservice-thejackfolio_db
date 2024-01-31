@@ -61,6 +61,17 @@ public class GameServiceHelper {
         return gameEntity;
     }
 
+    public List<Games> findAllByGameNames(List<String> gameNames) throws DataBaseOperationException {
+        List<Games> gameEntities = null;
+        try {
+            gameEntities = repository.findAllByNames(gameNames).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return gameEntities;
+    }
+
     public void saveInterestedGames(List<InterestedGames> games) throws DataBaseOperationException {
         try {
             interestedGamesRepository.saveAll(games);
