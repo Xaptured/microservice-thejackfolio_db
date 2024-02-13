@@ -83,6 +83,36 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Get event id",
+            description = "Get event id"
+    )
+    @GetMapping("/get-event-id/{name}")
+    public ResponseEntity<Integer> getEventId(@PathVariable String name) {
+        Integer response = null;
+        try{
+            response = service.getEventId(name);
+        } catch (DataBaseOperationException exception){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Is registered in event",
+            description = "Is registered in event"
+    )
+    @GetMapping("/is-registered")
+    public ResponseEntity<Boolean> isRegisteredInEvent(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        Boolean response = false;
+        try {
+            response = service.isRegisteredInEvent(eventId, eventName, email);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
             summary = "Find upcoming events",
             description = "Find upcoming events with a message which defines whether the request is successful or not."
     )

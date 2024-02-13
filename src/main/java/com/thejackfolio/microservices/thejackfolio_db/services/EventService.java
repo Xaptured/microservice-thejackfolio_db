@@ -89,6 +89,30 @@ public class EventService {
         return event;
     }
 
+    public Integer getEventId(String name) throws DataBaseOperationException {
+        Integer eventId = null;
+        Events eventEntity = helper.findEventByName(name);
+        if(eventEntity != null) {
+            eventId = eventEntity.getId();
+        }
+        return eventId;
+    }
+
+    public Boolean isRegisteredInEvent(Integer eventId, String eventName, String email) throws DataBaseOperationException {
+        Boolean isRegistered = false;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        for(Teams team : teamEntities) {
+            List<TeamDetails> detailEntities = helper.findDetailsByTeamId(team.getId());
+            isRegistered = detailEntities.stream()
+                    .anyMatch(detail -> detail.getEmail().equals(email));
+            if(isRegistered)
+                return isRegistered;
+        }
+        return isRegistered;
+    }
+
     public String findEventNameById(Integer eventId) throws DataBaseOperationException {
         return helper.findEventNameById(eventId);
     }
