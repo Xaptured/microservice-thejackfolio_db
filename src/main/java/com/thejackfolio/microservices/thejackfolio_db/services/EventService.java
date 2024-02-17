@@ -113,6 +113,33 @@ public class EventService {
         return isRegistered;
     }
 
+    public List<TeamDetail> getTeamDetailsForEvent(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
+        Boolean isRegistered = false;
+        List<TeamDetail> teamDetails = null;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        for(Teams team : teamEntities) {
+            List<TeamDetails> detailEntities = helper.findDetailsByTeamId(team.getId());
+            isRegistered = detailEntities.stream()
+                    .anyMatch(detail -> detail.getEmail().equals(email));
+            if(isRegistered) {
+                teamDetails = mapper.entityToModelDetails(detailEntities);
+                return teamDetails;
+            }
+        }
+        return null;
+    }
+
+    public Integer remainingPlayersPerSlotCount(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        EventDetails eventDetailsEntity = helper.findDetailsByEventId(eventId);
+        List<TeamDetail> teamDetails = getTeamDetailsForEvent(eventId, eventName, email);
+        Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - teamDetails.size();
+        return remainingCount;
+    }
+
     public String findEventNameById(Integer eventId) throws DataBaseOperationException {
         return helper.findEventNameById(eventId);
     }

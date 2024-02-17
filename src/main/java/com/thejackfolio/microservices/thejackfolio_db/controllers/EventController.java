@@ -11,6 +11,7 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
+import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.micrometer.common.util.StringUtils;
@@ -39,6 +40,8 @@ public class EventController {
 
     @Autowired
     private EventService service;
+    @Autowired
+    private ClientService clientService;
 
     @Operation(
             summary = "Save OR Update events",
@@ -107,6 +110,37 @@ public class EventController {
         try {
             response = service.isRegisteredInEvent(eventId, eventName, email);
         } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get team details for an event",
+            description = "Get team details for an event"
+    )
+    @GetMapping("/get-team-details-for-event")
+    public ResponseEntity<List<ProfileDetail>> getTeamDetailsForEvent(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        List<ProfileDetail> response = null;
+        try {
+            List<TeamDetail> teamDetails = service.getTeamDetailsForEvent(eventId, eventName, email);
+            response = clientService.getProfileDetails(teamDetails);
+        } catch (DataBaseOperationException | MapperException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get remaining players per slot",
+            description = "Get remaining players per slot"
+    )
+    @GetMapping("/get-remaining-players-per-slot")
+    public ResponseEntity<Integer> remainingPlayersPerSlotCount(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        Integer response = null;
+        try {
+            response = service.remainingPlayersPerSlotCount(eventId, eventName, email);
+        } catch (DataBaseOperationException | MapperException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
