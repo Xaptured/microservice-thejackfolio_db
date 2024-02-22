@@ -243,6 +243,11 @@ public class EventService {
                 helper.saveTeamDetails(details);
                 List<TeamDetail> teamDetails = mapper.entityToModelDetails(details);
                 team.setDetail(teamDetails);
+                EventDetails detail = helper.findDetailsByEventId(team.getEventId());
+                if(detail != null) {
+                    Integer remainingSlotsUpdated = detail.getRemainingSlots()-1;
+                    detail.setRemainingSlots(remainingSlotsUpdated);
+                }
             } else {
                 throw new TeamException(StringConstants.DUPLICATE_ERROR);
             }

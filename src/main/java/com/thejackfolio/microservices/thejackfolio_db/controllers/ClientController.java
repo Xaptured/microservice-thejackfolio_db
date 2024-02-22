@@ -252,7 +252,7 @@ public class ClientController {
             if(detail == null) {
                 detail = new ProfileDetail();
                 detail.setMessage(StringConstants.EMAIL_NOT_PRESENT);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(detail);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
             } else {
                 detail.setMessage(StringConstants.REQUEST_PROCESSED);
             }
@@ -261,7 +261,28 @@ public class ClientController {
             detail.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(detail);
+        return ResponseEntity.status(HttpStatus.OK).body(detail);
+    }
+
+    @Operation(
+            summary = "Is profile present",
+            description = "Is profile present"
+    )
+    @GetMapping("/is-profile-present/{email}")
+    public ResponseEntity<Boolean> isProfilePresent(@PathVariable String email) {
+        boolean response = false;
+        try {
+            if (email == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            ProfileDetail detail = clientService.getProfileDetails(email);
+            if(detail != null) {
+                response = true;
+            }
+        } catch (MapperException | DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Operation(
