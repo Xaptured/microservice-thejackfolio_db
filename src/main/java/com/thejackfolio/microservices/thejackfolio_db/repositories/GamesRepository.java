@@ -19,6 +19,9 @@ public interface GamesRepository extends JpaRepository<Games, Integer> {
 
     Optional<Games> findByName(String gameName);
 
+    @Query(value = "select * from game where name in (:gameNames)", nativeQuery = true)
+    Optional<List<Games>> findAllByNames(List<String> gameNames);
+
     @Query(value = "select * from game where status = 1", nativeQuery = true)
     List<Games> findAllActiveGames();
 }

@@ -11,6 +11,7 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
+import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.services.EventService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.micrometer.common.util.StringUtils;
@@ -39,6 +40,8 @@ public class EventController {
 
     @Autowired
     private EventService service;
+    @Autowired
+    private ClientService clientService;
 
     @Operation(
             summary = "Save OR Update events",
@@ -83,6 +86,82 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Get event id",
+            description = "Get event id"
+    )
+    @GetMapping("/get-event-id/{name}")
+    public ResponseEntity<Integer> getEventId(@PathVariable String name) {
+        Integer response = null;
+        try{
+            response = service.getEventId(name);
+        } catch (DataBaseOperationException exception){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Is registered in event",
+            description = "Is registered in event"
+    )
+    @GetMapping("/is-registered")
+    public ResponseEntity<Boolean> isRegisteredInEvent(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        Boolean response = false;
+        try {
+            response = service.isRegisteredInEvent(eventId, eventName, email);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get team details for an event",
+            description = "Get team details for an event"
+    )
+    @GetMapping("/get-team-details-for-event")
+    public ResponseEntity<List<ProfileDetail>> getTeamDetailsForEvent(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        List<ProfileDetail> response = null;
+        try {
+            List<TeamDetail> teamDetails = service.getTeamDetailsForEvent(eventId, eventName, email);
+            response = clientService.getProfileDetails(teamDetails);
+        } catch (DataBaseOperationException | MapperException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get remaining players per slot",
+            description = "Get remaining players per slot"
+    )
+    @GetMapping("/get-remaining-players-per-slot")
+    public ResponseEntity<Integer> remainingPlayersPerSlotCount(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        Integer response = null;
+        try {
+            response = service.remainingPlayersPerSlotCount(eventId, eventName, email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get team names with counts",
+            description = "Get team names with counts"
+    )
+    @GetMapping("/get-teams-with-count")
+    public ResponseEntity<List<TeamWithCount>> getTeamsWithCount(@RequestParam Integer eventId, @RequestParam String eventName) {
+        List<TeamWithCount> response = null;
+        try {
+            response = service.getTeamsWithCount(eventId, eventName);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
             summary = "Find upcoming events",
             description = "Find upcoming events with a message which defines whether the request is successful or not."
     )
@@ -94,6 +173,28 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             eventResults = service.findUpcomingEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
+            summary = "Find upcoming active events with respect to interested games",
+            description = "Find upcoming events with a message which defines whether the request is successful or not."
+    )
+    @GetMapping("/get-upcoming-events-interested-games/{email}")
+    public ResponseEntity<List<Event>> findActiveUpcomingEventsWrtInterestedGames(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findActiveUpcomingEventsWrtInterestedGames(email);
         } catch (DataBaseOperationException | MapperException exception) {
             eventResults = new ArrayList<>();
             Event event = new Event();

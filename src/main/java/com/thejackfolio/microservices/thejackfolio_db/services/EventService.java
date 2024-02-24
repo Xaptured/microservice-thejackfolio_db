@@ -13,6 +13,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.*;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.EventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.EventServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,6 +37,8 @@ public class EventService {
     private EventMapper mapper;
     @Autowired
     private EventServiceHelper helper;
+    @Autowired
+    private GameServiceHelper gameServiceHelper;
 
     public Event saveOrUpdateEvent(Event event, boolean isCreate, boolean isUpdate) throws MapperException, DataBaseOperationException, EventException {
         Events nullOrEntity = helper.findEventByName(event.getName());
@@ -86,12 +89,83 @@ public class EventService {
         return event;
     }
 
+    public Integer getEventId(String name) throws DataBaseOperationException {
+        Integer eventId = null;
+        Events eventEntity = helper.findEventByName(name);
+        if(eventEntity != null) {
+            eventId = eventEntity.getId();
+        }
+        return eventId;
+    }
+
+    public Boolean isRegisteredInEvent(Integer eventId, String eventName, String email) throws DataBaseOperationException {
+        Boolean isRegistered = false;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        for(Teams team : teamEntities) {
+            List<TeamDetails> detailEntities = helper.findDetailsByTeamId(team.getId());
+            isRegistered = detailEntities.stream()
+                    .anyMatch(detail -> detail.getEmail().equals(email));
+            if(isRegistered)
+                return isRegistered;
+        }
+        return isRegistered;
+    }
+
+    public List<TeamDetail> getTeamDetailsForEvent(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
+        Boolean isRegistered = false;
+        List<TeamDetail> teamDetails = null;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        for(Teams team : teamEntities) {
+            List<TeamDetails> detailEntities = helper.findDetailsByTeamId(team.getId());
+            isRegistered = detailEntities.stream()
+                    .anyMatch(detail -> detail.getEmail().equals(email));
+            if(isRegistered) {
+                teamDetails = mapper.entityToModelDetails(detailEntities);
+                return teamDetails;
+            }
+        }
+        return null;
+    }
+
+    public Integer remainingPlayersPerSlotCount(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        EventDetails eventDetailsEntity = helper.findDetailsByEventId(eventId);
+        List<TeamDetail> teamDetails = getTeamDetailsForEvent(eventId, eventName, email);
+        Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - teamDetails.size();
+        return remainingCount;
+    }
+
+    public List<TeamWithCount> getTeamsWithCount(Integer eventId, String eventName) throws DataBaseOperationException {
+        List<TeamWithCount> teamWithCounts = null;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        EventDetails eventDetailsEntity = helper.findDetailsByEventId(eventId);
+        if(teamEntities != null && !teamEntities.isEmpty()) {
+            teamWithCounts = new ArrayList<>();
+            for(Teams teamEntity : teamEntities) {
+                TeamWithCount teamWithCount = new TeamWithCount();
+                teamWithCount.setTeamName(teamEntity.getName());
+                List<TeamDetails> detailEntities = helper.findDetailsByTeamId(teamEntity.getId());
+                Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - detailEntities.size();
+                teamWithCount.setRemainingPlayers(remainingCount);
+                teamWithCounts.add(teamWithCount);
+            }
+        }
+        return teamWithCounts;
+    }
+
     public String findEventNameById(Integer eventId) throws DataBaseOperationException {
         return helper.findEventNameById(eventId);
     }
 
     public List<Event> findUpcomingEvents(String email) throws DataBaseOperationException, MapperException {
-        List<Event> inActiveEvents = null;
+        List<Event> activeEvents = null;
         List<TeamDetails> details = helper.findTeamDetailsByEmail(email);
         if(!details.isEmpty()) {
             List<Integer> teamIds = new ArrayList<>();
@@ -104,14 +178,37 @@ public class EventService {
                 eventIds.add(team.getEventId());
             }
             List<Events> events = helper.findAllEventsByEventIds(eventIds);
-            inActiveEvents = new ArrayList<>();
+            activeEvents = new ArrayList<>();
             for(Events event : events) {
-                if(event.getStatus() == EventStatus.INACTIVE) {
-                    inActiveEvents.add(mapper.entityToModelEvent(event));
+                if(event.getStatus() == EventStatus.ACTIVE) {
+                    activeEvents.add(mapper.entityToModelEvent(event));
                 }
             }
         }
-        return inActiveEvents;
+        return activeEvents;
+    }
+
+    public List<Event> findActiveUpcomingEventsWrtInterestedGames(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<InterestedGames> interestedGameEntities = gameServiceHelper.findInterestedGamesByEmail(email);
+        List<Integer> gameIds = null;
+        List<String> gameNames = null;
+        if(!interestedGameEntities.isEmpty()) {
+            gameIds = new ArrayList<>();
+            gameNames = new ArrayList<>();
+            for(InterestedGames gameEntity : interestedGameEntities) {
+                gameNames.add(gameEntity.getGameName());
+            }
+            List<Games> gameEntities = gameServiceHelper.findAllByGameNames(gameNames);
+            if(!gameEntities.isEmpty()) {
+                for(Games gameEntity: gameEntities) {
+                    gameIds.add(gameEntity.getId());
+                }
+                List<Events> eventEntities = helper.findActiveEventsWrtInterestedGames(gameIds);
+                activeEvents = mapper.entityToModelEvent(eventEntities);
+            }
+        }
+        return activeEvents;
     }
 
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
@@ -146,6 +243,12 @@ public class EventService {
                 helper.saveTeamDetails(details);
                 List<TeamDetail> teamDetails = mapper.entityToModelDetails(details);
                 team.setDetail(teamDetails);
+                EventDetails detail = helper.findDetailsByEventId(team.getEventId());
+                if(detail != null && detail.getRemainingSlots()>0) {
+                    Integer remainingSlotsUpdated = detail.getRemainingSlots()-1;
+                    detail.setRemainingSlots(remainingSlotsUpdated);
+                    helper.saveEventDetails(detail);
+                }
             } else {
                 throw new TeamException(StringConstants.DUPLICATE_ERROR);
             }

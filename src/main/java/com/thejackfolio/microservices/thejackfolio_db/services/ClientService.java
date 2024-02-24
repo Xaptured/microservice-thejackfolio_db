@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +42,8 @@ public class ClientService {
     private GameMapper gameMapper;
     @Autowired
     private GameServiceHelper gameServiceHelper;
+    @Autowired
+    private EventService eventService;
 
     public void saveComments(ClientComments clientComments) throws MapperException, DataBaseOperationException {
         com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = mapper.modelToEntityComments(clientComments);
@@ -129,6 +132,18 @@ public class ClientService {
             detail = mapper.entityToModelDetails(details, games);
         }
         return detail;
+    }
+
+    public List<ProfileDetail> getProfileDetails(List<TeamDetail> teamDetails) throws DataBaseOperationException, MapperException {
+        List<ProfileDetail> details = null;
+        if(teamDetails != null) {
+            details = new ArrayList<>();
+            for(TeamDetail detail : teamDetails) {
+                ProfileDetail profileDetail = getProfileDetails(detail.getEmail());
+                details.add(profileDetail);
+            }
+        }
+        return details;
     }
 
     public void saveOrUpdatePartner(Partner partner) throws DataBaseOperationException, MapperException, IOException {

@@ -163,6 +163,17 @@ public class EventServiceHelper {
         return details;
     }
 
+    public List<Events> findActiveEventsWrtInterestedGames(List<Integer> gameIds) throws DataBaseOperationException {
+        List<Events> eventEntities = null;
+        try {
+            eventEntities = eventsRepository.findActiveEventsWrtInterestedGames(gameIds).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return eventEntities;
+    }
+
     public Teams saveTeam(Teams team) throws DataBaseOperationException {
         Teams teamEntity = null;
         try {
