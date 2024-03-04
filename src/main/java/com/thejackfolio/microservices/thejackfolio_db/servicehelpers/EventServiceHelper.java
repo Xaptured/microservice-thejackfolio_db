@@ -174,6 +174,17 @@ public class EventServiceHelper {
         return eventEntities;
     }
 
+    public List<Events> findAllUpcomingOrganizerEvents(String email) throws DataBaseOperationException {
+        List<Events> eventEntities = null;
+        try {
+            eventEntities = eventsRepository.findAllByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return eventEntities;
+    }
+
     public Teams saveTeam(Teams team) throws DataBaseOperationException {
         Teams teamEntity = null;
         try {

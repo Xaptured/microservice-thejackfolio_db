@@ -211,6 +211,13 @@ public class EventService {
         return activeEvents;
     }
 
+    public List<Event> findAllUpcomingOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<Events> eventEntities = helper.findAllUpcomingOrganizerEvents(email);
+        activeEvents = mapper.entityToModelEvent(eventEntities);
+        return activeEvents;
+    }
+
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
         helper.updateEventStatus(name, status);
     }
