@@ -177,7 +177,7 @@ public class EventServiceHelper {
     public List<Events> findAllUpcomingOrganizerEvents(String email) throws DataBaseOperationException {
         List<Events> eventEntities = null;
         try {
-            eventEntities = eventsRepository.findAllByEmail(email).orElse(null);
+            eventEntities = eventsRepository.findAllActiveEventsByEmail(email).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
