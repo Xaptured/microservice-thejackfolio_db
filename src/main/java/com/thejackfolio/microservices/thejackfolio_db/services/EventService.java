@@ -318,6 +318,14 @@ public class EventService {
         return leaderboard;
     }
 
+    public boolean isLeaderboardComplete(Integer eventId) throws DataBaseOperationException {
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            return helper.isLeaderboardComplete(leaderboardEntity);
+        }
+        return false;
+    }
+
     private void saveDocumentsToPath(String docPath, MultipartFile document) throws IOException {
         document.transferTo(new File(docPath).toPath());
     }

@@ -13,6 +13,7 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperati
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.FileCreateException;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import io.micrometer.common.util.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -296,6 +297,15 @@ public class EventServiceHelper {
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
         }
         return leaderboard;
+    }
+
+    public boolean isLeaderboardComplete(Leaderboards leaderboard) {
+        if(StringUtils.isNotEmpty(leaderboard.getDocumentPath()) && StringUtils.isNotBlank(leaderboard.getDocumentPath()) &&
+                StringUtils.isNotEmpty(leaderboard.getDocumentType()) && StringUtils.isNotBlank(leaderboard.getDocumentType()) &&
+                StringUtils.isNotEmpty(leaderboard.getDocumentName()) && StringUtils.isNotBlank(leaderboard.getDocumentName())) {
+            return true;
+        } else
+            return false;
     }
 
     public List<Teams> findAllTeamsByEventId(Integer eventId) throws DataBaseOperationException {

@@ -415,6 +415,21 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Is leaderboard complete",
+            description = "Is leaderboard complete"
+    )
+    @GetMapping("/is-leaderboard-complete/{eventId}")
+    public ResponseEntity<Boolean> isLeaderboardComplete(@PathVariable Integer eventId) {
+        Boolean isLeaderboardComplete = false;
+        try {
+            isLeaderboardComplete = service.isLeaderboardComplete(eventId);
+        } catch (DataBaseOperationException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(isLeaderboardComplete);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(isLeaderboardComplete);
+    }
+
+    @Operation(
             summary = "Get leaderboard",
             description = "Get leaderboard with a message which defines whether the request is successful or not."
     )
