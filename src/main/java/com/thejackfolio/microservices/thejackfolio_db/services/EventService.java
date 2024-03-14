@@ -211,6 +211,13 @@ public class EventService {
         return activeEvents;
     }
 
+    public List<Event> findAllUpcomingOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<Events> eventEntities = helper.findAllUpcomingOrganizerEvents(email);
+        activeEvents = mapper.entityToModelEvent(eventEntities);
+        return activeEvents;
+    }
+
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
         helper.updateEventStatus(name, status);
     }
@@ -309,6 +316,14 @@ public class EventService {
             leaderboard = mapper.entityToModelLeaderboard(leaderboardEntity);
         }
         return leaderboard;
+    }
+
+    public boolean isLeaderboardComplete(Integer eventId) throws DataBaseOperationException {
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            return helper.isLeaderboardComplete(leaderboardEntity);
+        }
+        return false;
     }
 
     private void saveDocumentsToPath(String docPath, MultipartFile document) throws IOException {

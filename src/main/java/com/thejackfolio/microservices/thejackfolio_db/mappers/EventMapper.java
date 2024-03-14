@@ -195,7 +195,7 @@ public class EventMapper {
     public List<Event> entityToModelEvent(List<Events> eventEntities) throws MapperException {
         List<Event> eventModel = null;
         try {
-            if(!eventEntities.isEmpty()) {
+            if(eventEntities != null && !eventEntities.isEmpty()) {
                 eventModel = new ArrayList<>();
                 for(Events entity : eventEntities) {
                     Event event = new Event();
