@@ -22,7 +22,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
 
     Optional<Events> findByName(String name);
 
-    @Query(value = "select * from events where email = ?1 and status < 3", nativeQuery = true)
+    @Query(value = "select * from events where email = ?1 and status < 4", nativeQuery = true)
     Optional<List<Events>> findAllActiveEventsByEmail(String email);
 
     @Query(value = "select * from events where game_id in (:gameIds) and status = 1", nativeQuery = true)
