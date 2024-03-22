@@ -179,8 +179,9 @@ public class EventService {
             }
             List<Events> events = helper.findAllEventsByEventIds(eventIds);
             activeEvents = new ArrayList<>();
+            // will modify check so that it will return both active or ongoing events
             for(Events event : events) {
-                if(event.getStatus() == EventStatus.ACTIVE) {
+                if(event.getStatus() == EventStatus.ACTIVE || event.getStatus() == EventStatus.ONGOING) {
                     activeEvents.add(mapper.entityToModelEvent(event));
                 }
             }
@@ -234,6 +235,13 @@ public class EventService {
             }
         }
         activeEvents = mapper.entityToModelEvent(filteredEventEntities);
+        return activeEvents;
+    }
+
+    public List<Event> findOnlyActiveOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<Events> eventEntities = helper.findOnlyActiveEventsByEmail(email);
+        activeEvents = mapper.entityToModelEvent(eventEntities);
         return activeEvents;
     }
 

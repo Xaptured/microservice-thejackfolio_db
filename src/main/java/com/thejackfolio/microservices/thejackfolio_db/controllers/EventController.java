@@ -272,6 +272,28 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Find only active organizer events",
+            description = "Find only active organizer events."
+    )
+    @GetMapping("/get-only-active-events-organizer/{email}")
+    public ResponseEntity<List<Event>> findOnlyActiveOrganizerEvents(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findOnlyActiveOrganizerEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
             summary = "Update event status",
             description = "Update event status with a message which defines whether the request is successful or not."
     )
