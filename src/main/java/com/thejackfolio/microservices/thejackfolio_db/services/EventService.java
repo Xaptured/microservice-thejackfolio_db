@@ -207,6 +207,9 @@ public class EventService {
                 }
                 List<Events> eventEntities = helper.findActiveEventsWrtInterestedGames(gameIds);
                 activeEvents = mapper.entityToModelEvent(eventEntities);
+                if(activeEvents == null) {
+                    activeEvents = new ArrayList<>();
+                }
             }
         }
         return activeEvents;
@@ -222,6 +225,9 @@ public class EventService {
             }
         }
         activeEvents = mapper.entityToModelEvent(filteredEventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
         return activeEvents;
     }
 
@@ -235,6 +241,9 @@ public class EventService {
             }
         }
         activeEvents = mapper.entityToModelEvent(filteredEventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
         return activeEvents;
     }
 
@@ -242,6 +251,9 @@ public class EventService {
         List<Event> activeEvents = null;
         List<Events> eventEntities = helper.findOnlyActiveEventsByEmail(email);
         activeEvents = mapper.entityToModelEvent(eventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
         return activeEvents;
     }
 
