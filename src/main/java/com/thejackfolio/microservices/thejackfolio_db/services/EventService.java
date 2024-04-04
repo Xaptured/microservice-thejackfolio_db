@@ -179,8 +179,9 @@ public class EventService {
             }
             List<Events> events = helper.findAllEventsByEventIds(eventIds);
             activeEvents = new ArrayList<>();
+            // will modify check so that it will return both active or ongoing events
             for(Events event : events) {
-                if(event.getStatus() == EventStatus.ACTIVE) {
+                if(event.getStatus() == EventStatus.ACTIVE || event.getStatus() == EventStatus.ONGOING) {
                     activeEvents.add(mapper.entityToModelEvent(event));
                 }
             }
@@ -206,6 +207,9 @@ public class EventService {
                 }
                 List<Events> eventEntities = helper.findActiveEventsWrtInterestedGames(gameIds);
                 activeEvents = mapper.entityToModelEvent(eventEntities);
+                if(activeEvents == null) {
+                    activeEvents = new ArrayList<>();
+                }
             }
         }
         return activeEvents;
@@ -214,8 +218,67 @@ public class EventService {
     public List<Event> findAllUpcomingOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
         List<Event> activeEvents = null;
         List<Events> eventEntities = helper.findAllUpcomingOrganizerEvents(email);
-        activeEvents = mapper.entityToModelEvent(eventEntities);
+        List<Events> filteredEventEntities = new ArrayList<>();
+        for(Events eventEntity : eventEntities) {
+            if(!isLeaderboardComplete(eventEntity.getId())) {
+                filteredEventEntities.add(eventEntity);
+            }
+        }
+        activeEvents = mapper.entityToModelEvent(filteredEventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
         return activeEvents;
+    }
+
+    public List<Event> findAllLeaderboardCompleteOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<Events> eventEntities = helper.findAllUpcomingOrganizerEvents(email);
+        List<Events> filteredEventEntities = new ArrayList<>();
+        for(Events eventEntity : eventEntities) {
+            if(isLeaderboardComplete(eventEntity.getId())) {
+                filteredEventEntities.add(eventEntity);
+            }
+        }
+        activeEvents = mapper.entityToModelEvent(filteredEventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
+        return activeEvents;
+    }
+
+    public List<Event> findOnlyActiveOrganizerEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> activeEvents = null;
+        List<Events> eventEntities = helper.findOnlyActiveEventsByEmail(email);
+        activeEvents = mapper.entityToModelEvent(eventEntities);
+        if(activeEvents == null) {
+            activeEvents = new ArrayList<>();
+        }
+        return activeEvents;
+    }
+
+    public List<Event> findAllLeaderboardCompleteParticipantEvents(String email) throws DataBaseOperationException, MapperException {
+        List<Event> completedEvents = null;
+        List<TeamDetails> details = helper.findTeamDetailsByEmail(email);
+        if(!details.isEmpty()) {
+            List<Integer> teamIds = new ArrayList<>();
+            for(TeamDetails detail : details) {
+                teamIds.add(detail.getTeamId());
+            }
+            List<Teams> teams = helper.findAllTeamsByTeamIds(teamIds);
+            List<Integer> eventIds = new ArrayList<>();
+            for(Teams team : teams) {
+                eventIds.add(team.getEventId());
+            }
+            List<Events> events = helper.findAllEventsByEventIds(eventIds);
+            completedEvents = new ArrayList<>();
+            for(Events event : events) {
+                if(event.getStatus() == EventStatus.COMPLETED) {
+                    completedEvents.add(mapper.entityToModelEvent(event));
+                }
+            }
+        }
+        return completedEvents;
     }
 
     public void updateEventStatus(String name, EventStatus status) throws DataBaseOperationException {
@@ -358,6 +421,19 @@ public class EventService {
             String docPath = leaderboardEntity.getDocumentPath();
             byte[] document = Files.readAllBytes(new File(docPath).toPath());
             return document;
+        } else {
+            return null;
+        }
+    }
+
+    public List<TeamWithPoints> findTeamsWithPoints(Integer eventId) throws DataBaseOperationException, IOException {
+        Leaderboards leaderboardEntity = helper.findLeaderboardByEventId(eventId);
+        if(leaderboardEntity != null) {
+            String docPath = leaderboardEntity.getDocumentPath();
+            byte[] document = Files.readAllBytes(new File(docPath).toPath());
+            List<TeamWithPoints> teamWithPoints = helper.mapExcelDataToObject(document);
+            Collections.sort(teamWithPoints, Comparator.comparingDouble(TeamWithPoints :: getPoints));
+            return teamWithPoints;
         } else {
             return null;
         }

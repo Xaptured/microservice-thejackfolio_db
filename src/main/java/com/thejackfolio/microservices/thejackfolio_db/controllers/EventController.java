@@ -184,6 +184,28 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Find completed events for participant",
+            description = "Find completed events for participant."
+    )
+    @GetMapping("/get-completed-events-participant/{email}")
+    public ResponseEntity<List<Event>> findAllLeaderboardCompleteParticipantEvents(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findAllLeaderboardCompleteParticipantEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
             summary = "Find upcoming active events with respect to interested games",
             description = "Find upcoming events with a message which defines whether the request is successful or not."
     )
@@ -217,6 +239,50 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             eventResults = service.findAllUpcomingOrganizerEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
+            summary = "Find completed events for organizer",
+            description = "Find completed events for organizer."
+    )
+    @GetMapping("/get-completed-events-organizer/{email}")
+    public ResponseEntity<List<Event>> findAllLeaderboardCompleteOrganizerEvents(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findAllLeaderboardCompleteOrganizerEvents(email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            eventResults = new ArrayList<>();
+            Event event = new Event();
+            event.setMessage(exception.getMessage());
+            eventResults.add(event);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eventResults);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(eventResults);
+    }
+
+    @Operation(
+            summary = "Find only active organizer events",
+            description = "Find only active organizer events."
+    )
+    @GetMapping("/get-only-active-events-organizer/{email}")
+    public ResponseEntity<List<Event>> findOnlyActiveOrganizerEvents(@PathVariable String email) {
+        List<Event> eventResults = null;
+        try {
+            if(StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            eventResults = service.findOnlyActiveOrganizerEvents(email);
         } catch (DataBaseOperationException | MapperException exception) {
             eventResults = new ArrayList<>();
             Event event = new Event();
@@ -477,6 +543,27 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(document);
         }
         return ResponseEntity.status(HttpStatus.OK).body(document);
+    }
+
+    @Operation(
+            summary = "Get Teams with points",
+            description = "Get Teams with points"
+    )
+    @GetMapping("/get-teams-with-points/{eventId}")
+    public ResponseEntity<List<TeamWithPoints>> findTeamsWithPoints(@PathVariable Integer eventId) {
+        List<TeamWithPoints> teamWithPoints = null;
+        try {
+            if(eventId == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            teamWithPoints = service.findTeamsWithPoints(eventId);
+            if(teamWithPoints == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(teamWithPoints);
+            }
+        } catch (DataBaseOperationException | IOException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(teamWithPoints);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(teamWithPoints);
     }
 
     @Operation(

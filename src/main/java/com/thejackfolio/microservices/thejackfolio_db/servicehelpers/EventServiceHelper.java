@@ -11,21 +11,23 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.TeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.FileCreateException;
+import com.thejackfolio.microservices.thejackfolio_db.models.TeamWithPoints;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.micrometer.common.util.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -179,6 +181,17 @@ public class EventServiceHelper {
         List<Events> eventEntities = null;
         try {
             eventEntities = eventsRepository.findAllActiveEventsByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
+        }
+        return eventEntities;
+    }
+
+    public List<Events> findOnlyActiveEventsByEmail(String email) throws DataBaseOperationException {
+        List<Events> eventEntities = null;
+        try {
+            eventEntities = eventsRepository.findOnlyActiveEventsByEmail(email).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new DataBaseOperationException(StringConstants.DATABASE_ERROR, exception);
@@ -348,5 +361,27 @@ public class EventServiceHelper {
             throw new FileCreateException(StringConstants.DATABASE_ERROR, exception);
         }
         return outputStreamDoc;
+    }
+
+    public List<TeamWithPoints> mapExcelDataToObject(byte[] excelData) throws IOException {
+        List<TeamWithPoints> teamList = new ArrayList<>();
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(excelData);
+             Workbook workbook = WorkbookFactory.create(bis)) {
+
+            Sheet sheet = workbook.getSheet("Teams");
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            rowIterator.next(); // Skip header row
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+
+                String teamName = row.getCell(0).getStringCellValue();
+                Double points = row.getCell(1).getNumericCellValue();
+
+                TeamWithPoints teamData = new TeamWithPoints(teamName, points);
+                teamList.add(teamData);
+            }
+        }
+        return teamList;
     }
 }
