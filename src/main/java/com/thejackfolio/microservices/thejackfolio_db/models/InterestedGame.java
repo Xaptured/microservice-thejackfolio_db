@@ -16,14 +16,16 @@ public class InterestedGame {
     private String email;
     private String gameName;
     private Integer gameNumber;
+    private String message;
 
     public InterestedGame() {
     }
 
-    public InterestedGame(String email, String gameName, Integer gameNumber) {
+    public InterestedGame(String email, String gameName, Integer gameNumber, String message) {
         this.email = email;
         this.gameName = gameName;
         this.gameNumber = gameNumber;
+        this.message = message;
     }
 
     public String getEmail() {
@@ -48,6 +50,14 @@ public class InterestedGame {
 
     public void setGameNumber(Integer gameNumber) {
         this.gameNumber = gameNumber;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override

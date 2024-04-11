@@ -13,11 +13,13 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperati
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.GameMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.Game;
+import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
 import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -72,5 +74,14 @@ public class GameService {
 
     public String getGameName(Integer gameId) throws DataBaseOperationException {
         return helper.getGameName(gameId);
+    }
+
+    public List<InterestedGame> findInterestedGames(String email) throws DataBaseOperationException, MapperException {
+        List<InterestedGames> gameEntities = helper.findInterestedGamesByEmail(email);
+        List<InterestedGame> interestedGames = mapper.entityToModelGames(gameEntities);
+        if(interestedGames == null) {
+            interestedGames = new ArrayList<>();
+        }
+        return interestedGames;
     }
 }

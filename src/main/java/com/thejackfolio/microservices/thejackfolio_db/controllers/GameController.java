@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.Game;
+import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
 import com.thejackfolio.microservices.thejackfolio_db.services.GameService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,5 +69,23 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(activeGameModels);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(activeGameModels);
+    }
+
+    @Operation(
+            summary = "Get all interested games for an user",
+            description = "Get all interested games for an user."
+    )
+    @GetMapping("/get-interested-games/{email}")
+    public ResponseEntity<List<InterestedGame>> findAllInterestedGamesForUser(@PathVariable String email) {
+        List<InterestedGame> interestedGames = null;
+        try {
+            interestedGames = service.findInterestedGames(email);
+        } catch (MapperException | DataBaseOperationException exception) {
+            interestedGames = new ArrayList<>();
+            InterestedGame game = new InterestedGame();
+            game.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(interestedGames);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(interestedGames);
     }
 }
