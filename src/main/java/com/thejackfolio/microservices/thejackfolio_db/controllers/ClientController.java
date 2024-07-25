@@ -9,11 +9,13 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.Partners;
 import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.EmailException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.PartnersRepository;
 import com.thejackfolio.microservices.thejackfolio_db.services.ClientService;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
+import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -404,5 +406,41 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(partner);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(partner);
+    }
+
+    @Operation(
+            summary = "Save joiner",
+            description = "Save joiner and gives the same joiner response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/save-joiner")
+    public ResponseEntity<Joiner> saveJoiner(@RequestBody Joiner joiner) {
+        try {
+            if (joiner == null || StringUtils.isEmpty(joiner.getEmail()) || StringUtils.isBlank(joiner.getEmail())) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.saveJoiner(joiner);
+            joiner.setMessage(StringConstants.REQUEST_PROCESSED);
+        } catch (MapperException | DataBaseOperationException | EmailException exception) {
+            joiner.setMessage(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(joiner);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(joiner);
+    }
+
+    @Operation(
+            summary = "Update joiner",
+            description = "Update joiner and gives the same joiner response with a message which defines whether the request is successful or not."
+    )
+    @PostMapping("/update-joiner/{email}")
+    public ResponseEntity<String> updateJoiner(@PathVariable String email) {
+        try {
+            if (StringUtils.isEmpty(email) || StringUtils.isBlank(email)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            clientService.updateJoiner(email);
+        } catch (DataBaseOperationException | EmailException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(StringConstants.REQUEST_PROCESSED);
     }
 }

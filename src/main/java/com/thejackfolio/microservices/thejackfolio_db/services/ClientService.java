@@ -6,15 +6,14 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.ClientCredentials;
-import com.thejackfolio.microservices.thejackfolio_db.entities.InterestedGames;
-import com.thejackfolio.microservices.thejackfolio_db.entities.Partners;
-import com.thejackfolio.microservices.thejackfolio_db.entities.ProfileDetails;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.DataBaseOperationException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.EmailException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.GameMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
+import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
@@ -26,7 +25,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -218,6 +219,27 @@ public class ClientService {
             return document;
         } else {
             return null;
+        }
+    }
+
+    public void saveJoiner(Joiner joiner) throws MapperException, DataBaseOperationException, EmailException {
+        Joiners joinerEntity = helper.findJoiner(joiner.getEmail());
+        if (joinerEntity == null) {
+            joinerEntity = mapper.modelToEntityJoiner(joiner);
+            helper.saveJoiner(joinerEntity);
+        } else {
+            throw new EmailException(StringConstants.DUPLICATE_EMAIL);
+        }
+    }
+
+    public void updateJoiner(String email) throws DataBaseOperationException, EmailException {
+        Joiners joinerEntity = helper.findJoiner(email);
+        if (joinerEntity == null) {
+            throw new EmailException(StringConstants.EMAIL_NOT_PRESENT);
+        } else {
+            joinerEntity.setOnboarded(true);
+            joinerEntity.setJoiningDate(LocalDate.now());
+            helper.saveJoiner(joinerEntity);
         }
     }
 }

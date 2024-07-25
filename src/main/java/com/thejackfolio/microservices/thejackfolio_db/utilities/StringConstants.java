@@ -24,6 +24,7 @@ public class StringConstants {
     public static final String DATABASE_ERROR = "Error occurred while database operation";
     public static final String FILE_ERROR = "Error occurred while creating file";
     public static final String DUPLICATE_ERROR = "Duplicate name";
+    public static final String DUPLICATE_EMAIL = "Duplicate email";
     public static final String UPDATE_ERROR = "Update failed";
     public static final String REQUEST_PROCESSED = "Request Processed";
     public static final String ID_NOT_PRESENT = "Id not present in Database";
