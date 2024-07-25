@@ -79,14 +79,16 @@ public class GameMapper {
         List<InterestedGames> gameEntities = new ArrayList<>();
         try {
             int counter = findMaxGameNumber(interestedGames) + 1;
-            for(InterestedGame game : games) {
-                InterestedGames entity;
-                if(game.getGameNumber() == null) {
-                    entity = new InterestedGames();
-                    entity.setEmail(email);
-                    entity.setGameName(game.getGameName());
-                    entity.setGameNumber(counter++);
-                    gameEntities.add(entity);
+            if (games != null) {
+                for (InterestedGame game : games) {
+                    InterestedGames entity;
+                    if (game.getGameNumber() == null) {
+                        entity = new InterestedGames();
+                        entity.setEmail(email);
+                        entity.setGameName(game.getGameName());
+                        entity.setGameNumber(counter++);
+                        gameEntities.add(entity);
+                    }
                 }
             }
         } catch (Exception exception) {
@@ -99,11 +101,13 @@ public class GameMapper {
     public List<InterestedGames> modelToEntityGamesToRemove(List<InterestedGame> games, List<InterestedGames> interestedGames) throws MapperException {
         List<InterestedGames> gameEntities = new ArrayList<>();
         try {
-            for(InterestedGame game : games) {
-                InterestedGames entity;
-                if(game.getGameNumber() != null) {
-                    entity = searchInterestedGameByGameNumber(interestedGames, game.getGameNumber());
-                    gameEntities.add(entity);
+            if (games != null) {
+                for (InterestedGame game : games) {
+                    InterestedGames entity;
+                    if (game.getGameNumber() != null) {
+                        entity = searchInterestedGameByGameNumber(interestedGames, game.getGameNumber());
+                        gameEntities.add(entity);
+                    }
                 }
             }
         } catch (Exception exception) {

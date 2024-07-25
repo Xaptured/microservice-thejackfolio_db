@@ -7,11 +7,9 @@
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
-import com.thejackfolio.microservices.thejackfolio_db.models.ClientCredential;
-import com.thejackfolio.microservices.thejackfolio_db.models.InterestedGame;
-import com.thejackfolio.microservices.thejackfolio_db.models.Partner;
-import com.thejackfolio.microservices.thejackfolio_db.models.ProfileDetail;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.EncryptDecrypt;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -258,5 +256,23 @@ public class ClientsMapper {
             throw new MapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return partner;
+    }
+
+    public Joiners modelToEntityJoiner(Joiner joiner) throws MapperException {
+        Joiners joiners = null;
+        try {
+            if (joiner != null) {
+                joiners = new Joiners();
+                joiners.setName(joiner.getName());
+                joiners.setEmail(joiner.getEmail());
+                joiners.setDescription(joiner.getDescription());
+                joiners.setOnboarded(false);
+                joiners.setJoiningDate(null);
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return joiners;
     }
 }
