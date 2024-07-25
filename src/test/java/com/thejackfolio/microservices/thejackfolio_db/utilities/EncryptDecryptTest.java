@@ -19,31 +19,31 @@ import org.junit.jupiter.api.Test;
  */
 class EncryptDecryptTest {
 
-    public StringEncryptor getPasswordEncryptor() {
-        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-
-        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-        config.setPassword(PropertiesReader.getProperty(StringConstants.ENCRYPTION_PASSWORD));
-        config.setAlgorithm(PropertiesReader.getProperty(StringConstants.ENCRYPTION_ALGORITHM));
-        config.setKeyObtentionIterations(PropertiesReader.getProperty(StringConstants.ENCRYPTION_ITERATIONS));
-        config.setPoolSize(PropertiesReader.getProperty(StringConstants.ENCRYPTION_POOL_SIZE));
-        config.setProviderName(PropertiesReader.getProperty(StringConstants.ENCRYPTION_PROVIDER_NAME));
-        config.setSaltGeneratorClassName(PropertiesReader.getProperty(StringConstants.ENCRYPTION_SALT_GENERATOR));
-        config.setStringOutputType(PropertiesReader.getProperty(StringConstants.ENCRYPTION_OUTPUT_TYPE));
-        encryptor.setConfig(config);
-
-        return encryptor;
-    }
-    @Test
-    void encrypt_test() {
-        String cypherText = getPasswordEncryptor().encrypt("spyz ktbt jazd kzzb");
-        System.out.println(cypherText);
-    }
-
-    @Test
-    void decrypt_test() {
-        String plainText = getPasswordEncryptor().decrypt("VPkJGm2zz6VrmuOaodd3V3UxHxnkiSrGQ4krfCA9QFxC3tTtU+vU5w==");
-        System.out.println(plainText);
-    }
+//    public StringEncryptor getPasswordEncryptor() {
+//        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+//
+//        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+//        config.setPassword(PropertiesReader.getProperty(StringConstants.ENCRYPTION_PASSWORD));
+//        config.setAlgorithm(PropertiesReader.getProperty(StringConstants.ENCRYPTION_ALGORITHM));
+//        config.setKeyObtentionIterations(PropertiesReader.getProperty(StringConstants.ENCRYPTION_ITERATIONS));
+//        config.setPoolSize(PropertiesReader.getProperty(StringConstants.ENCRYPTION_POOL_SIZE));
+//        config.setProviderName(PropertiesReader.getProperty(StringConstants.ENCRYPTION_PROVIDER_NAME));
+//        config.setSaltGeneratorClassName(PropertiesReader.getProperty(StringConstants.ENCRYPTION_SALT_GENERATOR));
+//        config.setStringOutputType(PropertiesReader.getProperty(StringConstants.ENCRYPTION_OUTPUT_TYPE));
+//        encryptor.setConfig(config);
+//
+//        return encryptor;
+//    }
+//    @Test
+//    void encrypt_test() {
+//        String cypherText = getPasswordEncryptor().encrypt("YOUR-PLAIN-TEXT");
+//        System.out.println(cypherText);
+//    }
+//
+//    @Test
+//    void decrypt_test() {
+//        String plainText = getPasswordEncryptor().decrypt("4AD/GzIynZmv50z/esZ/93EKGgWqNaAN");
+//        System.out.println(plainText);
+//    }
 
 }
