@@ -298,6 +298,22 @@ public class EventMapper {
         return details;
     }
 
+    public Team entityToModelTeam(Teams teamEntity) throws MapperException {
+        Team team = null;
+        try {
+            if(teamEntity != null) {
+                team = new Team();
+                team.setName(teamEntity.getName());
+                team.setEventId(teamEntity.getEventId());
+                team.setTeamStatus(teamEntity.getTeamStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new MapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return team;
+    }
+
     public Team entityToModelTeam(Teams teamEntity, List<TeamDetails> detailEntities) throws MapperException {
         Team team = null;
         try {

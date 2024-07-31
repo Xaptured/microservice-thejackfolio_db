@@ -131,6 +131,24 @@ public class EventService {
         return null;
     }
 
+    public Team getTeamWithEventIDAndEmail(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
+        Boolean isRegistered = false;
+        Team team = null;
+        if(eventId == null)
+            eventId = helper.findEventByName(eventName).getId();
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        for(Teams teamEntity : teamEntities) {
+            List<TeamDetails> detailEntities = helper.findDetailsByTeamId(teamEntity.getId());
+            isRegistered = detailEntities.stream()
+                    .anyMatch(detail -> detail.getEmail().equals(email));
+            if(isRegistered) {
+                team = mapper.entityToModelTeam(teamEntity);
+                return team;
+            }
+        }
+        return null;
+    }
+
     public Integer remainingPlayersPerSlotCount(Integer eventId, String eventName, String email) throws DataBaseOperationException, MapperException {
         if(eventId == null)
             eventId = helper.findEventByName(eventName).getId();
