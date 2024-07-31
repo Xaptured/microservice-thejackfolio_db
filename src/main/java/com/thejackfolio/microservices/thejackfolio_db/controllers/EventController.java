@@ -132,6 +132,21 @@ public class EventController {
     }
 
     @Operation(
+            summary = "Get team for an event",
+            description = "Get team for an event"
+    )
+    @GetMapping("/get-team-for-event")
+    public ResponseEntity<Team> getTeamWithEventIDAndEmail(@RequestParam Integer eventId, @RequestParam String eventName, @RequestParam String email) {
+        Team response = null;
+        try {
+            response = service.getTeamWithEventIDAndEmail(eventId, eventName, email);
+        } catch (DataBaseOperationException | MapperException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
             summary = "Get remaining players per slot",
             description = "Get remaining players per slot"
     )
