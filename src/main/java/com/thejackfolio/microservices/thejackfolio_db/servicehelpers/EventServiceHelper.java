@@ -374,12 +374,14 @@ public class EventServiceHelper {
             rowIterator.next(); // Skip header row
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
+                if(row.getCell(0) != null && row.getCell(1) != null) {
+                    String teamName = row.getCell(0).getStringCellValue();
+                    Double points = row.getCell(1).getNumericCellValue();
 
-                String teamName = row.getCell(0).getStringCellValue();
-                Double points = row.getCell(1).getNumericCellValue();
+                    TeamWithPoints teamData = new TeamWithPoints(teamName, points);
+                    teamList.add(teamData);
+                }
 
-                TeamWithPoints teamData = new TeamWithPoints(teamName, points);
-                teamList.add(teamData);
             }
         }
         return teamList;

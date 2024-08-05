@@ -171,6 +171,23 @@ public class EventController {
         try {
             response = service.getTeamsWithCount(eventId, eventName);
         } catch (DataBaseOperationException exception) {
+            response = new ArrayList<>();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Get team names with ids",
+            description = "Get team names with ids"
+    )
+    @GetMapping("/get-teams-with-id")
+    public ResponseEntity<List<TeamWithID>> getTeamsWithIDs(@RequestParam Integer eventId) {
+        List<TeamWithID> response = null;
+        try {
+            response = service.getTeamsWithID(eventId);
+        } catch (DataBaseOperationException exception) {
+            response = new ArrayList<>();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
