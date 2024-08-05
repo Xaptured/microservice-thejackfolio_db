@@ -178,6 +178,21 @@ public class EventService {
         return teamWithCounts;
     }
 
+    public List<TeamWithID> getTeamsWithID(Integer eventId) throws DataBaseOperationException {
+        List<TeamWithID> teams = null;
+        List<Teams> teamEntities = helper.findAllTeamsByEventId(eventId);
+        if(teamEntities != null && !teamEntities.isEmpty()) {
+            teams = new ArrayList<>();
+            for(Teams teamEntity : teamEntities) {
+                TeamWithID teamWithID = new TeamWithID();
+                teamWithID.setTeamName(teamEntity.getName());
+                teamWithID.setTeamID(teamEntity.getId());
+                teams.add(teamWithID);
+            }
+        }
+        return teams;
+    }
+
     public String findEventNameById(Integer eventId) throws DataBaseOperationException {
         return helper.findEventNameById(eventId);
     }
