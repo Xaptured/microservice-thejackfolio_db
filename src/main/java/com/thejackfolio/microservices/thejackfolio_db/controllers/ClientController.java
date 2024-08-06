@@ -132,7 +132,7 @@ public class ClientController {
             }
             clientService.saveCredentials(credential);
             credential.setMessage(StringConstants.REQUEST_PROCESSED);
-        } catch (MapperException | DataBaseOperationException exception) {
+        } catch (MapperException | DataBaseOperationException | EmailException exception) {
             credential.setMessage(exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(credential);
         }
