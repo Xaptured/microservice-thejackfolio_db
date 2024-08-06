@@ -70,12 +70,18 @@ public class ClientService {
         return comment;
     }
 
-    public void saveCredentials(ClientCredential credential) throws MapperException, DataBaseOperationException {
-        ClientCredentials credentialEntity = mapper.modelToEntityCredential(credential);
-        helper.saveCredentials(credentialEntity);
-        ProfileDetail detail = new ProfileDetail();
-        detail.setEmail(credential.getEmail());
-        saveOrUpdateProfile(detail);
+    public void saveCredentials(ClientCredential credential) throws MapperException, DataBaseOperationException, EmailException {
+        ClientCredentials credentialEntity = helper.findCredentialByEmail((credential.getEmail()));
+        if(credentialEntity == null) {
+            credentialEntity = mapper.modelToEntityCredential(credential);
+            helper.saveCredentials(credentialEntity);
+            ProfileDetail detail = new ProfileDetail();
+            detail.setEmail(credential.getEmail());
+            saveOrUpdateProfile(detail);
+        } else {
+            throw new EmailException(StringConstants.DUPLICATE_EMAIL);
+        }
+
     }
 
     public ClientCredential findClientCredential(String email) throws DataBaseOperationException, MapperException {
