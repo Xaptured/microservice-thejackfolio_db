@@ -172,6 +172,9 @@ public class EventService {
                 List<TeamDetails> detailEntities = helper.findDetailsByTeamId(teamEntity.getId());
                 Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - detailEntities.size();
                 teamWithCount.setRemainingPlayers(remainingCount);
+                if(teamEntity.getTeamStatus().equals(TeamStatus.FREE) || teamEntity.getTeamStatus().equals(TeamStatus.PAID)) {
+                    teamWithCount.setApproved(true);
+                }
                 teamWithCounts.add(teamWithCount);
             }
         }
