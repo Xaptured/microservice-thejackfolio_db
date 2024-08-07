@@ -134,7 +134,7 @@ public class ClientController {
             credential.setMessage(StringConstants.REQUEST_PROCESSED);
         } catch (MapperException | DataBaseOperationException | EmailException exception) {
             credential.setMessage(exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(credential);
+            return ResponseEntity.status(HttpStatus.OK).body(credential);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(credential);
     }
