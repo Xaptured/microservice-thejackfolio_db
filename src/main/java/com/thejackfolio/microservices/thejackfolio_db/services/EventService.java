@@ -154,8 +154,12 @@ public class EventService {
             eventId = helper.findEventByName(eventName).getId();
         EventDetails eventDetailsEntity = helper.findDetailsByEventId(eventId);
         List<TeamDetail> teamDetails = getTeamDetailsForEvent(eventId, eventName, email);
-        Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - teamDetails.size();
-        return remainingCount;
+        if(teamDetails != null) {
+            Integer remainingCount = eventDetailsEntity.getPlayersPerSlot() - teamDetails.size();
+            return remainingCount;
+        } else {
+            return eventDetailsEntity.getPlayersPerSlot();
+        }
     }
 
     public List<TeamWithCount> getTeamsWithCount(Integer eventId, String eventName) throws DataBaseOperationException {

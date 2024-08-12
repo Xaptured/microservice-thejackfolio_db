@@ -128,6 +128,9 @@ public class EventController {
         } catch (DataBaseOperationException | MapperException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+        if(response == null) {
+            response = new ArrayList<>();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
