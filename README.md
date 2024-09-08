@@ -1,5 +1,6 @@
-![Static Badge](https://img.shields.io/badge/java-v17-green)
 [![Build and Test Java Spring Boot Application](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/build-and-test.yml)
+
+[![Dependabot Updates](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/Xaptured/microservice-thejackfolio_db/actions/workflows/dependabot/dependabot-updates)
 
 # thejackfolio_db
 
@@ -31,8 +32,5 @@ H2-Console: http://localhost:{your-port}/h2-console
 
 All the APIs related to this service has been documented in a postman_collection file which can be viewed by importing in postman application. It gives you better idea regarding APIs and the parameters that we are passing into them.
 This doscument will be uploaded in the TheJackFolioParentReposiotry as well as in each microservice. Please go through it and also you can directly test the APIs after importing into Postman.
-
-Test
-
 
 ### Will be adding more information here if I add any new feature 
