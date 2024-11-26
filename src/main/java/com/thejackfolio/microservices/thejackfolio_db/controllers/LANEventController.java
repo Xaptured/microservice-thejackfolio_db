@@ -44,4 +44,14 @@ public class LANEventController {
         List<LANEvent> lanEvents = lanEventService.fetchFutureEventsWRTEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanEvents);
     }
+
+    @Operation(
+            summary = "Fetch past events with respect to email",
+            description = "Fetch past events with respect to email."
+    )
+    @GetMapping("/past-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchPastEventsWRTEmail(@PathVariable String email) {
+        List<LANEvent> lanEvents = lanEventService.fetchPastEventsWRTEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanEvents);
+    }
 }

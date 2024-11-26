@@ -24,4 +24,7 @@ public interface LANEventRepository extends JpaRepository<LANEvent, Integer> {
 
     @Query(value = "select * from lan_events where email = ?1 and event_status < 2", nativeQuery = true)
     Optional<List<LANEvent>> fetchFutureEventsWRTEmail(String email);
+
+    @Query(value = "select * from lan_events where email = ?1 and event_status = 3", nativeQuery = true)
+    Optional<List<LANEvent>> fetchPastEventsWRTEmail(String email);
 }
