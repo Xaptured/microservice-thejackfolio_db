@@ -25,6 +25,8 @@ public class LANEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    @Column(name = "email")
+    private String email;
     @Column(name = "name", unique = true)
     private String name;
     @Column(name = "game_name")
