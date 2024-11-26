@@ -60,4 +60,13 @@ public class LANEventServiceHelper {
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public List<LANEvent> fetchPastEventsWRTEmail(String email) {
+        try {
+            return lanEventRepository.fetchPastEventsWRTEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
 }

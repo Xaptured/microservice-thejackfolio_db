@@ -44,4 +44,13 @@ public class LANEventService {
         List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> entities = lanEventServiceHelper.fetchFutureEventsWRTEmail(email);
         return lanEventMapper.convertToLANEventModels(entities);
     }
+
+    public List<LANEvent> fetchPastEventsWRTEmail(String email) {
+        boolean emailExist = lanEventServiceHelper.isEmailExist(email);
+        if (!emailExist) {
+            throw new ResourceNotFoundException("Email ID doesn't exist");
+        }
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> entities = lanEventServiceHelper.fetchPastEventsWRTEmail(email);
+        return lanEventMapper.convertToLANEventModels(entities);
+    }
 }
