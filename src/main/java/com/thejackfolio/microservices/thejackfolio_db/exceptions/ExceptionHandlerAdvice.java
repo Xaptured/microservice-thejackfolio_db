@@ -26,4 +26,11 @@ public class ExceptionHandlerAdvice {
         ExceptionBody exceptionBody = new ExceptionBody(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionBody);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ExceptionBody> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        LOGGER.error("Exception occurred due to resource not found", exception.getMessage());
+        ExceptionBody exceptionBody = new ExceptionBody(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionBody);
+    }
 }

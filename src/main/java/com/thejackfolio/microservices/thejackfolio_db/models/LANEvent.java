@@ -16,6 +16,7 @@ import lombok.*;
 @ToString
 public class LANEvent {
     private String name;
+    private String email;
     private String gameName;
     private LANAddress address;
     private LANEventDetails eventDetails;
