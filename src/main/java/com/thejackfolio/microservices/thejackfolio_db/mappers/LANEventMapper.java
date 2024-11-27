@@ -7,9 +7,13 @@
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
+import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANMapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANAddress;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEventDetails;
+import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
+import com.thejackfolio.microservices.thejackfolio_db.models.LANTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,5 +86,42 @@ public class LANEventMapper {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
+    }
+
+    public LANTeamEntity convertToLANTeamEntity(LANTeam teamModel) {
+        try {
+            if (teamModel != null) {
+                LANTeamEntity entity = new LANTeamEntity();
+                entity.setTeamName(teamModel.getTeamName());
+                entity.setEventName(teamModel.getEventName());
+                entity.setStatus(teamModel.getStatus());
+                return entity;
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return null;
+    }
+
+    public List<LANTeamMateEntity> convertToLANTeamMateEntities(List<LANTeamMate> lanTeamMates, Integer teamId) {
+        List<LANTeamMateEntity> teamMateEntities = null;
+        try {
+            if (!lanTeamMates.isEmpty()) {
+                teamMateEntities = new ArrayList<>();
+                for (LANTeamMate lanTeamMate: lanTeamMates) {
+                    LANTeamMateEntity lanTeamMateEntity = new LANTeamMateEntity();
+                    lanTeamMateEntity.setEmail(lanTeamMate.getEmail());
+                    lanTeamMateEntity.setEmailRegistered(lanTeamMateEntity.isEmailRegistered());
+                    lanTeamMateEntity.setTeamId(teamId);
+                    teamMateEntities.add(lanTeamMateEntity);
+                }
+                return teamMateEntities;
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return null;
     }
 }

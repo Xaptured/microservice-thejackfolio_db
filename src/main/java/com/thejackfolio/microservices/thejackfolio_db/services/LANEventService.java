@@ -6,9 +6,12 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
+import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.LANEventServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,5 +55,18 @@ public class LANEventService {
         }
         List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> entities = lanEventServiceHelper.fetchPastEventsWRTEmail(email);
         return lanEventMapper.convertToLANEventModels(entities);
+    }
+
+    public void saveTeams(List<LANTeam> teams) {
+        for(LANTeam team: teams) {
+            LANTeamEntity lanTeamEntity = lanEventMapper.convertToLANTeamEntity(team);
+            lanTeamEntity = lanEventServiceHelper.saveTeam(lanTeamEntity);
+            Integer teamId = lanTeamEntity.getId();
+            List<LANTeamMateEntity> teamMateEntities = lanEventMapper.convertToLANTeamMateEntities(team.getTeamMates(), teamId);
+            if (teamMateEntities != null) {
+                teamMateEntities = lanEventServiceHelper.checkEmailIsRegistered(teamMateEntities);
+                lanEventServiceHelper.saveTeamMates(teamMateEntities);
+            }
+        }
     }
 }
