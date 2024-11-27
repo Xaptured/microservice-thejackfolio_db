@@ -22,6 +22,8 @@ public interface ClientCredentialsRepository extends JpaRepository<ClientCredent
 
     Optional<ClientCredentials> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
     @Transactional
     @Modifying
     @Query("update ClientCredentials cc set cc.verified = true where cc.id = ?1")

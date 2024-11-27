@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
+import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
 import com.thejackfolio.microservices.thejackfolio_db.services.LANEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,5 +54,15 @@ public class LANEventController {
     public ResponseEntity<List<LANEvent>> fetchPastEventsWRTEmail(@PathVariable String email) {
         List<LANEvent> lanEvents = lanEventService.fetchPastEventsWRTEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanEvents);
+    }
+
+    @Operation(
+            summary = "Save team and team mate details",
+            description = "Save team and team mate details."
+    )
+    @PostMapping("/save-teams")
+    public ResponseEntity<Void> saveTeams(@RequestBody List<LANTeam> team) {
+        lanEventService.saveTeams(team);
+        return ResponseEntity.noContent().build();
     }
 }
