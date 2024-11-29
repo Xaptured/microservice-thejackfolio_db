@@ -20,4 +20,7 @@ public interface LANTeamRepository extends JpaRepository<LANTeamEntity, Integer>
 
     @Query(value = "select lan_teams.event_name,lan_teams.status,lan_teams.name,lan_team_mates.email,lan_team_mates.email_registered from lan_teams join lan_team_mates on lan_teams.id=lan_team_mates.team_id where lan_team_mates.email=?1 and lan_teams.status=0", nativeQuery = true)
     public Optional<List<Map<String, Object>>> fetchTeamWithTeamMate(String email);
+
+    @Query(value = "select lan_teams.id from lan_teams join lan_team_mates on lan_teams.id=lan_team_mates.team_id where lan_team_mates.email=?1 and lan_teams.event_name=?2", nativeQuery = true)
+    public Optional<Map<String, Object>> fetchTeamWithTeamMateAndEventName(String email, String eventName);
 }
