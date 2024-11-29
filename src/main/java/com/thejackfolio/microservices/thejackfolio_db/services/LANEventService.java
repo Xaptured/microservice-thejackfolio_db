@@ -81,4 +81,9 @@ public class LANEventService {
     public void updateTeamStatus(String email, String eventName, LANTeamStatus status) {
         lanEventServiceHelper.updateTeamStatus(email, eventName, status);
     }
+
+    public List<LANEvent> fetchPastEventsForParticipants(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchPastEventsForParticipants(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
 }
