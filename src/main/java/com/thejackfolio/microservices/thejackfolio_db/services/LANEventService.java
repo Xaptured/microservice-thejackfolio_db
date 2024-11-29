@@ -8,10 +8,12 @@ package com.thejackfolio.microservices.thejackfolio_db.services;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
+import com.thejackfolio.microservices.thejackfolio_db.models.Team;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.LANEventServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,5 +70,10 @@ public class LANEventService {
                 lanEventServiceHelper.saveTeamMates(teamMateEntities);
             }
         }
+    }
+
+    public List<LANTeam> fetchTeamWithTeamMate(String email) {
+        List<TeamWithTeamMate> teamWithTeamMates = lanEventServiceHelper.fetchTeamWithTeamMate(email);
+        return lanEventMapper.convertToTeamModels(teamWithTeamMates);
     }
 }
