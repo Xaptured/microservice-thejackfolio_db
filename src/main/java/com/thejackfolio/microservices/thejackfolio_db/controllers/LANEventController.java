@@ -96,4 +96,14 @@ public class LANEventController {
         List<LANEvent> lanTeams = lanEventService.fetchPastEventsForParticipants(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
     }
+
+    @Operation(
+            summary = "Fetch future events for participant with respect to email",
+            description = "Fetch future events for participant with respect to email."
+    )
+    @GetMapping("/participant-future-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchFutureEventsForParticipants(@PathVariable String email) {
+        List<LANEvent> lanTeams = lanEventService.fetchFutureEventsForParticipants(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
 }

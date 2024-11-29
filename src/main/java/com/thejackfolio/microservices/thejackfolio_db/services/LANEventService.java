@@ -86,4 +86,9 @@ public class LANEventService {
         List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchPastEventsForParticipants(email);
         return lanEventMapper.convertToLANEventModels(lanEvents);
     }
+
+    public List<LANEvent> fetchFutureEventsForParticipants(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchFutureEventsForParticipants(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
 }
