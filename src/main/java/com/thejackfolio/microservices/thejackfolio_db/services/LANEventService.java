@@ -10,6 +10,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.BadRequestException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
@@ -32,9 +33,14 @@ public class LANEventService {
     @Autowired
     private LANEventServiceHelper lanEventServiceHelper;
 
-    public void saveOrUpdateEvent(LANEvent event) {
+    public void saveOrUpdateEvent(LANEvent event, boolean isUpdate) {
         com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent lanEvent = lanEventServiceHelper.findLANEventByName(event.getName());
-
+        if (isUpdate && lanEvent == null) {
+            throw new ResourceNotFoundException("Event doesn't exist");
+        }
+        if (!isUpdate && lanEvent != null) {
+            throw new BadRequestException("Event name already exist");
+        }
         com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent eventEntity = lanEventMapper.convertToLANEventEntity(event);
         if (lanEvent != null) {
             eventEntity.setId(lanEvent.getId());

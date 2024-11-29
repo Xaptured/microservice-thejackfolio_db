@@ -32,8 +32,8 @@ public class LANEventController {
             description = "Save OR Update lan events."
     )
     @PostMapping("/save-or-update-event")
-    public ResponseEntity<Void> saveOrUpdateEvent(@RequestBody LANEvent event) {
-        lanEventService.saveOrUpdateEvent(event);
+    public ResponseEntity<Void> saveOrUpdateEvent(@RequestBody LANEvent event, @RequestParam boolean isUpdate) {
+        lanEventService.saveOrUpdateEvent(event, isUpdate);
         return ResponseEntity.noContent().build();
     }
 
