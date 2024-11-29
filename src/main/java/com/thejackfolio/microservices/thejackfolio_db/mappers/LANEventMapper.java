@@ -9,11 +9,9 @@ package com.thejackfolio.microservices.thejackfolio_db.mappers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANMapperException;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANAddress;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANEventDetails;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,5 +121,26 @@ public class LANEventMapper {
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return null;
+    }
+
+    public List<LANTeam> convertToTeamModels(List<TeamWithTeamMate> teamWithTeamMates) {
+        List<LANTeam> lanTeams = new ArrayList<>();
+        if (teamWithTeamMates != null && !teamWithTeamMates.isEmpty()) {
+            for (TeamWithTeamMate teamWithTeamMate : teamWithTeamMates) {
+                LANTeamMate lanTeamMate = new LANTeamMate();
+                List<LANTeamMate> lanTeamMates = new ArrayList<>();
+                lanTeamMate.setEmail(teamWithTeamMate.getEmail());
+                lanTeamMate.setIsEmailRegistered(teamWithTeamMate.isEmailRegistered());
+                lanTeamMates.add(lanTeamMate);
+
+                LANTeam lanTeam = new LANTeam();
+                lanTeam.setEventName(teamWithTeamMate.getEventName());
+                lanTeam.setTeamName(teamWithTeamMate.getName());
+                lanTeam.setStatus(teamWithTeamMate.getStatus());
+                lanTeam.setTeamMates(lanTeamMates);
+                lanTeams.add(lanTeam);
+            }
+        }
+        return lanTeams;
     }
 }

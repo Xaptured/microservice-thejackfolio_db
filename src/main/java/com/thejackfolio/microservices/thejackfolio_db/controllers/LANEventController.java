@@ -65,4 +65,14 @@ public class LANEventController {
         lanEventService.saveTeams(team);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Fetch pending teams with respect to email",
+            description = "Fetch pending teams with respect to email."
+    )
+    @GetMapping("/pending-teams/{email}")
+    public ResponseEntity<List<LANTeam>> fetchTeamWithTeamMate(@PathVariable String email) {
+        List<LANTeam> lanTeams = lanEventService.fetchTeamWithTeamMate(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
 }

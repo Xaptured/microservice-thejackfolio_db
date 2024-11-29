@@ -9,6 +9,8 @@ package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
@@ -22,7 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LANEventServiceHelper {
@@ -115,5 +120,27 @@ public class LANEventServiceHelper {
             teamMateEntity.setEmailRegistered(isRegistered);
         }
         return teamMateEntities;
+    }
+
+    public List<TeamWithTeamMate> fetchTeamWithTeamMate(String email) {
+        try {
+            List<TeamWithTeamMate> teamWithTeamMates = new ArrayList<>();
+            List<Map<String, Object>> results = lanTeamRepository.fetchTeamWithTeamMate(email).orElse(null);
+            if (!results.isEmpty()) {
+                for(Map<String, Object> result : results) {
+                    TeamWithTeamMate teamWithTeamMate = new TeamWithTeamMate();
+                    teamWithTeamMate.setName(result.get("NAME").toString());
+                    teamWithTeamMate.setEventName(result.get("EVENT_NAME").toString());
+                    teamWithTeamMate.setEmail(result.get("EMAIL").toString());
+                    teamWithTeamMate.setEmailRegistered((Boolean) result.get("EMAIL_REGISTERED"));
+                    teamWithTeamMate.setStatus(LANTeamStatus.fromValue(Integer.parseInt(result.get("STATUS").toString())));
+                    teamWithTeamMates.add(teamWithTeamMate);
+                }
+            }
+            return teamWithTeamMates;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
     }
 }

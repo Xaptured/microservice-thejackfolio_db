@@ -30,7 +30,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ExceptionBody> handleResourceNotFoundException(ResourceNotFoundException exception) {
         LOGGER.error("Exception occurred due to resource not found", exception.getMessage());
-        ExceptionBody exceptionBody = new ExceptionBody(HttpStatus.BAD_REQUEST, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionBody);
+        ExceptionBody exceptionBody = new ExceptionBody(HttpStatus.NOT_FOUND, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionBody);
     }
 }
