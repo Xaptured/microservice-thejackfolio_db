@@ -16,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class TeamWithTeamMate {
+    private int id;
     private String eventName;
     private LANTeamStatus status;
     private String name;

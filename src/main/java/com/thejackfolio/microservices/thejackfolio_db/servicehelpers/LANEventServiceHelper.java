@@ -10,6 +10,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
@@ -126,7 +127,7 @@ public class LANEventServiceHelper {
         try {
             List<TeamWithTeamMate> teamWithTeamMates = new ArrayList<>();
             List<Map<String, Object>> results = lanTeamRepository.fetchTeamWithTeamMate(email).orElse(null);
-            if (!results.isEmpty()) {
+            if (results!= null && !results.isEmpty()) {
                 for(Map<String, Object> result : results) {
                     TeamWithTeamMate teamWithTeamMate = new TeamWithTeamMate();
                     teamWithTeamMate.setName(result.get("NAME").toString());
@@ -138,6 +139,25 @@ public class LANEventServiceHelper {
                 }
             }
             return teamWithTeamMates;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void updateTeamStatus(String email, String eventName, LANTeamStatus status) {
+        try {
+            Map<String, Object> result = lanTeamRepository.fetchTeamWithTeamMateAndEventName(email, eventName).orElse(null);
+            if (result != null && result.get("ID") != null) {
+                Integer teamId = Integer.parseInt(result.get("ID").toString());
+                LANTeamEntity lanTeamEntity = lanTeamRepository.findById(teamId).orElse(null);
+                if (lanTeamEntity != null) {
+                    lanTeamEntity.setStatus(status);
+                    lanTeamRepository.save(lanTeamEntity);
+                }
+            } else {
+                throw new ResourceNotFoundException("Searched params doesn't exist");
+            }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
