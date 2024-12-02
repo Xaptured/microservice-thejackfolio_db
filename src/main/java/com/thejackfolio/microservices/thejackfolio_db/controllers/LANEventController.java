@@ -168,4 +168,14 @@ public class LANEventController {
         lanEventService.updateEventStatus(eventName, status);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @Operation(
+            summary = "Fetch event details by name",
+            description = "Fetch event details by name."
+    )
+    @GetMapping("/fetch-event-details/{eventName}")
+    public ResponseEntity<LANEvent> fetchLANEventDetails(@PathVariable String eventName) {
+        LANEvent lanEvent = lanEventService.fetchLANEventDetails(eventName);
+        return ResponseEntity.status(HttpStatus.OK).body(lanEvent);
+    }
 }
