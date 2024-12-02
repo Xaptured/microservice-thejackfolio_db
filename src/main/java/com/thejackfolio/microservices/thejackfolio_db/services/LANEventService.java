@@ -100,6 +100,21 @@ public class LANEventService {
         return lanEventMapper.convertToLANEventModels(lanEvents);
     }
 
+    public List<LANEvent> fetchPastEventsForAudience(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchPastEventsForAudience(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
+    public List<LANEvent> fetchFutureEventsForAudience(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchFutureEventsForAudience(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
+    public List<LANEvent> fetchLiveEventsForAudience(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchLiveEventsForAudience(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
     public void saveOrUpdateAudience(Audience audience) {
         AudienceEntity audienceEntity = lanEventServiceHelper.fetchAudienceByEmailAndEventName(audience.getEmail(), audience.getEventName());
         AudienceEntity convertedEntity = lanEventMapper.convertToAudienceEntity(audience);

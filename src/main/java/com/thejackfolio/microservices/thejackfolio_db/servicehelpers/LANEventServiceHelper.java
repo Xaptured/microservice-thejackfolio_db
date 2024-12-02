@@ -218,4 +218,58 @@ public class LANEventServiceHelper {
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public List<LANEvent> fetchPastEventsForAudience(String email) {
+        try {
+            List<LANEvent> lanEvents = new ArrayList<>();
+            List<Map<String, Object>> results = audienceRepository.fetchPastEventsForAudience(email).orElse(null);
+            if (results!= null && !results.isEmpty()) {
+                for(Map<String, Object> result : results) {
+                    LANEvent lanEvent = new LANEvent();
+                    lanEvent.setName(result.get("NAME").toString());
+                    lanEvents.add(lanEvent);
+                }
+            }
+            return lanEvents;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<LANEvent> fetchFutureEventsForAudience(String email) {
+        try {
+            List<LANEvent> lanEvents = new ArrayList<>();
+            List<Map<String, Object>> results = audienceRepository.fetchFutureEventsForAudience(email).orElse(null);
+            if (results!= null && !results.isEmpty()) {
+                for(Map<String, Object> result : results) {
+                    LANEvent lanEvent = new LANEvent();
+                    lanEvent.setName(result.get("NAME").toString());
+                    lanEvents.add(lanEvent);
+                }
+            }
+            return lanEvents;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<LANEvent> fetchLiveEventsForAudience(String email) {
+        try {
+            List<LANEvent> lanEvents = new ArrayList<>();
+            List<Map<String, Object>> results = audienceRepository.fetchLiveEventsForAudience(email).orElse(null);
+            if (results!= null && !results.isEmpty()) {
+                for(Map<String, Object> result : results) {
+                    LANEvent lanEvent = new LANEvent();
+                    lanEvent.setName(result.get("NAME").toString());
+                    lanEvents.add(lanEvent);
+                }
+            }
+            return lanEvents;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
 }
