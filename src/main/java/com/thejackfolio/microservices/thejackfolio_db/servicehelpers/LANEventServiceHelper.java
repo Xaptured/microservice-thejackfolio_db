@@ -296,4 +296,22 @@ public class LANEventServiceHelper {
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public List<LANTeamEntity> fetchParticipatedTeams(String eventName) {
+        try {
+            return lanTeamRepository.findByEventName(eventName).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<LANTeamMateEntity> fetchTeamMates(int teamId) {
+        try {
+            return lanTeamMateRepository.findByTeamId(teamId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
 }

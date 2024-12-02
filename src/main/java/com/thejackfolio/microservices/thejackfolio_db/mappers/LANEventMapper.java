@@ -129,17 +129,7 @@ public class LANEventMapper {
         try {
             if (teamWithTeamMates != null && !teamWithTeamMates.isEmpty()) {
                 for (TeamWithTeamMate teamWithTeamMate : teamWithTeamMates) {
-                    LANTeamMate lanTeamMate = new LANTeamMate();
-                    List<LANTeamMate> lanTeamMates = new ArrayList<>();
-                    lanTeamMate.setEmail(teamWithTeamMate.getEmail());
-                    lanTeamMate.setIsEmailRegistered(teamWithTeamMate.isEmailRegistered());
-                    lanTeamMates.add(lanTeamMate);
-
-                    LANTeam lanTeam = new LANTeam();
-                    lanTeam.setEventName(teamWithTeamMate.getEventName());
-                    lanTeam.setTeamName(teamWithTeamMate.getName());
-                    lanTeam.setStatus(teamWithTeamMate.getStatus());
-                    lanTeam.setTeamMates(lanTeamMates);
+                    LANTeam lanTeam = convertToLANTeamModel(teamWithTeamMate);
                     lanTeams.add(lanTeam);
                 }
             }
@@ -148,6 +138,21 @@ public class LANEventMapper {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
+    }
+
+    public LANTeam convertToLANTeamModel(TeamWithTeamMate teamWithTeamMate) {
+        LANTeamMate lanTeamMate = new LANTeamMate();
+        List<LANTeamMate> lanTeamMates = new ArrayList<>();
+        lanTeamMate.setEmail(teamWithTeamMate.getEmail());
+        lanTeamMate.setIsEmailRegistered(teamWithTeamMate.isEmailRegistered());
+        lanTeamMates.add(lanTeamMate);
+
+        LANTeam lanTeam = new LANTeam();
+        lanTeam.setEventName(teamWithTeamMate.getEventName());
+        lanTeam.setTeamName(teamWithTeamMate.getName());
+        lanTeam.setStatus(teamWithTeamMate.getStatus());
+        lanTeam.setTeamMates(lanTeamMates);
+        return lanTeam;
     }
 
     public AudienceEntity convertToAudienceEntity(Audience audience) {
@@ -167,5 +172,30 @@ public class LANEventMapper {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
+    }
+
+    public LANTeam convertToLANTeamModel(LANTeamEntity lanTeamEntity, List<LANTeamMateEntity> lanTeamMateEntities) {
+        LANTeam lanTeam = null;
+        if (lanTeamEntity != null) {
+            lanTeam = new LANTeam();
+            lanTeam.setTeamName(lanTeamEntity.getTeamName());
+            lanTeam.setEventName(lanTeamEntity.getEventName());
+            lanTeam.setStatus(lanTeamEntity.getStatus());
+            lanTeam.setTeamMates(convertToLANTeamMateModels(lanTeamMateEntities));
+        }
+        return lanTeam;
+    }
+
+    public List<LANTeamMate> convertToLANTeamMateModels(List<LANTeamMateEntity> lanTeamMateEntities) {
+        List<LANTeamMate> lanTeamMates = new ArrayList<>();
+        if (lanTeamMateEntities != null && !lanTeamMateEntities.isEmpty()) {
+            for (LANTeamMateEntity lanTeamMateEntity : lanTeamMateEntities) {
+                LANTeamMate lanTeamMate = new LANTeamMate();
+                lanTeamMate.setEmail(lanTeamMateEntity.getEmail());
+                lanTeamMate.setIsEmailRegistered(lanTeamMateEntity.isEmailRegistered());
+                lanTeamMates.add(lanTeamMate);
+            }
+        }
+        return lanTeamMates;
     }
 }

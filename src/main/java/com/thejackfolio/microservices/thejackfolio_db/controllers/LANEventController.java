@@ -170,8 +170,18 @@ public class LANEventController {
     }
 
     @Operation(
-            summary = "Fetch event details by name",
-            description = "Fetch event details by name."
+            summary = "Fetch team details",
+            description = "Fetch team details."
+    )
+    @GetMapping("/fetch-team-details/{eventName}")
+    public ResponseEntity<List<LANTeam>> fetchParticipatedTeamDetails(@PathVariable String eventName) {
+        List<LANTeam> lanTeams = lanEventService.fetchParticipatedTeamDetails(eventName);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
+            summary = "Fetch event details",
+            description = "Fetch event details."
     )
     @GetMapping("/fetch-event-details/{eventName}")
     public ResponseEntity<LANEvent> fetchLANEventDetails(@PathVariable String eventName) {
