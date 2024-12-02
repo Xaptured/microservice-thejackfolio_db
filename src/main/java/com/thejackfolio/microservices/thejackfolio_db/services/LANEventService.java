@@ -126,4 +126,9 @@ public class LANEventService {
         }
         lanEventServiceHelper.saveAudience(convertedEntity);
     }
+
+    public List<LANEvent> fetchInactiveEventForAdmin() {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchInactiveEventForAdmin();
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
 }

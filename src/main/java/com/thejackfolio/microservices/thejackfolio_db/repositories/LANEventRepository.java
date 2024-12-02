@@ -8,6 +8,8 @@ package com.thejackfolio.microservices.thejackfolio_db.repositories;
 
 import com.thejackfolio.microservices.thejackfolio_db.entities.Events;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
+import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
+import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -36,4 +38,6 @@ public interface LANEventRepository extends JpaRepository<LANEvent, Integer> {
     @Query(value="select lan_events.name from lan_events join lan_teams on lan_events.name=lan_teams.event_name " +
             "join lan_team_mates on lan_teams.id=lan_team_mates.team_id where lan_team_mates.email=?1 and lan_events.event_status=1", nativeQuery = true)
     Optional<List<Map<String, Object>>> fetchFutureEventsForParticipants(String email);
+
+    Optional<List<LANEvent>> findByStatus(LANEventStatus status);
 }
