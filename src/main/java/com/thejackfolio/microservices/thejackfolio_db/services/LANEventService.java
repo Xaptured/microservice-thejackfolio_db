@@ -136,4 +136,9 @@ public class LANEventService {
     public void updateEventStatus(String eventName, LANEventStatus status) {
         lanEventServiceHelper.updateEventStatus(eventName, status);
     }
+
+    public LANEvent fetchLANEventDetails(String eventName) {
+        com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent lanEvent = lanEventServiceHelper.findLANEventByName(eventName);
+        return lanEventMapper.convertToLANEventModel(lanEvent);
+    }
 }
