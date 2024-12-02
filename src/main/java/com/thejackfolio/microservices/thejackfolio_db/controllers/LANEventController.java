@@ -117,4 +117,34 @@ public class LANEventController {
         lanEventService.saveOrUpdateAudience(audience);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Fetch past events for audience with respect to email",
+            description = "Fetch past events for audience with respect to email."
+    )
+    @GetMapping("/audience-past-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchPastEventsForAudience(@PathVariable String email) {
+        List<LANEvent> lanTeams = lanEventService.fetchPastEventsForAudience(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
+            summary = "Fetch future events for audience with respect to email",
+            description = "Fetch future events for audience with respect to email."
+    )
+    @GetMapping("/audience-future-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchFutureEventsForAudience(@PathVariable String email) {
+        List<LANEvent> lanTeams = lanEventService.fetchFutureEventsForAudience(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
+            summary = "Fetch live events for audience with respect to email",
+            description = "Fetch live events for audience with respect to email."
+    )
+    @GetMapping("/audience-live-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchLiveEventsForAudience(@PathVariable String email) {
+        List<LANEvent> lanTeams = lanEventService.fetchLiveEventsForAudience(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
 }
