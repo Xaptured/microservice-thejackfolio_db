@@ -150,4 +150,9 @@ public class LANEventService {
         }
         return teams;
     }
+
+    public LANEvent fetchLANEventDetails(String eventName) {
+        com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent lanEvent = lanEventServiceHelper.findLANEventByName(eventName);
+        return lanEventMapper.convertToLANEventModel(lanEvent);
+    }
 }

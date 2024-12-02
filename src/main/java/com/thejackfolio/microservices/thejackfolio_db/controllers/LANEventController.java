@@ -178,4 +178,14 @@ public class LANEventController {
         List<LANTeam> lanTeams = lanEventService.fetchParticipatedTeamDetails(eventName);
         return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
     }
+
+    @Operation(
+            summary = "Fetch event details",
+            description = "Fetch event details."
+    )
+    @GetMapping("/fetch-event-details/{eventName}")
+    public ResponseEntity<LANEvent> fetchLANEventDetails(@PathVariable String eventName) {
+        LANEvent lanEvent = lanEventService.fetchLANEventDetails(eventName);
+        return ResponseEntity.status(HttpStatus.OK).body(lanEvent);
+    }
 }
