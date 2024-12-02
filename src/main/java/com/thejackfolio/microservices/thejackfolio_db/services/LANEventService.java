@@ -10,6 +10,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.BadRequestException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
@@ -130,5 +131,9 @@ public class LANEventService {
     public List<LANEvent> fetchInactiveEventForAdmin() {
         List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchInactiveEventForAdmin();
         return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
+    public void updateEventStatus(String eventName, LANEventStatus status) {
+        lanEventServiceHelper.updateEventStatus(eventName, status);
     }
 }

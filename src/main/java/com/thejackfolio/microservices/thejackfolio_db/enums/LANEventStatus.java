@@ -7,5 +7,5 @@
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
 public enum LANEventStatus {
-    INACTIVE, ACTIVE, ONGOING, COMPLETED;
+    INACTIVE, ACTIVE, ONGOING, COMPLETED, REJECTED;
 }

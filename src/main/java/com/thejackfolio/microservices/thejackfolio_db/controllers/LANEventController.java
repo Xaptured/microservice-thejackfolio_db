@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
+import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
@@ -156,5 +157,15 @@ public class LANEventController {
     public ResponseEntity<List<LANEvent>> fetchInactiveEventForAdmin() {
         List<LANEvent> lanTeams = lanEventService.fetchInactiveEventForAdmin();
         return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
+            summary = "Update event status",
+            description = "Update event status."
+    )
+    @PostMapping("/update-event-status")
+    public ResponseEntity<Void> updateEventStatus(@RequestParam String eventName, @RequestParam LANEventStatus status) {
+        lanEventService.updateEventStatus(eventName, status);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

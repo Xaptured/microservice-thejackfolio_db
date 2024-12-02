@@ -282,4 +282,18 @@ public class LANEventServiceHelper {
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
         }
     }
+
+    public void updateEventStatus(String eventName, LANEventStatus status) {
+        try {
+            LANEvent lanEvent = lanEventRepository.findByName(eventName).orElse(null);
+            if (lanEvent == null) {
+                throw new ResourceNotFoundException("Event name doesn't exist");
+            }
+            lanEvent.setStatus(status);
+            lanEventRepository.save(lanEvent);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
 }
