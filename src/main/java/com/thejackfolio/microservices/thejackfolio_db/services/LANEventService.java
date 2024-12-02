@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
@@ -13,6 +14,7 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.BadRequestException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
+import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
 import com.thejackfolio.microservices.thejackfolio_db.models.Team;
@@ -96,5 +98,17 @@ public class LANEventService {
     public List<LANEvent> fetchFutureEventsForParticipants(String email) {
         List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.fetchFutureEventsForParticipants(email);
         return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
+    public void saveOrUpdateAudience(Audience audience) {
+        AudienceEntity audienceEntity = lanEventServiceHelper.fetchAudienceByEmailAndEventName(audience.getEmail(), audience.getEventName());
+        AudienceEntity convertedEntity = lanEventMapper.convertToAudienceEntity(audience);
+        if (audienceEntity == null) {
+            LOGGER.info("Saving new audience details with payment status as {}, email as {} and eventName as {}", audience.getStatus(), audience.getEmail(), audience.getEventName());
+        } else {
+            LOGGER.info("Updating audience details with payment status as {}, email as {} and eventName as {}", audience.getStatus(), audience.getEmail(), audience.getEventName());
+            convertedEntity.setId(audienceEntity.getId());
+        }
+        lanEventServiceHelper.saveAudience(convertedEntity);
     }
 }

@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
@@ -15,10 +16,7 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.ClientCredentialsRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.LANEventRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.LANTeamMateRepository;
-import com.thejackfolio.microservices.thejackfolio_db.repositories.LANTeamRepository;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +40,8 @@ public class LANEventServiceHelper {
     private LANTeamMateRepository lanTeamMateRepository;
     @Autowired
     private ClientCredentialsRepository clientCredentialsRepository;
+    @Autowired
+    private AudienceRepository audienceRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -194,6 +194,25 @@ public class LANEventServiceHelper {
                 }
             }
             return lanEvents;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public AudienceEntity fetchAudienceByEmailAndEventName(String email, String eventName) {
+        try {
+            AudienceEntity audienceEntity = audienceRepository.findByEmailAndEventName(email, eventName).orElse(null);
+            return audienceEntity;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveAudience(AudienceEntity entity) {
+        try {
+            audienceRepository.save(entity);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

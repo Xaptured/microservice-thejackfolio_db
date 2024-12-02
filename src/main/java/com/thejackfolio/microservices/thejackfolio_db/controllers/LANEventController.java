@@ -7,6 +7,7 @@
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
 import com.thejackfolio.microservices.thejackfolio_db.services.LANEventService;
@@ -105,5 +106,15 @@ public class LANEventController {
     public ResponseEntity<List<LANEvent>> fetchFutureEventsForParticipants(@PathVariable String email) {
         List<LANEvent> lanTeams = lanEventService.fetchFutureEventsForParticipants(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
+            summary = "Save audience with payment status",
+            description = "Save audience with payment status."
+    )
+    @PostMapping("/save-or-update-audience")
+    public ResponseEntity<Void> saveOrUpdateAudience(@RequestBody Audience audience) {
+        lanEventService.saveOrUpdateAudience(audience);
+        return ResponseEntity.noContent().build();
     }
 }
