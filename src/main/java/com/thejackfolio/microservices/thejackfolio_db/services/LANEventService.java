@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -135,5 +136,18 @@ public class LANEventService {
 
     public void updateEventStatus(String eventName, LANEventStatus status) {
         lanEventServiceHelper.updateEventStatus(eventName, status);
+    }
+
+    public List<LANTeam> fetchParticipatedTeamDetails(String eventName) {
+        List<LANTeam> teams = new ArrayList<>();
+        List<LANTeamEntity> teamEntities = lanEventServiceHelper.fetchParticipatedTeams(eventName);
+        if (teamEntities != null && !teamEntities.isEmpty()) {
+            for (LANTeamEntity lanTeamEntity : teamEntities) {
+                List<LANTeamMateEntity> teamMateEntities = lanEventServiceHelper.fetchTeamMates(lanTeamEntity.getId());
+                LANTeam lanTeam = lanEventMapper.convertToLANTeamModel(lanTeamEntity, teamMateEntities);
+                teams.add(lanTeam);
+            }
+        }
+        return teams;
     }
 }
