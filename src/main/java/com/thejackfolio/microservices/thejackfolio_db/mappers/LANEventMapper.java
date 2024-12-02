@@ -6,6 +6,7 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
@@ -125,22 +126,46 @@ public class LANEventMapper {
 
     public List<LANTeam> convertToTeamModels(List<TeamWithTeamMate> teamWithTeamMates) {
         List<LANTeam> lanTeams = new ArrayList<>();
-        if (teamWithTeamMates != null && !teamWithTeamMates.isEmpty()) {
-            for (TeamWithTeamMate teamWithTeamMate : teamWithTeamMates) {
-                LANTeamMate lanTeamMate = new LANTeamMate();
-                List<LANTeamMate> lanTeamMates = new ArrayList<>();
-                lanTeamMate.setEmail(teamWithTeamMate.getEmail());
-                lanTeamMate.setIsEmailRegistered(teamWithTeamMate.isEmailRegistered());
-                lanTeamMates.add(lanTeamMate);
+        try {
+            if (teamWithTeamMates != null && !teamWithTeamMates.isEmpty()) {
+                for (TeamWithTeamMate teamWithTeamMate : teamWithTeamMates) {
+                    LANTeamMate lanTeamMate = new LANTeamMate();
+                    List<LANTeamMate> lanTeamMates = new ArrayList<>();
+                    lanTeamMate.setEmail(teamWithTeamMate.getEmail());
+                    lanTeamMate.setIsEmailRegistered(teamWithTeamMate.isEmailRegistered());
+                    lanTeamMates.add(lanTeamMate);
 
-                LANTeam lanTeam = new LANTeam();
-                lanTeam.setEventName(teamWithTeamMate.getEventName());
-                lanTeam.setTeamName(teamWithTeamMate.getName());
-                lanTeam.setStatus(teamWithTeamMate.getStatus());
-                lanTeam.setTeamMates(lanTeamMates);
-                lanTeams.add(lanTeam);
+                    LANTeam lanTeam = new LANTeam();
+                    lanTeam.setEventName(teamWithTeamMate.getEventName());
+                    lanTeam.setTeamName(teamWithTeamMate.getName());
+                    lanTeam.setStatus(teamWithTeamMate.getStatus());
+                    lanTeam.setTeamMates(lanTeamMates);
+                    lanTeams.add(lanTeam);
+                }
             }
+            return lanTeams;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
-        return lanTeams;
+    }
+
+    public AudienceEntity convertToAudienceEntity(Audience audience) {
+        AudienceEntity audienceEntity = null;
+        try {
+            if (audience != null) {
+                audienceEntity = new AudienceEntity();
+                audienceEntity.setAmount(audience.getAmount());
+                audienceEntity.setTransactionId(audience.getTransactionId());
+                audienceEntity.setName(audience.getName());
+                audienceEntity.setStatus(audience.getStatus());
+                audienceEntity.setEmail(audience.getEmail());
+                audienceEntity.setEventName(audience.getEventName());
+            }
+            return audienceEntity;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
     }
 }
