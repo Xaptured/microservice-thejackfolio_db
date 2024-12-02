@@ -147,4 +147,14 @@ public class LANEventController {
         List<LANEvent> lanTeams = lanEventService.fetchLiveEventsForAudience(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
     }
+
+    @Operation(
+            summary = "Fetch inactive events for admin",
+            description = "Fetch inactive events for admin."
+    )
+    @GetMapping("/admin-inactive-events")
+    public ResponseEntity<List<LANEvent>> fetchInactiveEventForAdmin() {
+        List<LANEvent> lanTeams = lanEventService.fetchInactiveEventForAdmin();
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
 }
