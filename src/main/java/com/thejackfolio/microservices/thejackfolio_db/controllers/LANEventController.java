@@ -150,6 +150,16 @@ public class LANEventController {
     }
 
     @Operation(
+            summary = "Fetch unregistered events for audience with respect to email",
+            description = "Fetch unregistered events for audience with respect to email."
+    )
+    @GetMapping("/audience-unregistered-events/{email}")
+    public ResponseEntity<List<LANEvent>> findLANEventsNotRegisteredByAudience(@PathVariable String email) {
+        List<LANEvent> lanTeams = lanEventService.findLANEventsNotRegisteredByAudience(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanTeams);
+    }
+
+    @Operation(
             summary = "Fetch inactive events for admin",
             description = "Fetch inactive events for admin."
     )

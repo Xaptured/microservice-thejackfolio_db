@@ -159,6 +159,8 @@ public class LANEventServiceHelper {
             } else {
                 throw new ResourceNotFoundException("Searched params doesn't exist");
             }
+        } catch (ResourceNotFoundException exception) {
+            throw new ResourceNotFoundException("Searched params doesn't exist");
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
@@ -274,6 +276,15 @@ public class LANEventServiceHelper {
         }
     }
 
+    public List<LANEvent> findLANEventsNotRegisteredByAudience(String email) {
+        try {
+            return audienceRepository.findLANEventsNotRegisteredByAudience(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
     public List<LANEvent> fetchInactiveEventForAdmin() {
         try {
             return lanEventRepository.findByStatus(LANEventStatus.INACTIVE).orElse(null);
@@ -291,6 +302,8 @@ public class LANEventServiceHelper {
             }
             lanEvent.setStatus(status);
             lanEventRepository.save(lanEvent);
+        } catch (ResourceNotFoundException exception) {
+            throw new ResourceNotFoundException("Event name doesn't exist");
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
