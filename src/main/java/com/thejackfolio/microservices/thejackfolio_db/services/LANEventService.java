@@ -117,6 +117,11 @@ public class LANEventService {
         return lanEventMapper.convertToLANEventModels(lanEvents);
     }
 
+    public List<LANEvent> findLANEventsNotRegisteredByAudience(String email) {
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> lanEvents = lanEventServiceHelper.findLANEventsNotRegisteredByAudience(email);
+        return lanEventMapper.convertToLANEventModels(lanEvents);
+    }
+
     public void saveOrUpdateAudience(Audience audience) {
         AudienceEntity audienceEntity = lanEventServiceHelper.fetchAudienceByEmailAndEventName(audience.getEmail(), audience.getEventName());
         AudienceEntity convertedEntity = lanEventMapper.convertToAudienceEntity(audience);
