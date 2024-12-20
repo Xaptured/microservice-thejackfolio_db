@@ -6,10 +6,8 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
@@ -43,6 +41,14 @@ public class LANEventServiceHelper {
     private ClientCredentialsRepository clientCredentialsRepository;
     @Autowired
     private AudienceRepository audienceRepository;
+    @Autowired
+    private AudienceTicketRepository audienceTicketRepository;
+    @Autowired
+    private FailedPaymentRepository failedPaymentRepository;
+    @Autowired
+    private PendingPaymentRepository pendingPaymentRepository;
+    @Autowired
+    private InitiatePaymentRepository initiatePaymentRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -322,6 +328,132 @@ public class LANEventServiceHelper {
     public List<LANTeamMateEntity> fetchTeamMates(int teamId) {
         try {
             return lanTeamMateRepository.findByTeamId(teamId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveAudienceTicket(AudienceTicketEntity audienceTicketEntity) {
+        try {
+            audienceTicketRepository.save(audienceTicketEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public AudienceTicketEntity fetchAudienceTicketByEmailAndEventName(String email, String eventName) {
+        try {
+            AudienceTicketEntity audienceTicketEntity = audienceTicketRepository.findByEmailAndEventName(email, eventName).orElse(null);
+            return audienceTicketEntity;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public long fetchUnsentEmailForAudienceCount() {
+        try {
+            long count = audienceTicketRepository.countByEmailSent(false);
+            return count;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<AudienceTicketEntity> fetchUnsentEmailForAudience() {
+        try {
+            List<AudienceTicketEntity> audienceTicketEntities = audienceTicketRepository.findByEmailSentFalse().orElse(null);
+            return audienceTicketEntities;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void updateEmailSentStatus(Integer id) {
+        try {
+            audienceTicketRepository.updateEmailStatus(id);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void savePendingPayment(PendingPaymentEntity entity) {
+        try {
+            pendingPaymentRepository.save(entity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveFailedPayment(FailedPaymentEntity entity) {
+        try {
+            failedPaymentRepository.save(entity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveInitiatePayment(InitiatePaymentEntity entity) {
+        try {
+            initiatePaymentRepository.save(entity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<PendingPaymentEntity> fetchAllPendingPayments() {
+        try {
+            List<PendingPaymentEntity> pendingPaymentEntities = pendingPaymentRepository.findAll();
+            return pendingPaymentEntities;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<FailedPaymentEntity> fetchAllFailedPayments() {
+        try {
+            List<FailedPaymentEntity> failedPaymentEntities = failedPaymentRepository.findAll();
+            return failedPaymentEntities;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public InitiatePaymentEntity findByMerchantTransactionId(String merchantTransactionId) {
+        try {
+            return initiatePaymentRepository.findByMerchantTransactionId(merchantTransactionId).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void deletePendingPaymentByEmailAndEventName(String email, String eventName) {
+        try {
+            PendingPaymentEntity pendingPaymentEntity = pendingPaymentRepository.findByEmailAndEventName(email, eventName).orElse(null);
+            if (pendingPaymentEntity != null)
+                pendingPaymentRepository.delete(pendingPaymentEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void deleteFailedPaymentByEmailAndEventName(String email, String eventName) {
+        try {
+            FailedPaymentEntity failedPaymentEntity = failedPaymentRepository.findByEmailAndEventName(email, eventName).orElse(null);
+            if (failedPaymentEntity != null)
+                failedPaymentRepository.delete(failedPaymentEntity);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

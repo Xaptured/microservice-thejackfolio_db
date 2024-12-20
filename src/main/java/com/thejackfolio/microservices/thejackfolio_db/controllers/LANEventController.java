@@ -6,9 +6,11 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.controllers;
 
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
+import com.thejackfolio.microservices.thejackfolio_db.models.AudienceTicket;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
 import com.thejackfolio.microservices.thejackfolio_db.services.LANEventService;
@@ -197,5 +199,125 @@ public class LANEventController {
     public ResponseEntity<LANEvent> fetchLANEventDetails(@PathVariable String eventName) {
         LANEvent lanEvent = lanEventService.fetchLANEventDetails(eventName);
         return ResponseEntity.status(HttpStatus.OK).body(lanEvent);
+    }
+
+    @Operation(
+            summary = "Save audience ticket",
+            description = "Save audience ticket."
+    )
+    @PostMapping("/save-audience-ticket")
+    public ResponseEntity<Void> saveAudienceTicket(@RequestBody AudienceTicket audienceTicket) {
+        lanEventService.saveAudienceTicket(audienceTicket);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Fetch unsent email count",
+            description = "Fetch unsent email count."
+    )
+    @GetMapping("/fetch-unsent-email-count")
+    public ResponseEntity<Long> fetchUnsentEmailForAudienceCount() {
+        long count = lanEventService.fetchUnsentEmailForAudienceCount();
+        return ResponseEntity.status(HttpStatus.OK).body(count);
+    }
+
+    @Operation(
+            summary = "Fetch unsent emails",
+            description = "Fetch unsent emails."
+    )
+    @GetMapping("/fetch-unsent-emails")
+    public ResponseEntity<List<AudienceTicket>> fetchUnsentEmailForAudience() {
+        List<AudienceTicket> audienceTickets = lanEventService.fetchUnsentEmailForAudience();
+        return ResponseEntity.status(HttpStatus.OK).body(audienceTickets);
+    }
+
+    @Operation(
+            summary = "Update audience ticket status",
+            description = "Update audience ticket status."
+    )
+    @PostMapping("/update-audience-ticket-status")
+    public ResponseEntity<Void> updateAudienceTicketStatus(@RequestBody AudienceTicket audienceTicket) {
+        lanEventService.updateEmailStatus(audienceTicket);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Save pending payments",
+            description = "Save pending payments."
+    )
+    @PostMapping("/save-pending-payments")
+    public ResponseEntity<Void> savePendingPayments(@RequestBody Audience audience) {
+        lanEventService.savePendingPayment(audience);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Save failed payments",
+            description = "Save failed payments."
+    )
+    @PostMapping("/save-failed-payments")
+    public ResponseEntity<Void> saveFailedPayments(@RequestBody Audience audience) {
+        lanEventService.saveFailedPayment(audience);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Save initiated payment",
+            description = "Save initiated payment."
+    )
+    @PostMapping("/save-initiated-payment")
+    public ResponseEntity<Void> saveInitiatePayment(@RequestBody Audience audience) {
+        lanEventService.saveInitiatePayment(audience);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Fetch pending payments",
+            description = "Fetch pending payments."
+    )
+    @GetMapping("/fetch-pending-payments")
+    public ResponseEntity<List<Audience>> fetchPendingPayments() {
+        List<Audience> audiences = lanEventService.fetchAllPendingPayments();
+        return ResponseEntity.status(HttpStatus.OK).body(audiences);
+    }
+
+    @Operation(
+            summary = "Fetch failed payments",
+            description = "Fetch failed payments."
+    )
+    @GetMapping("/fetch-failed-payments")
+    public ResponseEntity<List<Audience>> fetchFailedPayments() {
+        List<Audience> audiences = lanEventService.fetchAllFailedPayments();
+        return ResponseEntity.status(HttpStatus.OK).body(audiences);
+    }
+
+    @Operation(
+            summary = "Fetch initiate payment",
+            description = "Fetch initiate payment."
+    )
+    @GetMapping("/fetch-initiate-payment")
+    public ResponseEntity<Audience> fetchInitiatePayment(@RequestParam String merchantTransactionId) {
+        Audience audience = lanEventService.fetchInitiatePayment(merchantTransactionId);
+        return ResponseEntity.status(HttpStatus.OK).body(audience);
+    }
+
+    @Operation(
+            summary = "Delete pending payment",
+            description = "Delete pending payment."
+    )
+    @DeleteMapping("/delete-pending-payment")
+    public ResponseEntity<Void> deletePendingPayment(@RequestParam String email, @RequestParam String eventName) {
+        lanEventService.deletePendingPaymentByEmailAndEventName(email, eventName);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Delete failed payment",
+            description = "Delete failed payment."
+    )
+    @DeleteMapping("/delete-failed-payment")
+    public ResponseEntity<Void> deleteFailedPayment(@RequestParam String email, @RequestParam String eventName) {
+        lanEventService.deleteFailedPaymentByEmailAndEventName(email, eventName);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
