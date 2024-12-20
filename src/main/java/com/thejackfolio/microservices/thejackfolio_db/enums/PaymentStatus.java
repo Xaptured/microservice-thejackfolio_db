@@ -7,5 +7,5 @@
 package com.thejackfolio.microservices.thejackfolio_db.enums;
 
 public enum PaymentStatus {
-    PENDING, FAILED, SUCCESS
+    PENDING, FAILED, COMPLETED
 }

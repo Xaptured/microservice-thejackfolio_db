@@ -6,20 +6,19 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.services;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.BadRequestException;
+import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
-import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
-import com.thejackfolio.microservices.thejackfolio_db.models.Team;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.LANEventServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,5 +158,74 @@ public class LANEventService {
     public LANEvent fetchLANEventDetails(String eventName) {
         com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent lanEvent = lanEventServiceHelper.findLANEventByName(eventName);
         return lanEventMapper.convertToLANEventModel(lanEvent);
+    }
+
+    public void saveAudienceTicket(AudienceTicket audienceTicket) {
+        AudienceTicketEntity audienceTicketEntity = lanEventServiceHelper.fetchAudienceTicketByEmailAndEventName(audienceTicket.getEmail(), audienceTicket.getEventName());
+        AudienceTicketEntity convertedEntity = lanEventMapper.convertToAudienceTicketEntity(audienceTicket);
+        if (audienceTicketEntity == null) {
+            LOGGER.info("Saving new audience ticket details with email as {} and eventName as {}", audienceTicket.getEmail(), audienceTicket.getEventName());
+        } else {
+            LOGGER.info("Can not process saving new audience ticket as details already exist for  email as {} and eventName as {}", audienceTicket.getEmail(), audienceTicket.getEventName());
+            throw new BadRequestException("Details already exist");
+        }
+        lanEventServiceHelper.saveAudienceTicket(convertedEntity);
+    }
+
+    public long fetchUnsentEmailForAudienceCount() {
+        return lanEventServiceHelper.fetchUnsentEmailForAudienceCount();
+    }
+
+    public List<AudienceTicket> fetchUnsentEmailForAudience() {
+        List<AudienceTicketEntity> entities = lanEventServiceHelper.fetchUnsentEmailForAudience();
+        return lanEventMapper.convertToAudienceTicketModels(entities);
+    }
+
+    public void updateEmailStatus(AudienceTicket audienceTicket) {
+        AudienceTicketEntity audienceTicketEntity = lanEventServiceHelper.fetchAudienceTicketByEmailAndEventName(audienceTicket.getEmail(), audienceTicket.getEventName());
+        if (audienceTicketEntity != null) {
+            lanEventServiceHelper.updateEmailSentStatus(audienceTicketEntity.getId());
+        } else {
+            LOGGER.info("Can not process update status as details not exist for email as {} and eventName as {}", audienceTicket.getEmail(), audienceTicket.getEventName());
+            throw new BadRequestException("Details doesn't exist");
+        }
+    }
+
+    public void savePendingPayment(Audience audience) {
+        PendingPaymentEntity pendingPaymentEntity = lanEventMapper.convertAudienceToPendingPaymentEntity(audience);
+        lanEventServiceHelper.savePendingPayment(pendingPaymentEntity);
+    }
+
+    public void saveFailedPayment(Audience audience) {
+        FailedPaymentEntity failedPaymentEntity = lanEventMapper.convertAudienceToFailedPaymentEntity(audience);
+        lanEventServiceHelper.saveFailedPayment(failedPaymentEntity);
+    }
+
+    public void saveInitiatePayment(Audience audience) {
+        InitiatePaymentEntity initiatePaymentEntity = lanEventMapper.convertAudienceToInitiatePaymentEntity(audience);
+        lanEventServiceHelper.saveInitiatePayment(initiatePaymentEntity);
+    }
+
+    public List<Audience> fetchAllPendingPayments() {
+        List<PendingPaymentEntity> pendingPaymentEntities = lanEventServiceHelper.fetchAllPendingPayments();
+        return lanEventMapper.convertPendingPaymentEntitiesToAudiences(pendingPaymentEntities);
+    }
+
+    public List<Audience> fetchAllFailedPayments() {
+        List<FailedPaymentEntity> failedPaymentEntities = lanEventServiceHelper.fetchAllFailedPayments();
+        return lanEventMapper.convertFailedPaymentEntitiesToAudiences(failedPaymentEntities);
+    }
+
+    public Audience fetchInitiatePayment(String merchantTransactionId) {
+        InitiatePaymentEntity initiatePaymentEntity = lanEventServiceHelper.findByMerchantTransactionId(merchantTransactionId);
+        return lanEventMapper.convertInitiatePaymentEntityToAudience(initiatePaymentEntity);
+    }
+
+    public void deletePendingPaymentByEmailAndEventName(String email, String eventName) {
+        lanEventServiceHelper.deletePendingPaymentByEmailAndEventName(email, eventName);
+    }
+
+    public void deleteFailedPaymentByEmailAndEventName(String email, String eventName) {
+        lanEventServiceHelper.deleteFailedPaymentByEmailAndEventName(email, eventName);
     }
 }

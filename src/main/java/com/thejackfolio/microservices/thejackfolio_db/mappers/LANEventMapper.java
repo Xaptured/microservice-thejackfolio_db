@@ -6,13 +6,13 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.mappers;
 
-import com.thejackfolio.microservices.thejackfolio_db.entities.AudienceEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamEntity;
-import com.thejackfolio.microservices.thejackfolio_db.entities.LANTeamMateEntity;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANMapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
+import com.thejackfolio.microservices.thejackfolio_db.repositories.FailedPaymentRepository;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,6 +162,7 @@ public class LANEventMapper {
                 audienceEntity = new AudienceEntity();
                 audienceEntity.setAmount(audience.getAmount());
                 audienceEntity.setTransactionId(audience.getTransactionId());
+                audienceEntity.setMerchantTransactionId(audience.getMerchantTransactionId());
                 audienceEntity.setName(audience.getName());
                 audienceEntity.setStatus(audience.getStatus());
                 audienceEntity.setEmail(audience.getEmail());
@@ -197,5 +198,185 @@ public class LANEventMapper {
             }
         }
         return lanTeamMates;
+    }
+
+    public AudienceTicketEntity convertToAudienceTicketEntity(AudienceTicket audienceTicket) {
+        AudienceTicketEntity audienceTicketEntity = null;
+        try {
+            if (audienceTicket != null) {
+                audienceTicketEntity = new AudienceTicketEntity();
+                audienceTicketEntity.setEmail(audienceTicket.getEmail());
+                audienceTicketEntity.setEventName(audienceTicket.getEventName());
+                audienceTicketEntity.setTicketNumber(audienceTicket.getTicketNumber());
+                audienceTicketEntity.setEmailSent(audienceTicket.isEmailSent());
+            }
+            return audienceTicketEntity;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+    }
+
+    public List<AudienceTicket> convertToAudienceTicketModels(List<AudienceTicketEntity> entities) {
+        List<AudienceTicket> audienceTickets = null;
+        if (entities != null && !entities.isEmpty()) {
+            audienceTickets = new ArrayList<>();
+            for (AudienceTicketEntity audienceTicketEntity : entities) {
+                AudienceTicket audienceTicket = convertToAudienceTicketModel(audienceTicketEntity);
+                audienceTickets.add(audienceTicket);
+            }
+        }
+        return audienceTickets;
+    }
+
+    public AudienceTicket convertToAudienceTicketModel(AudienceTicketEntity entity) {
+        AudienceTicket audienceTicket = null;
+        try {
+            if (entity != null) {
+                audienceTicket = new AudienceTicket();
+                audienceTicket.setEmail(entity.getEmail());
+                audienceTicket.setTicketNumber(entity.getTicketNumber());
+                audienceTicket.setEmailSent(entity.isEmailSent());
+                audienceTicket.setEventName(entity.getEventName());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return audienceTicket;
+    }
+
+    public PendingPaymentEntity convertAudienceToPendingPaymentEntity(Audience audience) {
+        PendingPaymentEntity pendingPaymentEntity = null;
+        try {
+            if (audience != null) {
+                pendingPaymentEntity = new PendingPaymentEntity();
+                pendingPaymentEntity.setAmount(audience.getAmount());
+                pendingPaymentEntity.setEventName(audience.getEventName());
+                pendingPaymentEntity.setEmail(audience.getEmail());
+                pendingPaymentEntity.setName(audience.getName());
+                pendingPaymentEntity.setStatus(audience.getStatus());
+                pendingPaymentEntity.setMerchantTransactionId(audience.getMerchantTransactionId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return pendingPaymentEntity;
+    }
+
+    public FailedPaymentEntity convertAudienceToFailedPaymentEntity(Audience audience) {
+        FailedPaymentEntity failedPaymentEntity = null;
+        try {
+            if (audience != null) {
+                failedPaymentEntity = new FailedPaymentEntity();
+                failedPaymentEntity.setAmount(audience.getAmount());
+                failedPaymentEntity.setEventName(audience.getEventName());
+                failedPaymentEntity.setEmail(audience.getEmail());
+                failedPaymentEntity.setName(audience.getName());
+                failedPaymentEntity.setStatus(audience.getStatus());
+                failedPaymentEntity.setMerchantTransactionId(audience.getMerchantTransactionId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return failedPaymentEntity;
+    }
+
+    public InitiatePaymentEntity convertAudienceToInitiatePaymentEntity(Audience audience) {
+        InitiatePaymentEntity initiatePaymentEntity = null;
+        try {
+            if (audience != null) {
+                initiatePaymentEntity = new InitiatePaymentEntity();
+                initiatePaymentEntity.setAmount(audience.getAmount());
+                initiatePaymentEntity.setEventName(audience.getEventName());
+                initiatePaymentEntity.setEmail(audience.getEmail());
+                initiatePaymentEntity.setName(audience.getName());
+                initiatePaymentEntity.setMerchantTransactionId(audience.getMerchantTransactionId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return initiatePaymentEntity;
+    }
+
+    public List<Audience> convertPendingPaymentEntitiesToAudiences(List<PendingPaymentEntity> pendingPaymentEntities) {
+        List<Audience> audiences = new ArrayList<>();
+        if (!pendingPaymentEntities.isEmpty()) {
+            for (PendingPaymentEntity pendingPaymentEntity : pendingPaymentEntities) {
+                Audience audience = convertPendingPaymentEntityToAudience(pendingPaymentEntity);
+                audiences.add(audience);
+            }
+        }
+        return audiences;
+    }
+
+    public Audience convertPendingPaymentEntityToAudience(PendingPaymentEntity pendingPaymentEntity) {
+        Audience audience = null;
+        try {
+            if (pendingPaymentEntity != null) {
+                audience = new Audience();
+                audience.setAmount(pendingPaymentEntity.getAmount());
+                audience.setEmail(pendingPaymentEntity.getEmail());
+                audience.setEventName(pendingPaymentEntity.getEventName());
+                audience.setName(pendingPaymentEntity.getName());
+                audience.setMerchantTransactionId(pendingPaymentEntity.getMerchantTransactionId());
+                audience.setStatus(pendingPaymentEntity.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return audience;
+    }
+
+    public List<Audience> convertFailedPaymentEntitiesToAudiences(List<FailedPaymentEntity> failedPaymentEntities) {
+        List<Audience> audiences = new ArrayList<>();
+        if (!failedPaymentEntities.isEmpty()) {
+            for (FailedPaymentEntity failedPaymentEntity : failedPaymentEntities) {
+                Audience audience = convertFailedPaymentEntityToAudience(failedPaymentEntity);
+                audiences.add(audience);
+            }
+        }
+        return audiences;
+    }
+
+    public Audience convertFailedPaymentEntityToAudience(FailedPaymentEntity failedPaymentEntity) {
+        Audience audience = null;
+        try {
+            if (failedPaymentEntity != null) {
+                audience = new Audience();
+                audience.setAmount(failedPaymentEntity.getAmount());
+                audience.setEmail(failedPaymentEntity.getEmail());
+                audience.setEventName(failedPaymentEntity.getEventName());
+                audience.setName(failedPaymentEntity.getName());
+                audience.setMerchantTransactionId(failedPaymentEntity.getMerchantTransactionId());
+                audience.setStatus(failedPaymentEntity.getStatus());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return audience;
+    }
+
+    public Audience convertInitiatePaymentEntityToAudience(InitiatePaymentEntity initiatePaymentEntity) {
+        Audience audience = null;
+        try {
+            if (initiatePaymentEntity != null) {
+                audience = new Audience();
+                audience.setAmount(initiatePaymentEntity.getAmount());
+                audience.setEmail(initiatePaymentEntity.getEmail());
+                audience.setEventName(initiatePaymentEntity.getEventName());
+                audience.setName(initiatePaymentEntity.getName());
+                audience.setMerchantTransactionId(initiatePaymentEntity.getMerchantTransactionId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return audience;
     }
 }

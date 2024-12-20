@@ -13,13 +13,14 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "audience")
+@Table(name = "pending_payments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AudienceEntity {
+public class PendingPaymentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
