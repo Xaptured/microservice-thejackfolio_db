@@ -39,4 +39,6 @@ public class PendingPaymentEntity {
     private PaymentStatus status;
     @Column(name = "event_name")
     private String eventName;
+    @Column(name = "refund")
+    private boolean refund;
 }

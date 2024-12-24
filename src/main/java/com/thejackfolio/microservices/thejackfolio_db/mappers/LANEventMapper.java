@@ -257,6 +257,7 @@ public class LANEventMapper {
                 pendingPaymentEntity.setName(audience.getName());
                 pendingPaymentEntity.setStatus(audience.getStatus());
                 pendingPaymentEntity.setMerchantTransactionId(audience.getMerchantTransactionId());
+                pendingPaymentEntity.setRefund(audience.isRefund());
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);

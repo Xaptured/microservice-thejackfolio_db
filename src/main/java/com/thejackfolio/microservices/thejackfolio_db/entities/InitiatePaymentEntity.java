@@ -34,4 +34,6 @@ public class InitiatePaymentEntity {
     private String merchantTransactionId;
     @Column(name = "event_name")
     private String eventName;
+    @Column(name = "refund")
+    private boolean refund;
 }
