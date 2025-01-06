@@ -9,10 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
-import com.thejackfolio.microservices.thejackfolio_db.models.Audience;
-import com.thejackfolio.microservices.thejackfolio_db.models.AudienceTicket;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANEvent;
-import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
+import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.LANEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +55,16 @@ public class LANEventController {
     @GetMapping("/past-events/{email}")
     public ResponseEntity<List<LANEvent>> fetchPastEventsWRTEmail(@PathVariable String email) {
         List<LANEvent> lanEvents = lanEventService.fetchPastEventsWRTEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(lanEvents);
+    }
+
+    @Operation(
+            summary = "Fetch live events with respect to email",
+            description = "Fetch live events with respect to email."
+    )
+    @GetMapping("/live-events/{email}")
+    public ResponseEntity<List<LANEvent>> fetchLiveEventsWRTEmail(@PathVariable String email) {
+        List<LANEvent> lanEvents = lanEventService.fetchLiveEventsWRTEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(lanEvents);
     }
 
@@ -319,5 +326,45 @@ public class LANEventController {
     public ResponseEntity<Void> deleteFailedPayment(@RequestParam String email, @RequestParam String eventName) {
         lanEventService.deleteFailedPaymentByEmailAndEventName(email, eventName);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Save sub user",
+            description = "Save sub user."
+    )
+    @PostMapping("/save-sub-user")
+    public ResponseEntity<Void> saveSubUser(@RequestBody SubUser subUser) {
+        lanEventService.saveSubUser(subUser);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Update sub user",
+            description = "Update sub user."
+    )
+    @PostMapping("/update-sub-user")
+    public ResponseEntity<Void> updateSubUser(@RequestBody SubUser subUser) {
+        lanEventService.updateSubUser(subUser);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Update active",
+            description = "Update sub user."
+    )
+    @PostMapping("/update-active/{eventName}")
+    public ResponseEntity<Void> updateActive(@PathVariable String eventName) {
+        lanEventService.updateActive(eventName);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Fetch unsent email sub users",
+            description = "Fetch unsent email sub users."
+    )
+    @GetMapping("/fetch-unsent-email-sub-users")
+    public ResponseEntity<List<SubUser>> fetchUnsentEmailSubUsers() {
+        List<SubUser> subUsers = lanEventService.findByIsEmailSent();
+        return ResponseEntity.status(HttpStatus.OK).body(subUsers);
     }
 }

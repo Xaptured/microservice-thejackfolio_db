@@ -6,7 +6,6 @@
 
 package com.thejackfolio.microservices.thejackfolio_db.models;
 
-import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import lombok.*;
 
 @Getter
@@ -14,12 +13,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class LANEvent {
+public class SubUser {
     private String name;
     private String email;
-    private String gameName;
-    private LANAddress address;
-    private LANEventDetails eventDetails;
-    private LANEventStatus eventStatus;
-    private boolean startCheckInProcess;
+    private String userName;
+    private String userPassword;
+    private String eventName;
+    private boolean isEmailSent;
+    private boolean isActive;
 }

@@ -42,6 +42,7 @@ public class LANEventMapper {
                 lanEvent.setPrizePool(lanEventModel.getEventDetails().getPrizePool());
                 lanEvent.setDate(lanEventModel.getEventDetails().getDate());
                 lanEvent.setStatus(lanEventModel.getEventStatus());
+                lanEvent.setStartCheckInProcess(lanEvent.isStartCheckInProcess());
                 return lanEvent;
             }
         } catch (Exception exception) {
@@ -379,5 +380,76 @@ public class LANEventMapper {
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return audience;
+    }
+
+    public SubUserEntity convertSubUserModelToEntity(SubUser subUser) {
+        SubUserEntity entity = null;
+        try {
+            if (subUser != null) {
+                entity = new SubUserEntity();
+                entity.setEmail(subUser.getEmail());
+                entity.setUserPassword(subUser.getUserPassword());
+                entity.setName(subUser.getName());
+                entity.setUserName(subUser.getUserName());
+                entity.setEventName(subUser.getEventName());
+                entity.setEmailSent(subUser.isEmailSent());
+                entity.setActive(subUser.isActive());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entity;
+    }
+
+    public SubUserEntity convertSubUserModelToEntity(SubUser subUser, SubUserEntity subUserEntity) {
+        try {
+            if (subUser != null) {
+                subUserEntity.setUserPassword(subUser.getUserPassword());
+                subUserEntity.setUserName(subUser.getUserName());
+                subUserEntity.setEmailSent(subUser.isEmailSent());
+                subUserEntity.setActive(subUser.isActive());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return subUserEntity;
+    }
+
+    public SubUser convertSubUserEntityToModel(SubUserEntity subUserEntity) {
+        SubUser subUser = null;
+        try {
+            if (subUserEntity != null) {
+                subUser = new SubUser();
+                subUser.setEmail(subUserEntity.getEmail());
+                subUser.setUserPassword(subUserEntity.getUserPassword());
+                subUser.setName(subUserEntity.getName());
+                subUser.setUserName(subUserEntity.getUserName());
+                subUser.setEventName(subUserEntity.getEventName());
+                subUser.setEmailSent(subUserEntity.isEmailSent());
+                subUser.setActive(subUserEntity.isActive());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return subUser;
+    }
+
+    public List<SubUser> convertSubUserEntitiesToModels(List<SubUserEntity> subUserEntities) {
+        List<SubUser> subUsers = new ArrayList<>();;
+        try {
+            if (!subUserEntities.isEmpty()) {
+                for (SubUserEntity entity : subUserEntities) {
+                    SubUser subUser = convertSubUserEntityToModel(entity);
+                    subUsers.add(subUser);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return subUsers;
     }
 }
