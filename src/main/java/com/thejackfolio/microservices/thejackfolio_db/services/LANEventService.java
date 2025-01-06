@@ -69,6 +69,15 @@ public class LANEventService {
         return lanEventMapper.convertToLANEventModels(entities);
     }
 
+    public List<LANEvent> fetchLiveEventsWRTEmail(String email) {
+        boolean emailExist = lanEventServiceHelper.isEmailExist(email);
+        if (!emailExist) {
+            throw new ResourceNotFoundException("Email ID doesn't exist");
+        }
+        List<com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent> entities = lanEventServiceHelper.fetchLiveEventsWRTEmail(email);
+        return lanEventMapper.convertToLANEventModels(entities);
+    }
+
     public void saveTeams(List<LANTeam> teams) {
         for(LANTeam team: teams) {
             LANTeamEntity lanTeamEntity = lanEventMapper.convertToLANTeamEntity(team);
@@ -227,5 +236,41 @@ public class LANEventService {
 
     public void deleteFailedPaymentByEmailAndEventName(String email, String eventName) {
         lanEventServiceHelper.deleteFailedPaymentByEmailAndEventName(email, eventName);
+    }
+
+    public void saveSubUser(SubUser subUser) {
+        boolean isExist = lanEventServiceHelper.isEmailAndEventNameExistForSubUser(subUser.getEmail(), subUser.getEventName());
+        if (isExist) {
+            throw new BadRequestException("Event name and email id already exist");
+        } else {
+            SubUserEntity subUserEntity = lanEventMapper.convertSubUserModelToEntity(subUser);
+            lanEventServiceHelper.saveSubUser(subUserEntity);
+        }
+    }
+
+    public void updateSubUser(SubUser subUser) {
+        boolean isExist = lanEventServiceHelper.isEmailAndEventNameExistForSubUser(subUser.getEmail(), subUser.getEventName());
+        if (isExist) {
+            SubUserEntity subUserEntity = lanEventServiceHelper.findByEmailAndEventName(subUser.getEmail(), subUser.getEventName());
+            subUserEntity = lanEventMapper.convertSubUserModelToEntity(subUser, subUserEntity);
+            lanEventServiceHelper.saveSubUser(subUserEntity);
+        } else {
+            throw new ResourceNotFoundException("Email ID and event name doesn't exist");
+        }
+    }
+
+    public void updateActive(String eventName) {
+        boolean isExist = lanEventServiceHelper.isEventNameExistForSubUser(eventName);
+        if (isExist) {
+            lanEventServiceHelper.updateActive(eventName);
+            lanEventServiceHelper.updateStartCheckInProcess(eventName);
+        } else {
+            throw new ResourceNotFoundException("Event name doesn't exist");
+        }
+    }
+
+    public List<SubUser> findByIsEmailSent() {
+        List<SubUserEntity> subUserEntities = lanEventServiceHelper.findByIsEmailSent(false);
+        return lanEventMapper.convertSubUserEntitiesToModels(subUserEntities);
     }
 }

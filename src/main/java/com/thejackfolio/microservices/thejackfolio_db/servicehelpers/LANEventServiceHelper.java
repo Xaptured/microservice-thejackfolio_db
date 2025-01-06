@@ -15,6 +15,7 @@ import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
+import com.thejackfolio.microservices.thejackfolio_db.models.SubUser;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.*;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
@@ -49,6 +50,8 @@ public class LANEventServiceHelper {
     private PendingPaymentRepository pendingPaymentRepository;
     @Autowired
     private InitiatePaymentRepository initiatePaymentRepository;
+    @Autowired
+    private SubUserRepository subUserRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -89,6 +92,15 @@ public class LANEventServiceHelper {
     public List<LANEvent> fetchPastEventsWRTEmail(String email) {
         try {
             return lanEventRepository.fetchPastEventsWRTEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<LANEvent> fetchLiveEventsWRTEmail(String email) {
+        try {
+            return lanEventRepository.fetchLiveEventsWRTEmail(email).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
@@ -454,6 +466,69 @@ public class LANEventServiceHelper {
             FailedPaymentEntity failedPaymentEntity = failedPaymentRepository.findByEmailAndEventName(email, eventName).orElse(null);
             if (failedPaymentEntity != null)
                 failedPaymentRepository.delete(failedPaymentEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveSubUser(SubUserEntity subUserEntity) {
+        try {
+            subUserRepository.save(subUserEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public boolean isEmailAndEventNameExistForSubUser(String email, String eventName) {
+        try {
+            return subUserRepository.existsByEmailAndEventName(email, eventName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public SubUserEntity findByEmailAndEventName(String email, String eventName) {
+        try {
+            return subUserRepository.findByEmailAndEventName(email, eventName).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public boolean isEventNameExistForSubUser(String eventName) {
+        try {
+            return subUserRepository.existsByEventName(eventName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void updateActive(String eventName) {
+        try {
+            subUserRepository.updateActive(eventName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void updateStartCheckInProcess(String eventName) {
+        try {
+            lanEventRepository.updateStartCheckInProcess(eventName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<SubUserEntity> findByIsEmailSent(boolean isEmailSent) {
+        try {
+            return subUserRepository.findByIsEmailSent(isEmailSent).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

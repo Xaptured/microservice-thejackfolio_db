@@ -51,4 +51,6 @@ public class LANEvent {
     private String date;
     @Column(name = "event_status")
     private LANEventStatus status;
+    @Column(name = "start_check_in_process")
+    private boolean startCheckInProcess;
 }

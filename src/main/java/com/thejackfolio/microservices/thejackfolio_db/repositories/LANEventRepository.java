@@ -11,8 +11,10 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,9 @@ public interface LANEventRepository extends JpaRepository<LANEvent, Integer> {
     @Query(value = "select * from lan_events where email = ?1 and event_status = 3", nativeQuery = true)
     Optional<List<LANEvent>> fetchPastEventsWRTEmail(String email);
 
+    @Query(value = "select * from lan_events where email = ?1 and event_status = 2 and start_check_in_process = false", nativeQuery = true)
+    Optional<List<LANEvent>> fetchLiveEventsWRTEmail(String email);
+
     @Query(value="select lan_events.name from lan_events join lan_teams on lan_events.name=lan_teams.event_name " +
             "join lan_team_mates on lan_teams.id=lan_team_mates.team_id where lan_team_mates.email=?1 and lan_events.event_status=3 and lan_teams.status=1", nativeQuery = true)
     Optional<List<Map<String, Object>>> fetchPastEventsForParticipants(String email);
@@ -40,4 +45,9 @@ public interface LANEventRepository extends JpaRepository<LANEvent, Integer> {
     Optional<List<Map<String, Object>>> fetchFutureEventsForParticipants(String email);
 
     Optional<List<LANEvent>> findByStatus(LANEventStatus status);
+
+    @Transactional
+    @Modifying
+    @Query("update LANEvent l set l.startCheckInProcess = true where l.name = ?1")
+    void updateStartCheckInProcess(String eventName);
 }
