@@ -394,6 +394,15 @@ public class LANEventServiceHelper {
         }
     }
 
+    public void updateCheckedInStatus(String email, String eventName) {
+        try {
+            audienceTicketRepository.updateCheckedInStatus(email, eventName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
     public void savePendingPayment(PendingPaymentEntity entity) {
         try {
             pendingPaymentRepository.save(entity);
@@ -529,6 +538,15 @@ public class LANEventServiceHelper {
     public List<SubUserEntity> findByIsEmailSent(boolean isEmailSent) {
         try {
             return subUserRepository.findByIsEmailSent(isEmailSent).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public SubUserEntity findByUserName(String userName) {
+        try {
+            return subUserRepository.findByUserName(userName).orElse(null);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

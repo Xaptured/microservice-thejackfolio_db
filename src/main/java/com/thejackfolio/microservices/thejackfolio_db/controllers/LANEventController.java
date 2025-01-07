@@ -249,6 +249,26 @@ public class LANEventController {
     }
 
     @Operation(
+            summary = "Update audience ticket check in status",
+            description = "Update audience ticket check in status."
+    )
+    @PostMapping("/update-audience-check-in-status")
+    public ResponseEntity<Void> updateCheckedInStatus(@RequestParam String eventName, @RequestParam String email) {
+        lanEventService.updateCheckedInStatus(email, eventName);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Fetch audience ticket details",
+            description = "Fetch audience ticket details."
+    )
+    @GetMapping("/fetch-audience-ticket-details")
+    public ResponseEntity<AudienceTicket> fetchAudienceTicketDetails(@RequestParam String eventName, @RequestParam String email) {
+        AudienceTicket audienceTicket = lanEventService.fetchAudienceTicketByEventNameAndEmail(email, eventName);
+        return ResponseEntity.status(HttpStatus.OK).body(audienceTicket);
+    }
+
+    @Operation(
             summary = "Save pending payments",
             description = "Save pending payments."
     )
@@ -366,5 +386,15 @@ public class LANEventController {
     public ResponseEntity<List<SubUser>> fetchUnsentEmailSubUsers() {
         List<SubUser> subUsers = lanEventService.findByIsEmailSent();
         return ResponseEntity.status(HttpStatus.OK).body(subUsers);
+    }
+
+    @Operation(
+            summary = "Fetch sub user using username",
+            description = "Fetch sub user using username."
+    )
+    @GetMapping("/fetch-sub-user-by-username/{username}")
+    public ResponseEntity<SubUser> fetchSubUserByUsername(@PathVariable String username) {
+        SubUser subUser = lanEventService.findByUserName(username);
+        return ResponseEntity.status(HttpStatus.OK).body(subUser);
     }
 }

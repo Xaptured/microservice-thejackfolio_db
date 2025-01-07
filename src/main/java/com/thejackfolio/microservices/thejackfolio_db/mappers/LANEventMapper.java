@@ -210,6 +210,7 @@ public class LANEventMapper {
                 audienceTicketEntity.setEventName(audienceTicket.getEventName());
                 audienceTicketEntity.setTicketNumber(audienceTicket.getTicketNumber());
                 audienceTicketEntity.setEmailSent(audienceTicket.isEmailSent());
+                audienceTicketEntity.setCheckedIn(audienceTicket.isCheckedIn());
             }
             return audienceTicketEntity;
         } catch (Exception exception) {
@@ -239,6 +240,7 @@ public class LANEventMapper {
                 audienceTicket.setTicketNumber(entity.getTicketNumber());
                 audienceTicket.setEmailSent(entity.isEmailSent());
                 audienceTicket.setEventName(entity.getEventName());
+                audienceTicket.setCheckedIn(entity.isCheckedIn());
             }
         } catch (Exception exception) {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);

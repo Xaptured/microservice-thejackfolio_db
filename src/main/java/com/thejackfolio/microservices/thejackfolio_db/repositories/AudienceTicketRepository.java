@@ -28,4 +28,9 @@ public interface AudienceTicketRepository extends JpaRepository<AudienceTicketEn
     @Modifying
     @Query("update AudienceTicketEntity a set a.emailSent = true where a.id = ?1")
     void updateEmailStatus(Integer id);
+
+    @Transactional
+    @Modifying
+    @Query("update AudienceTicketEntity a set a.isCheckedIn = true where a.email = ?1 and a.eventName = ?2")
+    void updateCheckedInStatus(String email, String eventName);
 }
