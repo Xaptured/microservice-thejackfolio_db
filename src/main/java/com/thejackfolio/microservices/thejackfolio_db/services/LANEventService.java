@@ -200,6 +200,19 @@ public class LANEventService {
         }
     }
 
+    public void updateCheckedInStatus(String email, String eventName) {
+        lanEventServiceHelper.updateCheckedInStatus(email, eventName);
+    }
+
+    public AudienceTicket fetchAudienceTicketByEventNameAndEmail(String email, String eventName) {
+        AudienceTicketEntity audienceTicketEntity = lanEventServiceHelper.fetchAudienceTicketByEmailAndEventName(email, eventName);
+        if (audienceTicketEntity != null) {
+            return lanEventMapper.convertToAudienceTicketModel(audienceTicketEntity);
+        } else {
+            throw new BadRequestException("Details doesn't exist");
+        }
+    }
+
     public void savePendingPayment(Audience audience) {
         PendingPaymentEntity pendingPaymentEntity = lanEventMapper.convertAudienceToPendingPaymentEntity(audience);
         lanEventServiceHelper.savePendingPayment(pendingPaymentEntity);
@@ -272,5 +285,13 @@ public class LANEventService {
     public List<SubUser> findByIsEmailSent() {
         List<SubUserEntity> subUserEntities = lanEventServiceHelper.findByIsEmailSent(false);
         return lanEventMapper.convertSubUserEntitiesToModels(subUserEntities);
+    }
+
+    public SubUser findByUserName(String userName) {
+        SubUserEntity subUserEntity = lanEventServiceHelper.findByUserName(userName);
+        if (subUserEntity == null) {
+            throw new ResourceNotFoundException("Username doesn't exist");
+        }
+        return lanEventMapper.convertSubUserEntityToModel(subUserEntity);
     }
 }

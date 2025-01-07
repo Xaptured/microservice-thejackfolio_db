@@ -33,4 +33,6 @@ public interface SubUserRepository extends JpaRepository<SubUserEntity, Integer>
     void updateActive(String eventName);
 
     Optional<List<SubUserEntity>> findByIsEmailSent(boolean isEmailSent);
+
+    Optional<SubUserEntity> findByUserName(String userName);
 }

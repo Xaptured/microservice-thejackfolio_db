@@ -29,4 +29,6 @@ public class AudienceTicketEntity {
     private String ticketNumber;
     @Column(name = "email_sent")
     private boolean emailSent;
+    @Column(name = "checked_in")
+    private boolean isCheckedIn;
 }
