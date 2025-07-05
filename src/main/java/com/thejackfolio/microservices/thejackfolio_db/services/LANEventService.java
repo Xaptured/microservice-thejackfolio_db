@@ -294,4 +294,31 @@ public class LANEventService {
         }
         return lanEventMapper.convertSubUserEntityToModel(subUserEntity);
     }
+
+    public void updateFeedback(List<Feedback> feedbacks) {
+        for (Feedback feedback : feedbacks) {
+            FeedbackEntity feedbackEntity = lanEventServiceHelper.findFeedbackByEmail(feedback.getEmail());
+            if (feedbackEntity != null) {
+                feedbackEntity = lanEventMapper.convertFeedbackModelToEntity(feedback, feedbackEntity);
+                lanEventServiceHelper.saveFeedback(feedbackEntity);
+            } else {
+                throw new ResourceNotFoundException("Email doesn't exist");
+            }
+        }
+    }
+
+    public Feedback findFeedback(String email) {
+        FeedbackEntity feedbackEntity = lanEventServiceHelper.findFeedbackByEmail(email);
+        if (feedbackEntity != null) {
+            Feedback feedback = lanEventMapper.convertFeedbackEntityToModel(feedbackEntity);
+            return feedback;
+        } else {
+            throw new ResourceNotFoundException("Email doesn't exist");
+        }
+    }
+
+    public List<Feedback> getFeedbackExactlyOneMonthOld() {
+        List<FeedbackEntity> entities = lanEventServiceHelper.getFeedbackExactlyOneMonthOld();
+        return lanEventMapper.convertFeedbackEntitiesToModels(entities);
+    }
 }

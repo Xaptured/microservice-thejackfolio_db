@@ -397,4 +397,34 @@ public class LANEventController {
         SubUser subUser = lanEventService.findByUserName(username);
         return ResponseEntity.status(HttpStatus.OK).body(subUser);
     }
+
+    @Operation(
+            summary = "Update feedback flag",
+            description = "Update feedback flag."
+    )
+    @PostMapping("/update-feedback")
+    public ResponseEntity<Void> updateFeedback(@RequestBody List<Feedback> feedbacks) {
+        lanEventService.updateFeedback(feedbacks);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Fetch feedback flag using email",
+            description = "Fetch feedback flag using email."
+    )
+    @GetMapping("/fetch-feedback-by-email/{email}")
+    public ResponseEntity<Feedback> fetchFeedbackByEmail(@PathVariable String email) {
+        Feedback feedback = lanEventService.findFeedback(email);
+        return ResponseEntity.status(HttpStatus.OK).body(feedback);
+    }
+
+    @Operation(
+            summary = "Fetch feedback details one month exactly ago",
+            description = "Fetch feedback details one month exactly ago."
+    )
+    @GetMapping("/fetch-feedbacks")
+    public ResponseEntity<List<Feedback>> getFeedbackExactlyOneMonthOld() {
+        List<Feedback> feedbacks = lanEventService.getFeedbackExactlyOneMonthOld();
+        return ResponseEntity.status(HttpStatus.OK).body(feedbacks);
+    }
 }

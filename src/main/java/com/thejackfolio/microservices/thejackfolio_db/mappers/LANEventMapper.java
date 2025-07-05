@@ -454,4 +454,59 @@ public class LANEventMapper {
         }
         return subUsers;
     }
+
+    public FeedbackEntity convertFeedbackModelToEntity(Feedback feedback) {
+        FeedbackEntity entity = null;
+        try {
+            if (feedback != null) {
+                entity = new FeedbackEntity();
+                entity.setFlag(feedback.isFlag());
+                entity.setEmail(feedback.getEmail());
+                entity.setDate(feedback.getDate());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entity;
+    }
+
+    public FeedbackEntity convertFeedbackModelToEntity(Feedback feedback, FeedbackEntity entity) {
+        try {
+            if (feedback != null && entity != null) {
+                entity.setFlag(feedback.isFlag());
+                entity.setDate(feedback.getDate());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_MODEL_TO_ENTITY, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entity;
+    }
+
+    public Feedback convertFeedbackEntityToModel(FeedbackEntity entity) {
+        Feedback feedback = null;
+        try {
+            if (entity != null) {
+                feedback = new Feedback();
+                feedback.setDate(entity.getDate());
+                feedback.setFlag(entity.isFlag());
+                feedback.setEmail(entity.getEmail());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return feedback;
+    }
+
+    public List<Feedback> convertFeedbackEntitiesToModels(List<FeedbackEntity> entities) {
+        List<Feedback> feedbackList = new ArrayList<>();
+        if (entities != null && !entities.isEmpty()) {
+            for (FeedbackEntity entity : entities) {
+                feedbackList.add(convertFeedbackEntityToModel(entity));
+            }
+        }
+        return feedbackList;
+    }
 }

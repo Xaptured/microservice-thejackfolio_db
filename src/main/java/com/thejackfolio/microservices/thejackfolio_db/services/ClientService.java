@@ -12,10 +12,12 @@ import com.thejackfolio.microservices.thejackfolio_db.exceptions.EmailException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.MapperException;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.ClientsMapper;
 import com.thejackfolio.microservices.thejackfolio_db.mappers.GameMapper;
+import com.thejackfolio.microservices.thejackfolio_db.mappers.LANEventMapper;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.models.ClientComments;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.ClientServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.GameServiceHelper;
+import com.thejackfolio.microservices.thejackfolio_db.servicehelpers.LANEventServiceHelper;
 import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +27,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,6 +47,10 @@ public class ClientService {
     private GameServiceHelper gameServiceHelper;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private LANEventServiceHelper lanEventServiceHelper;
+    @Autowired
+    private LANEventMapper lanEventMapper;
 
     public void saveComments(ClientComments clientComments) throws MapperException, DataBaseOperationException {
         com.thejackfolio.microservices.thejackfolio_db.entities.ClientComments commentEntity = mapper.modelToEntityComments(clientComments);
@@ -78,6 +84,12 @@ public class ClientService {
             ProfileDetail detail = new ProfileDetail();
             detail.setEmail(credential.getEmail());
             saveOrUpdateProfile(detail);
+
+            LocalDate today = LocalDate.now();
+            Date sqlDate = Date.valueOf(today);
+            Feedback feedback = new Feedback(sqlDate.toString(),false, credential.getEmail()  );
+            FeedbackEntity feedbackEntity = lanEventMapper.convertFeedbackModelToEntity(feedback);
+            lanEventServiceHelper.saveFeedback(feedbackEntity);
         } else {
             throw new EmailException(StringConstants.DUPLICATE_EMAIL);
         }
