@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +53,8 @@ public class LANEventServiceHelper {
     private InitiatePaymentRepository initiatePaymentRepository;
     @Autowired
     private SubUserRepository subUserRepository;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -146,8 +149,8 @@ public class LANEventServiceHelper {
         try {
             List<TeamWithTeamMate> teamWithTeamMates = new ArrayList<>();
             List<Map<String, Object>> results = lanTeamRepository.fetchTeamWithTeamMate(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     TeamWithTeamMate teamWithTeamMate = new TeamWithTeamMate();
                     teamWithTeamMate.setName(result.get("NAME").toString());
                     teamWithTeamMate.setEventName(result.get("EVENT_NAME").toString());
@@ -189,8 +192,8 @@ public class LANEventServiceHelper {
         try {
             List<LANEvent> lanEvents = new ArrayList<>();
             List<Map<String, Object>> results = lanEventRepository.fetchPastEventsForParticipants(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     LANEvent lanEvent = new LANEvent();
                     lanEvent.setName(result.get("NAME").toString());
                     lanEvents.add(lanEvent);
@@ -207,8 +210,8 @@ public class LANEventServiceHelper {
         try {
             List<LANEvent> lanEvents = new ArrayList<>();
             List<Map<String, Object>> results = lanEventRepository.fetchFutureEventsForParticipants(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     LANEvent lanEvent = new LANEvent();
                     lanEvent.setName(result.get("NAME").toString());
                     lanEvents.add(lanEvent);
@@ -244,8 +247,8 @@ public class LANEventServiceHelper {
         try {
             List<LANEvent> lanEvents = new ArrayList<>();
             List<Map<String, Object>> results = audienceRepository.fetchPastEventsForAudience(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     LANEvent lanEvent = new LANEvent();
                     lanEvent.setName(result.get("NAME").toString());
                     lanEvents.add(lanEvent);
@@ -262,8 +265,8 @@ public class LANEventServiceHelper {
         try {
             List<LANEvent> lanEvents = new ArrayList<>();
             List<Map<String, Object>> results = audienceRepository.fetchFutureEventsForAudience(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     LANEvent lanEvent = new LANEvent();
                     lanEvent.setName(result.get("NAME").toString());
                     lanEvents.add(lanEvent);
@@ -280,8 +283,8 @@ public class LANEventServiceHelper {
         try {
             List<LANEvent> lanEvents = new ArrayList<>();
             List<Map<String, Object>> results = audienceRepository.fetchLiveEventsForAudience(email).orElse(null);
-            if (results!= null && !results.isEmpty()) {
-                for(Map<String, Object> result : results) {
+            if (results != null && !results.isEmpty()) {
+                for (Map<String, Object> result : results) {
                     LANEvent lanEvent = new LANEvent();
                     lanEvent.setName(result.get("NAME").toString());
                     lanEvents.add(lanEvent);
@@ -547,6 +550,34 @@ public class LANEventServiceHelper {
     public SubUserEntity findByUserName(String userName) {
         try {
             return subUserRepository.findByUserName(userName).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveFeedback(FeedbackEntity feedbackEntity) {
+        try {
+            feedbackRepository.save(feedbackEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public FeedbackEntity findFeedbackByEmail(String email) {
+        try {
+            return feedbackRepository.findByEmail(email).orElse(null);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<FeedbackEntity> getFeedbackExactlyOneMonthOld() {
+        try {
+            LocalDate targetDate = LocalDate.now().minusMonths(1);
+            return feedbackRepository.findByDate(targetDate.toString());
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
