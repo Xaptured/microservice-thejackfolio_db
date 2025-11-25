@@ -55,6 +55,8 @@ public class LANEventServiceHelper {
     private SubUserRepository subUserRepository;
     @Autowired
     private FeedbackRepository feedbackRepository;
+    @Autowired
+    private AdvertisementRepository advertisementRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -578,6 +580,24 @@ public class LANEventServiceHelper {
         try {
             LocalDate targetDate = LocalDate.now().minusMonths(1);
             return feedbackRepository.findByDate(targetDate.toString());
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveAdvertisement(AdvertisementEntity advertisementEntity) {
+        try {
+            advertisementRepository.save(advertisementEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<AdvertisementEntity> findAllActiveAds() {
+        try {
+            return advertisementRepository.findAllActiveAds();
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

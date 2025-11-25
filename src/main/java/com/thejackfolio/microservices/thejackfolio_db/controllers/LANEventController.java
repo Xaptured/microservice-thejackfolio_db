@@ -427,4 +427,24 @@ public class LANEventController {
         List<Feedback> feedbacks = lanEventService.getFeedbackExactlyOneMonthOld();
         return ResponseEntity.status(HttpStatus.OK).body(feedbacks);
     }
+
+    @Operation(
+            summary = "Fetch all active advertisement details",
+            description = "Fetch all active advertisement details."
+    )
+    @GetMapping("/fetch-advertisements")
+    public ResponseEntity<List<AdvertisementModel>> getAdvertisementDetails() {
+        List<AdvertisementModel> advertisementModels = lanEventService.fetchAllActiveAdvertisements();
+        return ResponseEntity.status(HttpStatus.OK).body(advertisementModels);
+    }
+
+    @Operation(
+            summary = "Save advertisement details",
+            description = "Save advertisement details."
+    )
+    @PostMapping("/save-advertisement")
+    public ResponseEntity<Void> saveAdvertisement(@RequestBody AdvertisementModel model) {
+        lanEventService.saveAdvertisementDetails(model);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

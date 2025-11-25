@@ -321,4 +321,18 @@ public class LANEventService {
         List<FeedbackEntity> entities = lanEventServiceHelper.getFeedbackExactlyOneMonthOld();
         return lanEventMapper.convertFeedbackEntitiesToModels(entities);
     }
+
+    public void saveAdvertisementDetails(AdvertisementModel model) {
+        AdvertisementEntity entity = lanEventMapper.convertAdvertisementModelToEntity(model);
+        lanEventServiceHelper.saveAdvertisement(entity);
+    }
+
+    public List<AdvertisementModel> fetchAllActiveAdvertisements() {
+        List<AdvertisementEntity> entities = lanEventServiceHelper.findAllActiveAds();
+        List<AdvertisementModel> models = lanEventMapper.convertAdvertisementEntitiesToModels(entities);
+        if (models == null) {
+            return new ArrayList<>();
+        }
+        return models;
+    }
 }
