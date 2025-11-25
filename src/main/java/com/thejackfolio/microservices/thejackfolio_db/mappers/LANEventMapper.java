@@ -509,4 +509,59 @@ public class LANEventMapper {
         }
         return feedbackList;
     }
+
+    public List<AdvertisementModel> convertAdvertisementEntitiesToModels(List<AdvertisementEntity> entities) {
+        List<AdvertisementModel> advertisementModels = null;
+        if (entities != null && !entities.isEmpty()) {
+            advertisementModels = new ArrayList<>();
+            for (AdvertisementEntity entity : entities) {
+                AdvertisementModel model = convertAdvertisementEntityToModel(entity);
+                advertisementModels.add(model);
+            }
+        }
+        return advertisementModels;
+    }
+
+    public AdvertisementModel convertAdvertisementEntityToModel(AdvertisementEntity entity) {
+        try {
+            AdvertisementModel model = new AdvertisementModel();
+            model.setAdvertiserName(entity.getAdvertiserName());
+            model.setImagePath(entity.getImagePath());
+            model.setTargetUrl(entity.getTargetUrl());
+            model.setAltText(entity.getAltText());
+            model.setActive(entity.isActive());
+            return model;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+    }
+
+    public List<AdvertisementEntity> convertAdvertisementModelsToEntities(List<AdvertisementModel> models) {
+        List<AdvertisementEntity> entities = null;
+        if (models != null && !models.isEmpty()) {
+            entities = new ArrayList<>();
+            for (AdvertisementModel model : models) {
+                AdvertisementEntity entity = convertAdvertisementModelToEntity(model);
+                entities.add(entity);
+            }
+        }
+        return entities;
+    }
+
+    public AdvertisementEntity convertAdvertisementModelToEntity(AdvertisementModel model) {
+        try {
+            AdvertisementEntity entity = new AdvertisementEntity();
+            entity.setAdvertiserName(model.getAdvertiserName());
+            entity.setImagePath(model.getImagePath());
+            entity.setTargetUrl(model.getTargetUrl());
+            entity.setAltText(model.getAltText());
+            entity.setActive(model.isActive());
+            return entity;
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+
+    }
 }
