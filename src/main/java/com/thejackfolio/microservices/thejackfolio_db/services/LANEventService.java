@@ -11,6 +11,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.enums.UpdateCategory;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.BadRequestException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
@@ -22,6 +23,7 @@ import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -334,5 +336,16 @@ public class LANEventService {
             return new ArrayList<>();
         }
         return models;
+    }
+
+    public void saveUpdateRequest(UpdateRequest updateRequest) {
+        UpdateRequestEntity updateRequestEntity = lanEventMapper.convertUpdateRequestModelToEntity(updateRequest);
+        lanEventServiceHelper.saveUpdateRequest(updateRequestEntity);
+    }
+
+    public List<UpdateRequest> fetchLatestUpdatesByCategory(UpdateCategory category, int limit) {
+        PageRequest pageRequest = PageRequest.of(0, limit);
+        List<UpdateRequestEntity> entities = lanEventServiceHelper.findByTypeWithLimit(category, pageRequest);
+        return lanEventMapper.convertUpdateRequestEntitiesToModels(entities);
     }
 }

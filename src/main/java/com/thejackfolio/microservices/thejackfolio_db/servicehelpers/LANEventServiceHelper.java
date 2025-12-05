@@ -12,6 +12,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.
 import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.enums.UpdateCategory;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANDataBaseException;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.ResourceNotFoundException;
 import com.thejackfolio.microservices.thejackfolio_db.models.LANTeam;
@@ -21,6 +22,7 @@ import com.thejackfolio.microservices.thejackfolio_db.utilities.StringConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -57,6 +59,8 @@ public class LANEventServiceHelper {
     private FeedbackRepository feedbackRepository;
     @Autowired
     private AdvertisementRepository advertisementRepository;
+    @Autowired
+    private UpdateRequestRepository updateRequestRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -598,6 +602,24 @@ public class LANEventServiceHelper {
     public List<AdvertisementEntity> findAllActiveAds() {
         try {
             return advertisementRepository.findAllActiveAds();
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public UpdateRequestEntity saveUpdateRequest(UpdateRequestEntity updateRequestEntity) {
+        try {
+            return updateRequestRepository.save(updateRequestEntity);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, PageRequest pageRequest) {
+        try {
+            return updateRequestRepository.findByTypeWithLimit(category, pageRequest);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

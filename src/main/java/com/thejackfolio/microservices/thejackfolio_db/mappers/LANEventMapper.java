@@ -562,6 +562,56 @@ public class LANEventMapper {
             LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
+    }
 
+    public UpdateRequestEntity convertUpdateRequestModelToEntity(UpdateRequest updateRequest) {
+        UpdateRequestEntity updateRequestEntity = null;
+        try {
+            if (updateRequest != null) {
+                updateRequestEntity = new UpdateRequestEntity();
+                updateRequestEntity.setEventId(updateRequest.getEventId());
+                updateRequestEntity.setCategory(updateRequest.getCategory());
+                updateRequestEntity.setMessage(updateRequest.getMessage());
+                updateRequestEntity.setTitle(updateRequest.getTitle());
+                updateRequestEntity.setCreatedAt(updateRequest.getCreatedAt());
+                updateRequestEntity.setTournamentId(updateRequest.getTournamentId());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return updateRequestEntity;
+    }
+
+    public UpdateRequest convertUpdateRequestEntityToModel(UpdateRequestEntity entity) {
+        UpdateRequest updateRequest = null;
+        try {
+            if (entity != null) {
+                updateRequest = new UpdateRequest();
+                updateRequest.setEventId(entity.getEventId());
+                updateRequest.setTitle(entity.getTitle());
+                updateRequest.setMessage(entity.getMessage());
+                updateRequest.setCategory(entity.getCategory());
+                updateRequest.setTournamentId(entity.getTournamentId());
+                updateRequest.setCreatedAt(entity.getCreatedAt());
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return updateRequest;
+    }
+
+    public List<UpdateRequest> convertUpdateRequestEntitiesToModels(List<UpdateRequestEntity> entities) {
+        List<UpdateRequest> updateRequests = new ArrayList<>();
+        try {
+            if (entities != null && !entities.isEmpty()) {
+                return entities.stream().map(entity -> convertUpdateRequestEntityToModel(entity)).toList();
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return updateRequests;
     }
 }

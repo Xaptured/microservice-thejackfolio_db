@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.controllers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
+import com.thejackfolio.microservices.thejackfolio_db.enums.UpdateCategory;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.services.LANEventService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -446,5 +447,26 @@ public class LANEventController {
     public ResponseEntity<Void> saveAdvertisement(@RequestBody AdvertisementModel model) {
         lanEventService.saveAdvertisementDetails(model);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(
+            summary = "Save live update details",
+            description = "Save live update details."
+    )
+    @PostMapping("/save-live-update")
+    public ResponseEntity<Void> saveUpdateRequest(@RequestBody UpdateRequest updateRequest) {
+        lanEventService.saveUpdateRequest(updateRequest);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(
+            summary = "Fetch live update details",
+            description = "Fetch live update details."
+    )
+    @GetMapping("/live-updates")
+    public ResponseEntity<List<UpdateRequest>> fetchLatestUpdates(@RequestParam(name = "category")UpdateCategory category,
+                                                  @RequestParam(name = "limit") int limit) {
+        List<UpdateRequest> updateRequests = lanEventService.fetchLatestUpdatesByCategory(category, limit);
+        return ResponseEntity.status(HttpStatus.OK).body(updateRequests);
     }
 }
