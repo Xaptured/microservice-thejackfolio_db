@@ -465,8 +465,8 @@ public class LANEventController {
     )
     @GetMapping("/live-updates")
     public ResponseEntity<List<UpdateRequest>> fetchLatestUpdates(@RequestParam(name = "category")UpdateCategory category,
-                                                  @RequestParam(name = "limit") int limit) {
-        List<UpdateRequest> updateRequests = lanEventService.fetchLatestUpdatesByCategory(category, limit);
+                                                  @RequestParam(name = "limit") int limit, @RequestParam(name = "tournamentName") String tournamentName) {
+        List<UpdateRequest> updateRequests = lanEventService.fetchLatestUpdatesByCategory(category, limit, tournamentName);
         return ResponseEntity.status(HttpStatus.OK).body(updateRequests);
     }
 }

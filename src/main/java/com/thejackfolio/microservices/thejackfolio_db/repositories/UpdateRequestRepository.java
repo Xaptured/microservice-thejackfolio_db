@@ -18,8 +18,6 @@ import java.util.List;
 @Repository
 public interface UpdateRequestRepository extends JpaRepository<UpdateRequestEntity, Integer> {
 
-    List<UpdateRequestEntity> findTop7ByCategoryOrderByCreatedAtDesc(UpdateCategory updateCategory);
-
-    @Query("SELECT u FROM UpdateRequestEntity u WHERE u.category = :category ORDER BY u.createdAt DESC")
-    List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, Pageable pageable);
+    @Query("SELECT u FROM UpdateRequestEntity u WHERE u.category = :category AND u.tournamentId = :tournamentName ORDER BY u.createdAt DESC")
+    List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, Pageable pageable, String tournamentName);
 }

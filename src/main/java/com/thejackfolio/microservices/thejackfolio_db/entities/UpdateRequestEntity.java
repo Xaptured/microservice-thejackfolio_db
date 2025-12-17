@@ -29,7 +29,7 @@ public class UpdateRequestEntity {
     @Column(name = "category")
     private UpdateCategory category;
     @Column(name = "tournament_id")
-    private String tournamentId;
+    private String tournamentId; // considering as event_name
     @Column(name = "title")
     private String title;
     @Column(name = "message")

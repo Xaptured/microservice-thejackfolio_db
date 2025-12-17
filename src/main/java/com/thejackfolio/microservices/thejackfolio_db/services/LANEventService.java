@@ -343,9 +343,9 @@ public class LANEventService {
         lanEventServiceHelper.saveUpdateRequest(updateRequestEntity);
     }
 
-    public List<UpdateRequest> fetchLatestUpdatesByCategory(UpdateCategory category, int limit) {
+    public List<UpdateRequest> fetchLatestUpdatesByCategory(UpdateCategory category, int limit, String tournamentName) {
         PageRequest pageRequest = PageRequest.of(0, limit);
-        List<UpdateRequestEntity> entities = lanEventServiceHelper.findByTypeWithLimit(category, pageRequest);
+        List<UpdateRequestEntity> entities = lanEventServiceHelper.findByTypeWithLimit(category, pageRequest, tournamentName);
         return lanEventMapper.convertUpdateRequestEntitiesToModels(entities);
     }
 }

@@ -617,9 +617,9 @@ public class LANEventServiceHelper {
         }
     }
 
-    public List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, PageRequest pageRequest) {
+    public List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, PageRequest pageRequest, String tournamentName) {
         try {
-            return updateRequestRepository.findByTypeWithLimit(category, pageRequest);
+            return updateRequestRepository.findByTypeWithLimit(category, pageRequest, tournamentName);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
