@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.servicehelpers;
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TournamentImageEntity;
 import com.thejackfolio.microservices.thejackfolio_db.enums.EventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
@@ -61,6 +62,10 @@ public class LANEventServiceHelper {
     private AdvertisementRepository advertisementRepository;
     @Autowired
     private UpdateRequestRepository updateRequestRepository;
+    @Autowired
+    private ImageRepository imageRepository;
+    @Autowired
+    private TournamentImageRepository  tournamentImageRepository;
 
     public LANEvent saveLANEvent(LANEvent event) {
         try {
@@ -620,6 +625,42 @@ public class LANEventServiceHelper {
     public List<UpdateRequestEntity> findByTypeWithLimit(UpdateCategory category, PageRequest pageRequest, String tournamentName) {
         try {
             return updateRequestRepository.findByTypeWithLimit(category, pageRequest, tournamentName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<ImagesEntity> saveImages(List<ImagesEntity> imagesEntities) {
+        try {
+            return imageRepository.saveAll(imagesEntities);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public void saveTournamentImages(List<TournamentImageEntity> tournamentImageEntities) {
+        try {
+            tournamentImageRepository.saveAll(tournamentImageEntities);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<TournamentImageEntity> findTournamentImagesByTournamentName(String tournamentName) {
+        try {
+            return tournamentImageRepository.findByTournamentName(tournamentName);
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.DATABASE_ERROR, exception);
+            throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);
+        }
+    }
+
+    public List<ImagesEntity> findImagesByIds(List<Long> imageIds) {
+        try {
+            return  imageRepository.findAllById(imageIds);
         } catch (Exception exception) {
             LOGGER.info(StringConstants.DATABASE_ERROR, exception);
             throw new LANDataBaseException(StringConstants.DATABASE_ERROR, exception);

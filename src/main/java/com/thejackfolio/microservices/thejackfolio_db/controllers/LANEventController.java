@@ -469,4 +469,24 @@ public class LANEventController {
         List<UpdateRequest> updateRequests = lanEventService.fetchLatestUpdatesByCategory(category, limit, tournamentName);
         return ResponseEntity.status(HttpStatus.OK).body(updateRequests);
     }
+
+    @Operation(
+            summary = "Save tournament image details",
+            description = "Save tournament image details."
+    )
+    @PostMapping("/save-tournament-images")
+    public ResponseEntity<Void> saveTournamentImages(@RequestBody TournamentImages tournamentImages) {
+        lanEventService.saveTournamentImages(tournamentImages);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(
+            summary = "Fetch tournament image details",
+            description = "Fetch tournament image details."
+    )
+    @GetMapping("/fetch-tournament-images")
+    public ResponseEntity<List<Image>> fetchImagesByTournamentName(@RequestParam String tournamentName) {
+        List<Image> images =  lanEventService.fetchImagesByTournamentName(tournamentName);
+        return ResponseEntity.status(HttpStatus.OK).body(images);
+    }
 }

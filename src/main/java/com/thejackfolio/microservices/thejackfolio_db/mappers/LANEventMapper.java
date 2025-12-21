@@ -10,6 +10,7 @@ import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.entities.LANEvent;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TournamentImageEntity;
 import com.thejackfolio.microservices.thejackfolio_db.exceptions.LANMapperException;
 import com.thejackfolio.microservices.thejackfolio_db.models.*;
 import com.thejackfolio.microservices.thejackfolio_db.repositories.FailedPaymentRepository;
@@ -613,5 +614,61 @@ public class LANEventMapper {
             throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
         }
         return updateRequests;
+    }
+
+    public List<ImagesEntity> convertImageModelsToEntities(List<Image> images) {
+        List<ImagesEntity> entities = null;
+        try {
+            if (images != null && !images.isEmpty()) {
+                entities = new ArrayList<>();
+                for (Image image : images) {
+                    ImagesEntity entity = new ImagesEntity();
+                    entity.setImageName(image.getImageName());
+                    entity.setImagePath(image.getImagePath());
+                    entities.add(entity);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entities;
+    }
+
+    public List<Image> convertImageEntitiesToModels(List<ImagesEntity> entities) {
+        List<Image> images = new ArrayList<>();
+        try {
+            if (entities != null && !entities.isEmpty()) {
+                for (ImagesEntity entity : entities) {
+                    Image image = new Image();
+                    image.setImageName(entity.getImageName());
+                    image.setImagePath(entity.getImagePath());
+                    images.add(image);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return images;
+    }
+
+    public List<TournamentImageEntity> convertTournamentImageModelToEntities(TournamentImages tournamentImages, List<ImagesEntity> imagesEntities) {
+        List<TournamentImageEntity> entities = null;
+        try {
+            if (tournamentImages != null && imagesEntities != null && !imagesEntities.isEmpty()) {
+                entities = new ArrayList<>();
+                for (ImagesEntity entity : imagesEntities) {
+                    TournamentImageEntity tournamentImageEntity = new TournamentImageEntity();
+                    tournamentImageEntity.setTournamentName(tournamentImages.getTournamentName());
+                    tournamentImageEntity.setImageId(entity.getId());
+                    entities.add(tournamentImageEntity);
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info(StringConstants.MAPPING_ERROR_ENTITY_TO_MODEL, exception);
+            throw new LANMapperException(StringConstants.MAPPING_ERROR, exception);
+        }
+        return entities;
     }
 }

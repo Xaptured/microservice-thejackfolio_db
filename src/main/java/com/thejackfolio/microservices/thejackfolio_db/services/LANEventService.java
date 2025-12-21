@@ -9,6 +9,7 @@ package com.thejackfolio.microservices.thejackfolio_db.services;
 import com.thejackfolio.microservices.thejackfolio_db.entities.*;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.AudienceTicketEntity;
 import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TeamWithTeamMate;
+import com.thejackfolio.microservices.thejackfolio_db.entities.combinedentities.TournamentImageEntity;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANEventStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.LANTeamStatus;
 import com.thejackfolio.microservices.thejackfolio_db.enums.UpdateCategory;
@@ -347,5 +348,19 @@ public class LANEventService {
         PageRequest pageRequest = PageRequest.of(0, limit);
         List<UpdateRequestEntity> entities = lanEventServiceHelper.findByTypeWithLimit(category, pageRequest, tournamentName);
         return lanEventMapper.convertUpdateRequestEntitiesToModels(entities);
+    }
+
+    public void saveTournamentImages(TournamentImages tournamentImages) {
+        List<ImagesEntity> imagesEntities = lanEventMapper.convertImageModelsToEntities(tournamentImages.getImages());
+        imagesEntities = lanEventServiceHelper.saveImages(imagesEntities);
+        List<TournamentImageEntity> tournamentImageEntities = lanEventMapper.convertTournamentImageModelToEntities(tournamentImages, imagesEntities);
+        lanEventServiceHelper.saveTournamentImages(tournamentImageEntities);
+    }
+
+    public List<Image> fetchImagesByTournamentName(String tournamentName) {
+        List<TournamentImageEntity> tournamentImageEntities = lanEventServiceHelper.findTournamentImagesByTournamentName(tournamentName);
+        List<Long> imageIds = tournamentImageEntities.stream().map(TournamentImageEntity::getImageId).toList();
+        List<ImagesEntity> imagesEntities = lanEventServiceHelper.findImagesByIds(imageIds);
+        return lanEventMapper.convertImageEntitiesToModels(imagesEntities);
     }
 }
